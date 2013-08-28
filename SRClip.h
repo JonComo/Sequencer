@@ -8,9 +8,6 @@
 
 #import <Foundation/Foundation.h>
 
-#define SRClipNotificationDidGenerateThumbnail @"clipGeneratedThumbnail"
-#define SRClipNotificationFailed @"clipFailed"
-
 @interface SRClip : NSObject
 
 @property (nonatomic, strong) UIImage *thumbnail;
@@ -18,7 +15,7 @@
 
 -(id)initWithURL:(NSURL *)URL;
 
--(void)generateThumbnail;
+-(void)generateThumbnailCompletion:(void(^)(BOOL success))block;
 
 +(NSURL *)uniqueFileURLInDirectory:(NSString *)directory;
 

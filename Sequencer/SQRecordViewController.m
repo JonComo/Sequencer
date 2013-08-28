@@ -8,11 +8,18 @@
 
 #import "SQRecordViewController.h"
 #import "SRSequencer.h"
+#import "MBProgressHUD.h"
+#import "JCActionSheetManager.h"
+#import "Macros.h"
+#import <QuartzCore/QuartzCore.h>
 
-@interface SQRecordViewController () <SRSequencerDelegate>
+@interface SQRecordViewController () <SRSequencerDelegate, UICollectionViewDelegateFlowLayout>
 {
     SRSequencer *sequence;
     __weak IBOutlet UIView *viewPreview;
+    __weak IBOutlet UICollectionView *collectionViewClips;
+    
+    NSIndexPath *selectedIndex;
 }
 
 @end
@@ -25,6 +32,7 @@
 	// Do any additional setup after loading the view.
     
     sequence = [[SRSequencer alloc] initWithDelegate:self];
+    sequence.collectionViewClips = collectionViewClips;
     sequence.viewPreview = viewPreview;
 }
 
@@ -32,7 +40,8 @@
 {
     [super viewDidAppear:animated];
     
-    [sequence setupSessionWithDefaults];
+    if (!sequence.captureSession)
+        [sequence setupSessionWithDefaults];
 }
 
 - (void)didReceiveMemoryWarning
@@ -41,14 +50,14 @@
     // Dispose of any resources that can be recreated.
 }
 
--(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+-(void)dealloc
 {
-    [sequence record];
+    NSLog(@"Recorder Removed");
 }
 
--(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
+-(NSUInteger)supportedInterfaceOrientations
 {
-    [sequence pauseRecording];
+    return UIInterfaceOrientationMaskPortrait;
 }
 
 #pragma SequenceDelegate
@@ -56,6 +65,89 @@
 -(void)sequencer:(SRSequencer *)sequencer clipCountChanged:(int)count
 {
     
+}
+
+#pragma UIActions
+
+- (IBAction)cancel:(id)sender
+{
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (IBAction)recordDown:(UIButton *)sender {
+    [sequence record];
+}
+
+- (IBAction)recordUp:(id)sender {
+    [sequence pauseRecording];
+}
+
+- (IBAction)recordCancel:(id)sender {
+    [sequence pauseRecording];
+}
+
+- (IBAction)preview:(id)sender {
+    if (sequence.moviePlayerController.playbackState != MPMoviePlaybackStatePlaying)
+    {
+        [sequence previewOverView:viewPreview];
+    }else{
+        [sequence stopPreview];
+    }
+}
+
+- (IBAction)done:(id)sender
+{
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    hud.labelText = @"Rendering";
+    
+    NSURL *outputURL = [SRClip uniqueFileURLInDirectory:DOCUMENTS];
+    
+    [sequence finalizeRecordingToFile:outputURL withVideoSize:CGSizeMake(500, 500) withPreset:AVAssetExportPreset640x480 withCompletionHandler:^(NSError *error) {
+        [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+        
+        if (error) return;
+        
+        UISaveVideoAtPathToSavedPhotosAlbum([outputURL path], self, @selector(video:didFinishSavingWithError:contextInfo:), nil);
+    }];
+}
+
+- (IBAction)addClip:(id)sender
+{
+    [[JCActionSheetManager sharedManager] setDelegate:self];
+    [[JCActionSheetManager sharedManager] imagePickerInView:self.view onlyLibrary:YES completion:^(UIImage *image, NSURL *movieURL) {
+        
+        if (movieURL)
+        {
+            [sequence addClipFromURL:movieURL];
+        }
+    }];
+}
+
+- (void)video:(NSString *)videoPath didFinishSavingWithError:(NSError *)error contextInfo:(void *) contextInfo
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+        [hud setMode:MBProgressHUDModeText];
+        hud.labelText = @"Saved to Photos";
+        
+        [hud hide:YES afterDelay:2];
+    });
+}
+
+-(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    //[self highlightIndexPath:indexPath];
+    [sequence duplicateClipAtIndex:indexPath.row];
+}
+
+-(void)highlightIndexPath:(NSIndexPath *)indexPath
+{
+    selectedIndex = indexPath;
+    
+    UICollectionViewCell *cell = [collectionViewClips cellForItemAtIndexPath:indexPath];
+    
+    cell.layer.borderColor = [UIColor orangeColor].CGColor;
+    cell.layer.borderWidth = 2;
 }
 
 @end

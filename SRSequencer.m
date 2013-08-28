@@ -7,6 +7,8 @@
 #import "AVAssetStitcher.h"
 #import <MobileCoreServices/UTCoreTypes.h>
 
+#import "LXReorderableCollectionViewFlowLayout.h"
+
 #import "Macros.h"
 
 // Maximum and minumum length to record in seconds
@@ -52,13 +54,13 @@
     id deviceConnectedObserver;
     id deviceDisconnectedObserver;
     id deviceOrientationDidChangeObserver;
-    id clipThummbnailObserver;
-    id clipFailed;
     
     int currentRecordingSegment;
     
     CMTime currentFinalDurration;
     int inFlightWrites;
+    
+    NSTimer *timerStop;
     
     SRClip *clipRecording;
 }
@@ -240,47 +242,28 @@
     }
 }
 
-- (void)startRecording
-{
-//    if (![self.captureSession isRunning]) return;
-//    
-//    self.isRecording = YES;
-//    
-//    [self.clips removeAllObjects];
-//    [self.collectionViewClips reloadData];
-//    
-//    currentRecordingSegment = 0;
-//    _isPaused = NO;
-//    currentFinalDurration = kCMTimeZero;
-//    
-//    AVCaptureConnection *videoConnection = [self connectionWithMediaType:AVMediaTypeVideo fromConnections:movieFileOutput.connections];
-//    if ([videoConnection isVideoOrientationSupported]){
-//        videoConnection.videoOrientation = orientation;
-//    }
-//    
-//    NSURL *outputFileURL = [SRClip uniqueFileURLInDirectory:DOCUMENTS];
-//    
-//    clipRecording = [[SRClip alloc] initWithURL:outputFileURL];
-//    
-//    movieFileOutput.maxRecordedDuration = (_maxDuration > 0) ? CMTimeMakeWithSeconds(_maxDuration, 600) : kCMTimeInvalid;
-//    
-//    [movieFileOutput startRecordingToOutputFileURL:outputFileURL recordingDelegate:self];
-}
-
 - (void)pauseRecording
 {
+    if (!self.isRecording) return;
+    
+    float currentLength = CMTimeGetSeconds(movieFileOutput.recordedDuration);
+    
+    if (currentLength == 0){
+        if (!timerStop)
+            timerStop = [NSTimer scheduledTimerWithTimeInterval:0.01 target:self selector:@selector(pauseRecording) userInfo:nil repeats:YES];
+        
+        return;
+    }
+    
+    [timerStop invalidate];
+    timerStop = nil;
+    
     _isPaused = YES;
     
+    self.isRecording = NO;
     [movieFileOutput stopRecording];
     
     currentFinalDurration = CMTimeAdd(currentFinalDurration, movieFileOutput.recordedDuration);
-    
-    [self performSelector:@selector(delayEnableRecording) withObject:nil afterDelay:0.3];
-}
-
--(void)delayEnableRecording
-{
-    self.isRecording = NO;
 }
 
 - (void)record
@@ -288,16 +271,100 @@
     if (self.isRecording) return;
     if (![self.captureSession isRunning]) return;
     if (inFlightWrites != 0) return;
+    if (movieFileOutput.isRecording) return;
     
-    self.isRecording = YES;
-    currentRecordingSegment++;
     _isPaused = NO;
+    self.isRecording = YES;
     
     NSURL *outputFileURL = [SRClip uniqueFileURLInDirectory:DOCUMENTS];
     
     clipRecording = [[SRClip alloc] initWithURL:outputFileURL];
     
     [movieFileOutput startRecordingToOutputFileURL:outputFileURL recordingDelegate:self];
+}
+
+-(void)previewOverView:(UIView *)placeholder
+{
+    if (self.moviePlayerController.playbackState == MPMoviePlaybackStatePlaying)
+    {
+        [self stopPreview];
+        return;
+    }
+    
+    NSURL *outputURL = [SRClip uniqueFileURLInDirectory:DOCUMENTS];
+    
+    [self finalizeRecordingToFile:outputURL withVideoSize:CGSizeMake(500, 500) withPreset:AVAssetExportPreset640x480 withCompletionHandler:^(NSError *error) {
+        
+        if (error) return;
+        
+        if (!self.moviePlayerController){
+            self.moviePlayerController = [[MPMoviePlayerController alloc] initWithContentURL:outputURL];
+            self.moviePlayerController.controlStyle = MPMovieControlStyleNone;
+        }
+        
+        [self.moviePlayerController setContentURL:outputURL];
+        
+        self.moviePlayerController.view.frame = CGRectMake(0, 0, placeholder.bounds.size.width, placeholder.bounds.size.height);
+        [placeholder addSubview:self.moviePlayerController.view];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(stopPreview) name:MPMoviePlayerPlaybackDidFinishNotification object:nil];
+        
+        [self.captureSession stopRunning];
+        [self.moviePlayerController play];
+    }];
+}
+
+-(void)stopPreview
+{
+    [self.moviePlayerController stop];
+    [self.moviePlayerController.view removeFromSuperview];
+    self.moviePlayerController = nil;
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:MPMoviePlayerPlaybackDidFinishNotification object:nil];
+    
+    [self.captureSession startRunning];
+}
+
+#pragma mark - AVCaptureFileOutputRecordingDelegate implementation
+
+- (void)captureOutput:(AVCaptureFileOutput *)captureOutput didStartRecordingToOutputFileAtURL:(NSURL *)fileURL fromConnections:(NSArray *)connections
+{
+    inFlightWrites++;
+    
+    NSLog(@"AVCaptureMovieOutput started writing to file");
+}
+
+- (void)captureOutput:(AVCaptureFileOutput *)captureOutput didFinishRecordingToOutputFileAtURL:(NSURL *)fileURL fromConnections:(NSArray *)connections error:(NSError *)error
+{
+    NSLog(@"AVCaptureMovieOutput finished writing");
+    
+    if (error)
+    {
+        if(self.asyncErrorHandler){
+            self.asyncErrorHandler(error);
+        }else{
+            NSLog(@"Error capturing output: %@", error);
+        }
+    }
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [clipRecording generateThumbnailCompletion:^(BOOL success) {
+            
+            if (success){
+                [self addClip:clipRecording];
+                
+                if ([self.delegate respondsToSelector:@selector(sequencer:clipCountChanged:)])
+                    [self.delegate sequencer:self clipCountChanged:self.clips.count];
+            }
+            
+            clipRecording = nil;
+            
+            inFlightWrites--;
+            self.isRecording = NO;
+            
+            NSLog(@"Can record");
+        }];
+    });
 }
 
 - (void)reset
@@ -321,6 +388,12 @@
 - (void)finalizeRecordingToFile:(NSURL *)finalVideoLocationURL withVideoSize:(CGSize)videoSize withPreset:(NSString *)preset withCompletionHandler:(void (^)(NSError *error))completionHandler
 {
     //[self reset];
+    
+    if (self.clips.count == 0)
+    {
+        completionHandler([NSError errorWithDomain:@"No clips to export" code:104 userInfo:nil]);
+        return;
+    }
     
     NSError *error;
     if([finalVideoLocationURL checkResourceIsReachableAndReturnError:&error]){
@@ -347,6 +420,8 @@
             // The following transform is applied to each video track. It changes the size of the
             // video so it fits within the output size and stays at the correct aspect ratio.
             //
+            
+            return CGAffineTransformIdentity;
             
             CGFloat ratioW = videoSize.width / videoTrack.naturalSize.width;
             CGFloat ratioH = videoSize.height / videoTrack.naturalSize.height;
@@ -394,50 +469,11 @@
     }];
 }
 
-#pragma mark - AVCaptureFileOutputRecordingDelegate implementation
-
-- (void)captureOutput:(AVCaptureFileOutput *)captureOutput didStartRecordingToOutputFileAtURL:(NSURL *)fileURL fromConnections:(NSArray *)connections
-{
-    inFlightWrites++;
-}
-
-- (void)captureOutput:(AVCaptureFileOutput *)captureOutput didFinishRecordingToOutputFileAtURL:(NSURL *)fileURL fromConnections:(NSArray *)connections error:(NSError *)error
-{
-    if(error){
-        if(self.asyncErrorHandler)
-        {
-            self.asyncErrorHandler(error);
-        }
-        else
-        {
-            NSLog(@"Error capturing output: %@", error);
-        }
-    }else{
-        [self addClip:clipRecording];
-        [clipRecording generateThumbnail];
-        
-        clipRecording = nil;
-        
-        if ([self.delegate respondsToSelector:@selector(sequencer:clipCountChanged:)])
-            [self.delegate sequencer:self clipCountChanged:self.clips.count];
-    }
-    
-    inFlightWrites--;
-}
-
 #pragma mark - Observer start and stop
 
 - (void)startNotificationObservers
 {
     NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
-    
-    clipThummbnailObserver = [notificationCenter addObserverForName:SRClipNotificationDidGenerateThumbnail object:nil queue:nil usingBlock:^(NSNotification *note) {
-        [self.collectionViewClips reloadData];
-    }];
-    
-    clipFailed = [notificationCenter addObserverForName:SRClipNotificationFailed object:nil queue:nil usingBlock:^(NSNotification *note) {
-        [self removeClipAtIndex:[self.clips indexOfObject:note.object]];
-    }];
     
     //
     // Reconnect to a device that was previously being used
@@ -548,8 +584,6 @@
 {
     [[UIDevice currentDevice] endGeneratingDeviceOrientationNotifications];
     
-    [[NSNotificationCenter defaultCenter] removeObserver:clipThummbnailObserver];
-    
     [[NSNotificationCenter defaultCenter] removeObserver:deviceConnectedObserver];
     [[NSNotificationCenter defaultCenter] removeObserver:deviceDisconnectedObserver];
     [[NSNotificationCenter defaultCenter] removeObserver:deviceOrientationDidChangeObserver];
@@ -628,9 +662,16 @@
 
 -(void)setCollectionViewClips:(UICollectionView *)collectionViewClips
 {
-    _collectionViewClips = collectionViewClips;
-    
     collectionViewClips.dataSource = self;
+    
+    LXReorderableCollectionViewFlowLayout *layout = [[LXReorderableCollectionViewFlowLayout alloc] init];
+    [layout setMinimumInteritemSpacing:0];
+    [layout setMinimumLineSpacing:0];
+    [layout setItemSize:CGSizeMake(60, 60)];
+    layout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
+    [collectionViewClips setCollectionViewLayout:layout];
+    
+    _collectionViewClips = collectionViewClips;
 }
 
 -(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
@@ -665,7 +706,7 @@
     [self.clips addObject:clip];
     
     [self.collectionViewClips reloadData];
-    [self.collectionViewClips scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:MAX(0,self.clips.count-1) inSection:0] atScrollPosition:UICollectionViewScrollPositionRight animated:NO];
+    [self.collectionViewClips scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:MAX(0,self.clips.count-1) inSection:0] atScrollPosition:UICollectionViewScrollPositionRight animated:YES];
 }
 
 -(void)removeClipAtIndex:(NSInteger)index
@@ -683,7 +724,18 @@
     
     SRClip *newClip = [clipAtIndex duplicate];
     
-    [self addClip:newClip];
+    [newClip generateThumbnailCompletion:^(BOOL success) {
+        [self addClip:newClip];
+    }];
+}
+
+-(void)addClipFromURL:(NSURL *)url
+{
+    SRClip *newClip = [[SRClip alloc] initWithURL:url];
+    
+    [newClip generateThumbnailCompletion:^(BOOL success) {
+        [self addClip:newClip];
+    }];
 }
 
 @end

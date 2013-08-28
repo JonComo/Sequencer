@@ -7,6 +7,7 @@
 //
 
 #import "SRClip.h"
+#import "Macros.h"
 #import <AVFoundation/AVFoundation.h>
 
 @implementation SRClip
@@ -23,10 +24,7 @@
 
 -(SRClip *)duplicate
 {
-    NSString *extension = [self.URL pathExtension];
-    NSString *newPath = [NSString stringWithFormat:@"%@dup", [self.URL URLByDeletingPathExtension]];
-    NSURL *newURL = [NSURL URLWithString:newPath];
-    newURL = [newURL URLByAppendingPathExtension:extension];
+    NSURL *newURL = [SRClip uniqueFileURLInDirectory:DOCUMENTS];
     
     NSError *error;
     
@@ -40,22 +38,15 @@
     return newClip;
 }
 
--(void)setURL:(NSURL *)URL
+-(void)generateThumbnailCompletion:(void (^)(BOOL success))block
 {
-    _URL = URL;
-    
-    [self generateThumbnail];
-}
-
--(void)generateThumbnail
-{
-    [self generateThumbnailCompletion:^(UIImage *thumb) {
+    [self thumbnailCompletion:^(UIImage *thumb) {
         _thumbnail = thumb;
-        [[NSNotificationCenter defaultCenter] postNotificationName:SRClipNotificationDidGenerateThumbnail object:self];
+        if (block) block(YES);
     }];
 }
 
--(void)generateThumbnailCompletion:(void (^)(UIImage *thumb))block
+-(void)thumbnailCompletion:(void (^)(UIImage *thumb))block
 {
     AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:self.URL options:nil];
     AVAssetImageGenerator *generator = [[AVAssetImageGenerator alloc] initWithAsset:asset];
@@ -69,7 +60,9 @@
         if (result != AVAssetImageGeneratorSucceeded) {
             NSLog(@"couldn't generate thumbnail, error:%@", error);
             
-            [[NSNotificationCenter defaultCenter] postNotificationName:SRClipNotificationFailed object:self];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (block) block(nil);
+            });
             
             return;
         }
@@ -77,8 +70,7 @@
         UIImage *thumb = [UIImage imageWithCGImage:image];
         
         dispatch_async(dispatch_get_main_queue(), ^{
-            if (block)
-                block(thumb);
+            if (block) block(thumb);
         });
     }];
 }

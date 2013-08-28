@@ -27,6 +27,11 @@
 		865865B617CDD04200B5D7BD /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 865865B517CDD04200B5D7BD /* CoreVideo.framework */; };
 		865865B817CDD05F00B5D7BD /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 865865B717CDD05F00B5D7BD /* CoreMedia.framework */; };
 		865865BA17CDD09300B5D7BD /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 865865B917CDD09300B5D7BD /* QuartzCore.framework */; };
+		865865BD17CDE8C000B5D7BD /* SQHomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 865865BC17CDE8C000B5D7BD /* SQHomeViewController.m */; };
+		865865C117CDE99B00B5D7BD /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 865865C017CDE99B00B5D7BD /* MediaPlayer.framework */; };
+		865865C417CDF3A000B5D7BD /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 865865C317CDF3A000B5D7BD /* MBProgressHUD.m */; };
+		865865C817CDF63F00B5D7BD /* JCActionSheetManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 865865C617CDF63F00B5D7BD /* JCActionSheetManager.m */; };
+		865865CA17CDF6DA00B5D7BD /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 865865C917CDF6DA00B5D7BD /* MobileCoreServices.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -50,8 +55,8 @@
 		865865A417CDCC2C00B5D7BD /* SRClip.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRClip.m; path = ../SRClip.m; sourceTree = "<group>"; };
 		865865A517CDCC2C00B5D7BD /* SRSequencer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRSequencer.h; path = ../SRSequencer.h; sourceTree = "<group>"; };
 		865865A617CDCC2C00B5D7BD /* SRSequencer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRSequencer.m; path = ../SRSequencer.m; sourceTree = "<group>"; };
-		865865A917CDCC3A00B5D7BD /* AVAssetStitcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVAssetStitcher.h; sourceTree = "<group>"; };
-		865865AA17CDCC3A00B5D7BD /* AVAssetStitcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVAssetStitcher.m; sourceTree = "<group>"; };
+		865865A917CDCC3A00B5D7BD /* AVAssetStitcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AVAssetStitcher.h; path = ../AVAssetStitcher.h; sourceTree = "<group>"; };
+		865865AA17CDCC3A00B5D7BD /* AVAssetStitcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AVAssetStitcher.m; path = ../AVAssetStitcher.m; sourceTree = "<group>"; };
 		865865AC17CDCC4200B5D7BD /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		865865AE17CDCC4700B5D7BD /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 		865865B017CDCC6F00B5D7BD /* SQRecordViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQRecordViewController.h; sourceTree = "<group>"; };
@@ -60,6 +65,14 @@
 		865865B517CDD04200B5D7BD /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		865865B717CDD05F00B5D7BD /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		865865B917CDD09300B5D7BD /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		865865BB17CDE8C000B5D7BD /* SQHomeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQHomeViewController.h; sourceTree = "<group>"; };
+		865865BC17CDE8C000B5D7BD /* SQHomeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SQHomeViewController.m; sourceTree = "<group>"; };
+		865865C017CDE99B00B5D7BD /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
+		865865C217CDF3A000B5D7BD /* MBProgressHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBProgressHUD.h; sourceTree = "<group>"; };
+		865865C317CDF3A000B5D7BD /* MBProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MBProgressHUD.m; sourceTree = "<group>"; };
+		865865C617CDF63F00B5D7BD /* JCActionSheetManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JCActionSheetManager.m; sourceTree = "<group>"; };
+		865865C717CDF63F00B5D7BD /* JCActionSheetManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JCActionSheetManager.h; sourceTree = "<group>"; };
+		865865C917CDF6DA00B5D7BD /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,6 +80,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				865865CA17CDF6DA00B5D7BD /* MobileCoreServices.framework in Frameworks */,
+				865865C117CDE99B00B5D7BD /* MediaPlayer.framework in Frameworks */,
 				865865BA17CDD09300B5D7BD /* QuartzCore.framework in Frameworks */,
 				865865B817CDD05F00B5D7BD /* CoreMedia.framework in Frameworks */,
 				865865B617CDD04200B5D7BD /* CoreVideo.framework in Frameworks */,
@@ -101,13 +116,16 @@
 		8658657B17CDCB6A00B5D7BD /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				865865C617CDF63F00B5D7BD /* JCActionSheetManager.m */,
+				865865C717CDF63F00B5D7BD /* JCActionSheetManager.h */,
+				865865C517CDF3A400B5D7BD /* MBProgress */,
+				865865B417CDD01300B5D7BD /* Macros.h */,
+				8658659F17CDCB9200B5D7BD /* LXReorderableCollectionViewFlowLayout */,
+				865865C917CDF6DA00B5D7BD /* MobileCoreServices.framework */,
+				865865C017CDE99B00B5D7BD /* MediaPlayer.framework */,
 				865865B917CDD09300B5D7BD /* QuartzCore.framework */,
 				865865B717CDD05F00B5D7BD /* CoreMedia.framework */,
 				865865B517CDD04200B5D7BD /* CoreVideo.framework */,
-				865865B417CDD01300B5D7BD /* Macros.h */,
-				865865A917CDCC3A00B5D7BD /* AVAssetStitcher.h */,
-				865865AA17CDCC3A00B5D7BD /* AVAssetStitcher.m */,
-				8658659F17CDCB9200B5D7BD /* LXReorderableCollectionViewFlowLayout */,
 				865865AE17CDCC4700B5D7BD /* AssetsLibrary.framework */,
 				865865AC17CDCC4200B5D7BD /* AVFoundation.framework */,
 				8658657C17CDCB6A00B5D7BD /* UIKit.framework */,
@@ -123,12 +141,8 @@
 				8658658B17CDCB6A00B5D7BD /* SQAppDelegate.h */,
 				8658658C17CDCB6A00B5D7BD /* SQAppDelegate.m */,
 				8658659417CDCB6A00B5D7BD /* MainStoryboard.storyboard */,
-				865865B017CDCC6F00B5D7BD /* SQRecordViewController.h */,
-				865865B117CDCC6F00B5D7BD /* SQRecordViewController.m */,
-				865865A317CDCC2C00B5D7BD /* SRClip.h */,
-				865865A417CDCC2C00B5D7BD /* SRClip.m */,
-				865865A517CDCC2C00B5D7BD /* SRSequencer.h */,
-				865865A617CDCC2C00B5D7BD /* SRSequencer.m */,
+				865865BE17CDE8C500B5D7BD /* View */,
+				865865BF17CDE8CE00B5D7BD /* Model */,
 				8658658317CDCB6A00B5D7BD /* Supporting Files */,
 			);
 			path = Sequencer;
@@ -155,6 +169,39 @@
 				865865A117CDCB9200B5D7BD /* LXReorderableCollectionViewFlowLayout.m */,
 			);
 			path = LXReorderableCollectionViewFlowLayout;
+			sourceTree = "<group>";
+		};
+		865865BE17CDE8C500B5D7BD /* View */ = {
+			isa = PBXGroup;
+			children = (
+				865865B017CDCC6F00B5D7BD /* SQRecordViewController.h */,
+				865865B117CDCC6F00B5D7BD /* SQRecordViewController.m */,
+				865865BB17CDE8C000B5D7BD /* SQHomeViewController.h */,
+				865865BC17CDE8C000B5D7BD /* SQHomeViewController.m */,
+			);
+			name = View;
+			sourceTree = "<group>";
+		};
+		865865BF17CDE8CE00B5D7BD /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				865865A317CDCC2C00B5D7BD /* SRClip.h */,
+				865865A417CDCC2C00B5D7BD /* SRClip.m */,
+				865865A517CDCC2C00B5D7BD /* SRSequencer.h */,
+				865865A617CDCC2C00B5D7BD /* SRSequencer.m */,
+				865865A917CDCC3A00B5D7BD /* AVAssetStitcher.h */,
+				865865AA17CDCC3A00B5D7BD /* AVAssetStitcher.m */,
+			);
+			name = Model;
+			sourceTree = "<group>";
+		};
+		865865C517CDF3A400B5D7BD /* MBProgress */ = {
+			isa = PBXGroup;
+			children = (
+				865865C217CDF3A000B5D7BD /* MBProgressHUD.h */,
+				865865C317CDF3A000B5D7BD /* MBProgressHUD.m */,
+			);
+			name = MBProgress;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -231,6 +278,9 @@
 				865865A817CDCC2C00B5D7BD /* SRSequencer.m in Sources */,
 				865865AB17CDCC3A00B5D7BD /* AVAssetStitcher.m in Sources */,
 				865865B217CDCC6F00B5D7BD /* SQRecordViewController.m in Sources */,
+				865865BD17CDE8C000B5D7BD /* SQHomeViewController.m in Sources */,
+				865865C417CDF3A000B5D7BD /* MBProgressHUD.m in Sources */,
+				865865C817CDF63F00B5D7BD /* JCActionSheetManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

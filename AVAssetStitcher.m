@@ -47,11 +47,11 @@
 
 - (void)addAsset:(AVURLAsset *)asset withTransform:(CGAffineTransform (^)(AVAssetTrack *videoTrack))transformToApply withErrorHandler:(void (^)(NSError *error))errorHandler
 {
-    NSArray *tracks = [asset tracksWithMediaType:AVMediaTypeVideo];
+    NSArray *videoTracks = [asset tracksWithMediaType:AVMediaTypeVideo];
     
-    if (tracks.count == 0) return;
+    if (videoTracks.count == 0) return;
     
-    AVAssetTrack *videoTrack = [[asset tracksWithMediaType:AVMediaTypeVideo] objectAtIndex:0];
+    AVAssetTrack *videoTrack = [videoTracks objectAtIndex:0];
     
     AVMutableVideoCompositionInstruction *instruction = [AVMutableVideoCompositionInstruction videoCompositionInstruction];
     AVMutableVideoCompositionLayerInstruction *layerInstruction = [AVMutableVideoCompositionLayerInstruction videoCompositionLayerInstructionWithAssetTrack:compositionVideoTrack];
@@ -60,16 +60,20 @@
     // Apply a transformation to the video if one has been given. If a transformation is given it is combined
     // with the preferred transform contained in the incoming video track.
     //
-    if(transformToApply)
-    {
-        [layerInstruction setTransform:CGAffineTransformConcat(videoTrack.preferredTransform, transformToApply(videoTrack))
-                                atTime:kCMTimeZero];
-    }
-    else
-    {
-        [layerInstruction setTransform:videoTrack.preferredTransform
-                                atTime:kCMTimeZero];
-    }
+    
+    [layerInstruction setTransform:videoTrack.preferredTransform
+                            atTime:kCMTimeZero];
+    
+//    if(transformToApply)
+//    {
+//        [layerInstruction setTransform:CGAffineTransformConcat(videoTrack.preferredTransform, transformToApply(videoTrack))
+//                                atTime:kCMTimeZero];
+//    }
+//    else
+//    {
+//        [layerInstruction setTransform:videoTrack.preferredTransform
+//                                atTime:kCMTimeZero];
+//    }
     
     instruction.layerInstructions = @[layerInstruction];
     
@@ -77,26 +81,28 @@
     [instructions enumerateObjectsUsingBlock:^(AVMutableVideoCompositionInstruction *previousInstruction, NSUInteger idx, BOOL *stop) {
         startTime = CMTimeAdd(startTime, previousInstruction.timeRange.duration);
     }];
+    
     instruction.timeRange = CMTimeRangeMake(startTime, asset.duration);
     
     [instructions addObject:instruction];
     
     NSError *error;
-    
     [compositionVideoTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, asset.duration) ofTrack:videoTrack atTime:kCMTimeZero error:&error];
     
-    if(error)
-    {
+    if(error){
         errorHandler(error);
         return;
     }
     
-    AVAssetTrack *audioTrack = [[asset tracksWithMediaType:AVMediaTypeAudio] objectAtIndex:0];
+    NSArray *audioTracks = [asset tracksWithMediaType:AVMediaTypeAudio];
+    
+    if (audioTracks.count == 0) return;
+    
+    AVAssetTrack *audioTrack = [audioTracks objectAtIndex:0];
     
     [compositionAudioTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, asset.duration) ofTrack:audioTrack atTime:kCMTimeZero error:&error];
     
-    if(error)
-    {
+    if(error){
         errorHandler(error);
         return;
     }

@@ -4,6 +4,7 @@
 
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
+#import <MediaPlayer/MediaPlayer.h>
 
 #import "SRClip.h"
 
@@ -31,6 +32,7 @@ typedef void (^ErrorHandlingBlock)(NSError *error);
 
 @property (assign, readonly) BOOL isPaused;
 @property BOOL isRecording;
+@property (nonatomic, strong) MPMoviePlayerController *moviePlayerController;
 
 @property (copy, readwrite) ErrorHandlingBlock asyncErrorHandler;
 
@@ -44,6 +46,9 @@ typedef void (^ErrorHandlingBlock)(NSError *error);
 - (void)pauseRecording;
 - (void)flipCamera;
 
+- (void)previewOverView:(UIView *)placeholder;
+- (void)stopPreview;
+
 - (void)reset;
 
 - (void)finalizeRecordingToFile:(NSURL *)finalVideoLocationURL withVideoSize:(CGSize)videoSize withPreset:(NSString *)preset withCompletionHandler:(void (^)(NSError *error))completionHandler;
@@ -52,5 +57,6 @@ typedef void (^ErrorHandlingBlock)(NSError *error);
 
 -(void)duplicateClipAtIndex:(NSInteger)index;
 -(void)removeClipAtIndex:(NSInteger)index;
+-(void)addClipFromURL:(NSURL *)url;
 
 @end
