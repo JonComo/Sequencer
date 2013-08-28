@@ -17,7 +17,16 @@
 		8658659117CDCB6A00B5D7BD /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8658659017CDCB6A00B5D7BD /* Default@2x.png */; };
 		8658659317CDCB6A00B5D7BD /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8658659217CDCB6A00B5D7BD /* Default-568h@2x.png */; };
 		8658659617CDCB6A00B5D7BD /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8658659417CDCB6A00B5D7BD /* MainStoryboard.storyboard */; };
-		8658659917CDCB6A00B5D7BD /* SQViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8658659817CDCB6A00B5D7BD /* SQViewController.m */; };
+		865865A217CDCB9200B5D7BD /* LXReorderableCollectionViewFlowLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 865865A117CDCB9200B5D7BD /* LXReorderableCollectionViewFlowLayout.m */; };
+		865865A717CDCC2C00B5D7BD /* SRClip.m in Sources */ = {isa = PBXBuildFile; fileRef = 865865A417CDCC2C00B5D7BD /* SRClip.m */; };
+		865865A817CDCC2C00B5D7BD /* SRSequencer.m in Sources */ = {isa = PBXBuildFile; fileRef = 865865A617CDCC2C00B5D7BD /* SRSequencer.m */; };
+		865865AB17CDCC3A00B5D7BD /* AVAssetStitcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 865865AA17CDCC3A00B5D7BD /* AVAssetStitcher.m */; };
+		865865AD17CDCC4200B5D7BD /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 865865AC17CDCC4200B5D7BD /* AVFoundation.framework */; };
+		865865AF17CDCC4700B5D7BD /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 865865AE17CDCC4700B5D7BD /* AssetsLibrary.framework */; };
+		865865B217CDCC6F00B5D7BD /* SQRecordViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 865865B117CDCC6F00B5D7BD /* SQRecordViewController.m */; };
+		865865B617CDD04200B5D7BD /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 865865B517CDD04200B5D7BD /* CoreVideo.framework */; };
+		865865B817CDD05F00B5D7BD /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 865865B717CDD05F00B5D7BD /* CoreMedia.framework */; };
+		865865BA17CDD09300B5D7BD /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 865865B917CDD09300B5D7BD /* QuartzCore.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -35,8 +44,22 @@
 		8658659017CDCB6A00B5D7BD /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
 		8658659217CDCB6A00B5D7BD /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		8658659517CDCB6A00B5D7BD /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard.storyboard; sourceTree = "<group>"; };
-		8658659717CDCB6A00B5D7BD /* SQViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SQViewController.h; sourceTree = "<group>"; };
-		8658659817CDCB6A00B5D7BD /* SQViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SQViewController.m; sourceTree = "<group>"; };
+		865865A017CDCB9200B5D7BD /* LXReorderableCollectionViewFlowLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LXReorderableCollectionViewFlowLayout.h; sourceTree = "<group>"; };
+		865865A117CDCB9200B5D7BD /* LXReorderableCollectionViewFlowLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LXReorderableCollectionViewFlowLayout.m; sourceTree = "<group>"; };
+		865865A317CDCC2C00B5D7BD /* SRClip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRClip.h; path = ../SRClip.h; sourceTree = "<group>"; };
+		865865A417CDCC2C00B5D7BD /* SRClip.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRClip.m; path = ../SRClip.m; sourceTree = "<group>"; };
+		865865A517CDCC2C00B5D7BD /* SRSequencer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRSequencer.h; path = ../SRSequencer.h; sourceTree = "<group>"; };
+		865865A617CDCC2C00B5D7BD /* SRSequencer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRSequencer.m; path = ../SRSequencer.m; sourceTree = "<group>"; };
+		865865A917CDCC3A00B5D7BD /* AVAssetStitcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVAssetStitcher.h; sourceTree = "<group>"; };
+		865865AA17CDCC3A00B5D7BD /* AVAssetStitcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVAssetStitcher.m; sourceTree = "<group>"; };
+		865865AC17CDCC4200B5D7BD /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		865865AE17CDCC4700B5D7BD /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
+		865865B017CDCC6F00B5D7BD /* SQRecordViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQRecordViewController.h; sourceTree = "<group>"; };
+		865865B117CDCC6F00B5D7BD /* SQRecordViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SQRecordViewController.m; sourceTree = "<group>"; };
+		865865B417CDD01300B5D7BD /* Macros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Macros.h; sourceTree = "<group>"; };
+		865865B517CDD04200B5D7BD /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
+		865865B717CDD05F00B5D7BD /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
+		865865B917CDD09300B5D7BD /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -44,6 +67,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				865865BA17CDD09300B5D7BD /* QuartzCore.framework in Frameworks */,
+				865865B817CDD05F00B5D7BD /* CoreMedia.framework in Frameworks */,
+				865865B617CDD04200B5D7BD /* CoreVideo.framework in Frameworks */,
+				865865AF17CDCC4700B5D7BD /* AssetsLibrary.framework in Frameworks */,
+				865865AD17CDCC4200B5D7BD /* AVFoundation.framework in Frameworks */,
 				8658657D17CDCB6A00B5D7BD /* UIKit.framework in Frameworks */,
 				8658657F17CDCB6A00B5D7BD /* Foundation.framework in Frameworks */,
 				8658658117CDCB6A00B5D7BD /* CoreGraphics.framework in Frameworks */,
@@ -73,6 +101,15 @@
 		8658657B17CDCB6A00B5D7BD /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				865865B917CDD09300B5D7BD /* QuartzCore.framework */,
+				865865B717CDD05F00B5D7BD /* CoreMedia.framework */,
+				865865B517CDD04200B5D7BD /* CoreVideo.framework */,
+				865865B417CDD01300B5D7BD /* Macros.h */,
+				865865A917CDCC3A00B5D7BD /* AVAssetStitcher.h */,
+				865865AA17CDCC3A00B5D7BD /* AVAssetStitcher.m */,
+				8658659F17CDCB9200B5D7BD /* LXReorderableCollectionViewFlowLayout */,
+				865865AE17CDCC4700B5D7BD /* AssetsLibrary.framework */,
+				865865AC17CDCC4200B5D7BD /* AVFoundation.framework */,
 				8658657C17CDCB6A00B5D7BD /* UIKit.framework */,
 				8658657E17CDCB6A00B5D7BD /* Foundation.framework */,
 				8658658017CDCB6A00B5D7BD /* CoreGraphics.framework */,
@@ -86,8 +123,12 @@
 				8658658B17CDCB6A00B5D7BD /* SQAppDelegate.h */,
 				8658658C17CDCB6A00B5D7BD /* SQAppDelegate.m */,
 				8658659417CDCB6A00B5D7BD /* MainStoryboard.storyboard */,
-				8658659717CDCB6A00B5D7BD /* SQViewController.h */,
-				8658659817CDCB6A00B5D7BD /* SQViewController.m */,
+				865865B017CDCC6F00B5D7BD /* SQRecordViewController.h */,
+				865865B117CDCC6F00B5D7BD /* SQRecordViewController.m */,
+				865865A317CDCC2C00B5D7BD /* SRClip.h */,
+				865865A417CDCC2C00B5D7BD /* SRClip.m */,
+				865865A517CDCC2C00B5D7BD /* SRSequencer.h */,
+				865865A617CDCC2C00B5D7BD /* SRSequencer.m */,
 				8658658317CDCB6A00B5D7BD /* Supporting Files */,
 			);
 			path = Sequencer;
@@ -105,6 +146,15 @@
 				8658659217CDCB6A00B5D7BD /* Default-568h@2x.png */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		8658659F17CDCB9200B5D7BD /* LXReorderableCollectionViewFlowLayout */ = {
+			isa = PBXGroup;
+			children = (
+				865865A017CDCB9200B5D7BD /* LXReorderableCollectionViewFlowLayout.h */,
+				865865A117CDCB9200B5D7BD /* LXReorderableCollectionViewFlowLayout.m */,
+			);
+			path = LXReorderableCollectionViewFlowLayout;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -176,7 +226,11 @@
 			files = (
 				8658658917CDCB6A00B5D7BD /* main.m in Sources */,
 				8658658D17CDCB6A00B5D7BD /* SQAppDelegate.m in Sources */,
-				8658659917CDCB6A00B5D7BD /* SQViewController.m in Sources */,
+				865865A217CDCB9200B5D7BD /* LXReorderableCollectionViewFlowLayout.m in Sources */,
+				865865A717CDCC2C00B5D7BD /* SRClip.m in Sources */,
+				865865A817CDCC2C00B5D7BD /* SRSequencer.m in Sources */,
+				865865AB17CDCC3A00B5D7BD /* AVAssetStitcher.m in Sources */,
+				865865B217CDCC6F00B5D7BD /* SQRecordViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

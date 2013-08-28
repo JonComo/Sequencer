@@ -1,5 +1,5 @@
 //
-//  SQViewController.h
+//  SQRecordViewController.h
 //  Sequencer
 //
 //  Created by Jon Como on 8/27/13.
@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface SQViewController : UIViewController
+@interface SQRecordViewController : UIViewController
 
 @end
