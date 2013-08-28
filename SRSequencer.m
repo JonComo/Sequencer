@@ -421,7 +421,7 @@
             // video so it fits within the output size and stays at the correct aspect ratio.
             //
             
-            return CGAffineTransformIdentity;
+            //return CGAffineTransformIdentity;
             
             CGFloat ratioW = videoSize.width / videoTrack.naturalSize.width;
             CGFloat ratioH = videoSize.height / videoTrack.naturalSize.height;
