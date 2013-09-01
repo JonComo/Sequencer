@@ -7,6 +7,7 @@
 #import "AVAssetStitcher.h"
 #import <MobileCoreServices/UTCoreTypes.h>
 
+#import "SQClipCell.h"
 #import "LXReorderableCollectionViewFlowLayout.h"
 
 #import "Macros.h"
@@ -263,6 +264,9 @@
     self.isRecording = NO;
     [movieFileOutput stopRecording];
     
+    if([self.delegate respondsToSelector:@selector(sequencer:isRecording:)])
+        [self.delegate sequencer:self isRecording:NO];
+    
     currentFinalDurration = CMTimeAdd(currentFinalDurration, movieFileOutput.recordedDuration);
 }
 
@@ -332,6 +336,9 @@
     inFlightWrites++;
     
     NSLog(@"AVCaptureMovieOutput started writing to file");
+    
+    if([self.delegate respondsToSelector:@selector(sequencer:isRecording:)])
+        [self.delegate sequencer:self isRecording:YES];
 }
 
 - (void)captureOutput:(AVCaptureFileOutput *)captureOutput didFinishRecordingToOutputFileAtURL:(NSURL *)fileURL fromConnections:(NSArray *)connections error:(NSError *)error
@@ -671,18 +678,18 @@
     layout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
     [collectionViewClips setCollectionViewLayout:layout];
     
+    [collectionViewClips registerNib:[UINib nibWithNibName:@"clipCell" bundle:[NSBundle mainBundle]] forCellWithReuseIdentifier:@"clipCell"];
+    
     _collectionViewClips = collectionViewClips;
 }
 
 -(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    UICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"cellClip" forIndexPath:indexPath];
+    SQClipCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"clipCell" forIndexPath:indexPath];
     
     SRClip *clip = [self.clips objectAtIndex:indexPath.row];
     
-    UIImageView *imageView = (UIImageView *)[cell viewWithTag:100];
-    
-    imageView.image = clip.thumbnail;
+    cell.clip = clip;
     
     return cell;
 }

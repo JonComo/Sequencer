@@ -113,6 +113,8 @@
     [picker setSourceType:source];
     picker.mediaTypes = [UIImagePickerController availableMediaTypesForSourceType:source];
     
+    
+    
     if ([picker.mediaTypes containsObject:(id)kUTTypeMovie] && source == UIImagePickerControllerSourceTypeCamera)
         [picker setCameraCaptureMode:UIImagePickerControllerCameraCaptureModeVideo];
     

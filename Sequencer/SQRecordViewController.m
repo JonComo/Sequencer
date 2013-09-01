@@ -8,16 +8,22 @@
 
 #import "SQRecordViewController.h"
 #import "SRSequencer.h"
+
 #import "MBProgressHUD.h"
-#import "JCActionSheetManager.h"
 #import "Macros.h"
+
 #import <QuartzCore/QuartzCore.h>
+
+#define TIPRecord @"TAP HERE TO RECORD"
+#define TIPRecordStop @"TAP AGAIN TO STOP"
 
 @interface SQRecordViewController () <SRSequencerDelegate, UICollectionViewDelegateFlowLayout>
 {
     SRSequencer *sequence;
     __weak IBOutlet UIView *viewPreview;
     __weak IBOutlet UICollectionView *collectionViewClips;
+    __weak IBOutlet UILabel *labelHint;
+    
     
     NSIndexPath *selectedIndex;
 }
@@ -34,6 +40,10 @@
     sequence = [[SRSequencer alloc] initWithDelegate:self];
     sequence.collectionViewClips = collectionViewClips;
     sequence.viewPreview = viewPreview;
+    
+    [viewPreview addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(recordTapped)]];
+    
+    [self initInterface];
 }
 
 -(void)viewDidAppear:(BOOL)animated
@@ -60,6 +70,19 @@
     return UIInterfaceOrientationMaskPortrait;
 }
 
+-(void)initInterface
+{
+    viewPreview.layer.borderColor = [UIColor redColor].CGColor;
+    
+//    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"TIPRecord"])
+//    {
+        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"TIPRecord"];
+        labelHint.text = TIPRecord;
+//    }else{
+//        [labelHint removeFromSuperview];
+//    }
+}
+
 #pragma SequenceDelegate
 
 -(void)sequencer:(SRSequencer *)sequencer clipCountChanged:(int)count
@@ -67,23 +90,48 @@
     
 }
 
+-(void)sequencer:(SRSequencer *)sequencer isRecording:(BOOL)recording
+{
+    viewPreview.layer.borderWidth = recording ? 3 : 0;
+}
+
+#pragma UIChanges
+
+-(void)progressTips
+{
+    if ([labelHint.text isEqualToString:TIPRecord])
+    {
+        [UIView animateWithDuration:0.3 animations:^{
+            labelHint.alpha = 0;
+        } completion:^(BOOL finished) {
+            labelHint.text = TIPRecordStop;
+            [UIView animateWithDuration:0.3 animations:^{
+                labelHint.alpha = 1;
+            }];
+        }];
+    }else if ([labelHint.text isEqualToString:TIPRecordStop])
+    {
+        [labelHint removeFromSuperview];
+    }
+}
+
 #pragma UIActions
+
+-(void)recordTapped
+{
+    if (sequence.isRecording)
+    {
+        [sequence pauseRecording];
+    }else{
+        [sequence record];
+    }
+    
+    [self progressTips];
+}
 
 - (IBAction)cancel:(id)sender
 {
     [self dismissViewControllerAnimated:YES completion:nil];
-}
-
-- (IBAction)recordDown:(UIButton *)sender {
-    [sequence record];
-}
-
-- (IBAction)recordUp:(id)sender {
-    [sequence pauseRecording];
-}
-
-- (IBAction)recordCancel:(id)sender {
-    [sequence pauseRecording];
 }
 
 - (IBAction)preview:(id)sender {
@@ -113,14 +161,7 @@
 
 - (IBAction)addClip:(id)sender
 {
-    [[JCActionSheetManager sharedManager] setDelegate:self];
-    [[JCActionSheetManager sharedManager] imagePickerInView:self.view onlyLibrary:YES completion:^(UIImage *image, NSURL *movieURL) {
-        
-        if (movieURL)
-        {
-            [sequence addClipFromURL:movieURL];
-        }
-    }];
+    
 }
 
 - (void)video:(NSString *)videoPath didFinishSavingWithError:(NSError *)error contextInfo:(void *) contextInfo
@@ -128,7 +169,7 @@
     dispatch_async(dispatch_get_main_queue(), ^{
         MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
         [hud setMode:MBProgressHUDModeText];
-        hud.labelText = @"Saved to Photos";
+        hud.labelText = @"Saved to Photo Library";
         
         [hud hide:YES afterDelay:2];
     });

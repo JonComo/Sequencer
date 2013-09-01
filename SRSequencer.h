@@ -17,6 +17,8 @@ typedef void (^ErrorHandlingBlock)(NSError *error);
 @optional
 -(void)sequencer:(SRSequencer *)sequencer clipCountChanged:(int)count;
 
+-(void)sequencer:(SRSequencer *)sequencer isRecording:(BOOL)recording;
+
 @end
 
 @interface SRSequencer : NSObject <AVCaptureFileOutputRecordingDelegate>
