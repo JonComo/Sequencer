@@ -8,10 +8,14 @@
 
 #import <Foundation/Foundation.h>
 
+#import "Macros.h"
+
 @interface SRClip : NSObject
 
 @property (nonatomic, strong) UIImage *thumbnail;
 @property (nonatomic, strong) NSURL *URL;
+
+@property BOOL isSelected;
 
 -(id)initWithURL:(NSURL *)URL;
 
@@ -19,6 +23,9 @@
 
 +(NSURL *)uniqueFileURLInDirectory:(NSString *)directory;
 
+//Clip operations
+
 -(SRClip *)duplicate;
+-(BOOL)remove;
 
 @end

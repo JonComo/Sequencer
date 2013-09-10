@@ -12,7 +12,11 @@
 #import "MBProgressHUD.h"
 #import "Macros.h"
 
+#import "JCActionSheetManager.h"
+
 #import <QuartzCore/QuartzCore.h>
+
+#import "SQClipTimeStretch.h"
 
 #define TIPRecord @"TAP HERE TO RECORD"
 #define TIPRecordStop @"TAP AGAIN TO STOP"
@@ -20,12 +24,10 @@
 @interface SQRecordViewController () <SRSequencerDelegate, UICollectionViewDelegateFlowLayout>
 {
     SRSequencer *sequence;
+    
     __weak IBOutlet UIView *viewPreview;
     __weak IBOutlet UICollectionView *collectionViewClips;
     __weak IBOutlet UILabel *labelHint;
-    
-    
-    NSIndexPath *selectedIndex;
 }
 
 @end
@@ -67,27 +69,27 @@
 
 -(NSUInteger)supportedInterfaceOrientations
 {
-    return UIInterfaceOrientationMaskPortrait;
+    return UIInterfaceOrientationMaskLandscape;
 }
 
 -(void)initInterface
 {
     viewPreview.layer.borderColor = [UIColor redColor].CGColor;
     
-//    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"TIPRecord"])
-//    {
+    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"TIPRecord"])
+    {
         [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"TIPRecord"];
         labelHint.text = TIPRecord;
-//    }else{
-//        [labelHint removeFromSuperview];
-//    }
+    }else{
+        [labelHint removeFromSuperview];
+    }
 }
 
 #pragma SequenceDelegate
 
 -(void)sequencer:(SRSequencer *)sequencer clipCountChanged:(int)count
 {
-    
+    [collectionViewClips reloadData];
 }
 
 -(void)sequencer:(SRSequencer *)sequencer isRecording:(BOOL)recording
@@ -150,7 +152,7 @@
     
     NSURL *outputURL = [SRClip uniqueFileURLInDirectory:DOCUMENTS];
     
-    [sequence finalizeRecordingToFile:outputURL withVideoSize:CGSizeMake(500, 500) withPreset:AVAssetExportPreset640x480 withCompletionHandler:^(NSError *error) {
+    [sequence finalizeClips:sequence.clips toFile:outputURL withVideoSize:CGSizeMake(640, 480) withPreset:AVAssetExportPreset640x480 withCompletionHandler:^(NSError *error) {
         [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
         
         if (error) return;
@@ -159,9 +161,45 @@
     }];
 }
 
-- (IBAction)addClip:(id)sender
-{
+- (IBAction)import:(id)sender {
     
+    [sequence.captureSession stopRunning];
+    
+    [[JCActionSheetManager sharedManager] setDelegate:self];
+    [[JCActionSheetManager sharedManager] imagePickerInView:self.view onlyLibrary:YES completion:^(UIImage *image, NSURL *movieURL) {
+        
+        [sequence.captureSession startRunning];
+        
+        [sequence addClipFromURL:movieURL];
+    }];
+}
+
+- (IBAction)deleteSelected:(id)sender {
+    [sequence deleteSelectedClips];
+    [collectionViewClips reloadData];
+}
+
+- (IBAction)duplicateSelected:(id)sender {
+    [sequence duplicateSelectedClips];
+    [collectionViewClips reloadData];
+}
+
+- (IBAction)consolidateSelected:(id)sender {
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    hud.labelText = @"Consolidating";
+    
+    [sequence consolidateSelectedClipsCompletion:^(SRClip *consolidated) {
+        
+        [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+        
+        [consolidated generateThumbnailCompletion:^(BOOL success) {
+            if (success)
+            {
+                [sequence addClip:consolidated];
+                [collectionViewClips reloadData];
+            }
+        }];
+    }];
 }
 
 - (void)video:(NSString *)videoPath didFinishSavingWithError:(NSError *)error contextInfo:(void *) contextInfo
@@ -177,18 +215,16 @@
 
 -(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    //[self highlightIndexPath:indexPath];
-    [sequence duplicateClipAtIndex:indexPath.row];
-}
-
--(void)highlightIndexPath:(NSIndexPath *)indexPath
-{
-    selectedIndex = indexPath;
+    SRClip *clip = [sequence.clips objectAtIndex:indexPath.row];
     
-    UICollectionViewCell *cell = [collectionViewClips cellForItemAtIndexPath:indexPath];
+    clip.isSelected = !clip.isSelected;
     
-    cell.layer.borderColor = [UIColor orangeColor].CGColor;
-    cell.layer.borderWidth = 2;
+//    SQClipTimeStretch *timeStretch = [SQClipTimeStretch new];
+//    [timeStretch stretchClip:clip byPercent:0.5 completion:^(SRClip *stretchedClip) {
+//        [sequence addClip:stretchedClip];
+//    }];
+    
+    [collectionViewClips reloadData];
 }
 
 @end

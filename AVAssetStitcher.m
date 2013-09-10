@@ -64,16 +64,16 @@
 //    [layerInstruction setTransform:videoTrack.preferredTransform
 //                            atTime:kCMTimeZero];
     
-    if(transformToApply)
-    {
-        [layerInstruction setTransform:CGAffineTransformConcat(videoTrack.preferredTransform, transformToApply(videoTrack))
-                                atTime:kCMTimeZero];
-    }
-    else
-    {
-        [layerInstruction setTransform:videoTrack.preferredTransform
-                                atTime:kCMTimeZero];
-    }
+//    if(transformToApply)
+//    {
+//        [layerInstruction setTransform:CGAffineTransformConcat(videoTrack.preferredTransform, transformToApply(videoTrack))
+//                                atTime:kCMTimeZero];
+//    }
+//    else
+//    {
+//        [layerInstruction setTransform:videoTrack.preferredTransform
+//                                atTime:kCMTimeZero];
+//    }
     
     instruction.layerInstructions = @[layerInstruction];
     

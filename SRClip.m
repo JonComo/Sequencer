@@ -22,22 +22,6 @@
     return self;
 }
 
--(SRClip *)duplicate
-{
-    NSURL *newURL = [SRClip uniqueFileURLInDirectory:DOCUMENTS];
-    
-    NSError *error;
-    
-    [[NSFileManager defaultManager] copyItemAtURL:self.URL toURL:newURL error:&error];
-    
-    SRClip *newClip;
-    
-    if (!error)
-        newClip = [[SRClip alloc] initWithURL:newURL];
-    
-    return newClip;
-}
-
 -(void)generateThumbnailCompletion:(void (^)(BOOL success))block
 {
     [self thumbnailCompletion:^(UIImage *thumb) {
@@ -50,7 +34,7 @@
 {
     AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:self.URL options:nil];
     AVAssetImageGenerator *generator = [[AVAssetImageGenerator alloc] initWithAsset:asset];
-    generator.appliesPreferredTrackTransform = YES;
+    //generator.appliesPreferredTrackTransform = YES;
     
     CMTime thumbTime = CMTimeMakeWithSeconds(0,30);
     
@@ -84,6 +68,29 @@
     } while ([[NSFileManager defaultManager] fileExistsAtPath:[returnURL path]]);
     
     return returnURL;
+}
+
+-(SRClip *)duplicate
+{
+    NSURL *newURL = [SRClip uniqueFileURLInDirectory:DOCUMENTS];
+    
+    NSError *error;
+    [[NSFileManager defaultManager] copyItemAtURL:self.URL toURL:newURL error:&error];
+    
+    SRClip *newClip;
+    
+    if (!error)
+        newClip = [[SRClip alloc] initWithURL:newURL];
+    
+    return newClip;
+}
+
+-(BOOL)remove
+{
+    NSError *error;
+    [[NSFileManager defaultManager] removeItemAtURL:self.URL error:&error];
+    
+    return error ? NO : YES;
 }
 
 @end

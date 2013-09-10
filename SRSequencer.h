@@ -53,12 +53,18 @@ typedef void (^ErrorHandlingBlock)(NSError *error);
 
 - (void)reset;
 
-- (void)finalizeRecordingToFile:(NSURL *)finalVideoLocationURL withVideoSize:(CGSize)videoSize withPreset:(NSString *)preset withCompletionHandler:(void (^)(NSError *error))completionHandler;
+- (void)finalizeClips:(NSArray *)clipsCombining toFile:(NSURL *)finalVideoLocationURL withVideoSize:(CGSize)videoSize withPreset:(NSString *)preset withCompletionHandler:(ErrorHandlingBlock)completionHandler;
 
 //Clip Modifications
 
--(void)duplicateClipAtIndex:(NSInteger)index;
--(void)removeClipAtIndex:(NSInteger)index;
+-(void)deleteSelectedClips;
+-(void)duplicateSelectedClips;
+-(void)consolidateSelectedClipsCompletion:(void(^)(SRClip *consolidated))consolidateHandler;
+
+
+-(SRClip *)duplicateClip:(SRClip *)clip;
+-(void)removeClip:(SRClip *)clip;
 -(void)addClipFromURL:(NSURL *)url;
+-(void)addClip:(SRClip *)clip;
 
 @end

@@ -87,6 +87,8 @@
             [alertView show];
         };
         
+        [[movieFileOutput connectionWithMediaType:AVMediaTypeVideo] setVideoOrientation:AVCaptureVideoOrientationLandscapeLeft];
+        
         [self startNotificationObservers];
     }
     
@@ -163,6 +165,18 @@
     }
 }
 
++ (AVCaptureConnection *)connectionWithMediaType:(NSString *)mediaType fromConnections:(NSArray *)connections
+{
+	for ( AVCaptureConnection *connection in connections ) {
+		for ( AVCaptureInputPort *port in [connection inputPorts] ) {
+			if ( [[port mediaType] isEqual:mediaType] ) {
+				return connection;
+			}
+		}
+	}
+	return nil;
+}
+
 -(void)setupSessionWithDefaults
 {
     NSError *error;
@@ -176,12 +190,16 @@
     {
         captureVideoPreviewLayer = [AVCaptureVideoPreviewLayer layerWithSession:self.captureSession];
         
-        self.viewPreview.layer.masksToBounds = YES;
+        self.viewPreview.layer.masksToBounds = NO;
         captureVideoPreviewLayer.frame = self.viewPreview.bounds;
         
-        captureVideoPreviewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill;
+        captureVideoPreviewLayer.videoGravity = AVLayerVideoGravityResizeAspect;
+        
+        [captureVideoPreviewLayer connection].videoOrientation = AVCaptureVideoOrientationLandscapeLeft;
         
         [self.viewPreview.layer insertSublayer:captureVideoPreviewLayer below:self.viewPreview.layer.sublayers[0]];
+        
+        [[captureVideoPreviewLayer connection] setVideoOrientation:AVCaptureVideoOrientationLandscapeRight];
         
         // Start the session. This is done asychronously because startRunning doesn't return until the session is running.
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
@@ -297,7 +315,7 @@
     
     NSURL *outputURL = [SRClip uniqueFileURLInDirectory:DOCUMENTS];
     
-    [self finalizeRecordingToFile:outputURL withVideoSize:CGSizeMake(500, 500) withPreset:AVAssetExportPreset640x480 withCompletionHandler:^(NSError *error) {
+    [self finalizeClips:self.clips toFile:outputURL withVideoSize:CGSizeMake(640, 480) withPreset:AVAssetExportPreset640x480 withCompletionHandler:^(NSError *error) {
         
         if (error) return;
         
@@ -356,8 +374,8 @@
     
     dispatch_async(dispatch_get_main_queue(), ^{
         [clipRecording generateThumbnailCompletion:^(BOOL success) {
-            
-            if (success){
+            if (success)
+            {
                 [self addClip:clipRecording];
                 
                 if ([self.delegate respondsToSelector:@selector(sequencer:clipCountChanged:)])
@@ -383,7 +401,8 @@
     _isPaused = NO;
     
     for (int i = 0; i<self.clips.count; i++){
-        [self removeClipAtIndex:i];
+        SRClip *clip = self.clips[i];
+        [self removeClip:clip];
     }
     
     if ([self.delegate respondsToSelector:@selector(sequencer:clipCountChanged:)])
@@ -392,11 +411,11 @@
     [self.collectionViewClips reloadData];
 }
 
-- (void)finalizeRecordingToFile:(NSURL *)finalVideoLocationURL withVideoSize:(CGSize)videoSize withPreset:(NSString *)preset withCompletionHandler:(void (^)(NSError *error))completionHandler
+- (void)finalizeClips:(NSArray *)clipsCombining toFile:(NSURL *)finalVideoLocationURL withVideoSize:(CGSize)videoSize withPreset:(NSString *)preset withCompletionHandler:(ErrorHandlingBlock)completionHandler
 {
     //[self reset];
     
-    if (self.clips.count == 0)
+    if (clipsCombining.count == 0)
     {
         completionHandler([NSError errorWithDomain:@"No clips to export" code:104 userInfo:nil]);
         return;
@@ -417,7 +436,7 @@
 
     __block NSError *stitcherError;
     
-    [self.clips enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+    [clipsCombining enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         
         SRClip *clip = (SRClip *)obj;
         
@@ -429,7 +448,7 @@
             //
             
             //return CGAffineTransformIdentity;
-            
+            /*
             CGFloat ratioW = videoSize.width / videoTrack.naturalSize.width;
             CGFloat ratioH = videoSize.height / videoTrack.naturalSize.height;
             if(ratioW < ratioH)
@@ -446,6 +465,9 @@
                 CGFloat diffW = videoTrack.naturalSize.width - (videoTrack.naturalSize.width * ratioW);
                 return CGAffineTransformConcat( CGAffineTransformMakeTranslation(neg*diffW/2.0, 0), CGAffineTransformMakeScale(ratioW, ratioW) );
             }
+             */
+            
+            return CGAffineTransformIdentity;
             
         } withErrorHandler:^(NSError *error) {
             
@@ -560,31 +582,32 @@
     // to be used at decoding time to transform the video into the correct orientation.
     //
     
+    /*
+    
     orientation = AVCaptureVideoOrientationPortrait;
     deviceOrientationDidChangeObserver = [notificationCenter addObserverForName:UIDeviceOrientationDidChangeNotification object:nil queue:nil usingBlock:^(NSNotification *note) {
         
         switch ([[UIDevice currentDevice] orientation])
         {
-            case UIDeviceOrientationPortrait:
-                orientation = AVCaptureVideoOrientationPortrait;
-                break;
-            case UIDeviceOrientationPortraitUpsideDown:
-                orientation = AVCaptureVideoOrientationPortraitUpsideDown;
-                break;
             case UIDeviceOrientationLandscapeLeft:
                 orientation = AVCaptureVideoOrientationLandscapeRight;
-                break;
-            case UIDeviceOrientationLandscapeRight:
-                orientation = AVCaptureVideoOrientationLandscapeLeft;
+                
+                [[movieFileOutput connectionWithMediaType:AVMediaTypeVideo] setVideoOrientation:AVCaptureVideoOrientationLandscapeRight];
+                
                 break;
             default:
-                orientation = AVCaptureVideoOrientationPortrait;
+                orientation = AVCaptureVideoOrientationLandscapeLeft;
+                
+                [[movieFileOutput connectionWithMediaType:AVMediaTypeVideo] setVideoOrientation:AVCaptureVideoOrientationLandscapeRight];
                 break;
         }
         
+        [[captureVideoPreviewLayer connection] setVideoOrientation:orientation];
     }];
     
     [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
+     
+     */
 }
 
 - (void)endNotificationObservers
@@ -716,24 +739,79 @@
     [self.collectionViewClips scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:MAX(0,self.clips.count-1) inSection:0] atScrollPosition:UICollectionViewScrollPositionRight animated:YES];
 }
 
--(void)removeClipAtIndex:(NSInteger)index
+-(void)deleteSelectedClips
 {
-    SRClip *clip = [self.clips objectAtIndex:index];
-    
-    [[NSFileManager defaultManager] removeItemAtURL:clip.URL error:nil];
-    
-    [self.clips removeObjectAtIndex:index];
+    for (int i = self.clips.count-1; i>=0; i--)
+    {
+        SRClip *clip = self.clips[i];
+        
+        if (clip.isSelected){
+            [self removeClip:clip];
+        }
+    }
 }
 
--(void)duplicateClipAtIndex:(NSInteger)index
+-(void)duplicateSelectedClips
 {
-    SRClip *clipAtIndex = self.clips[index];
+    NSMutableArray *newClips = [NSMutableArray array];
     
-    SRClip *newClip = [clipAtIndex duplicate];
+    SRClip *clip;
     
-    [newClip generateThumbnailCompletion:^(BOOL success) {
-        [self addClip:newClip];
+    for (int i = 0; i<self.clips.count; i++)
+    {
+        clip = self.clips[i];
+        
+        if (clip.isSelected){
+            SRClip *newClip = [self duplicateClip:clip];
+            if (newClip)
+                [newClips addObject:newClip];
+        }
+    }
+    
+    NSInteger insertIndex = [self.clips indexOfObject:clip];
+    
+    NSIndexSet *set = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(insertIndex, newClips.count)];
+    
+    [self.clips insertObjects:newClips atIndexes:set];
+}
+
+-(void)consolidateSelectedClipsCompletion:(void (^)(SRClip *))consolidateHandler
+{
+    NSMutableArray *clipsToCombine = [NSMutableArray array];
+    
+    for (SRClip *clip in self.clips)
+    {
+        if (clip.isSelected)
+            [clipsToCombine addObject:clip];
+    }
+    
+    NSURL *exportURL = [SRClip uniqueFileURLInDirectory:DOCUMENTS];
+    
+    [self finalizeClips:clipsToCombine toFile:exportURL withVideoSize:CGSizeMake(640, 480) withPreset:AVAssetExportPreset640x480 withCompletionHandler:^(NSError *error) {
+        if (!error)
+        {
+            SRClip *newClip = [[SRClip alloc] initWithURL:exportURL];
+            if (consolidateHandler) consolidateHandler(newClip);
+        }else{
+            if (consolidateHandler) consolidateHandler(nil);
+        }
     }];
+}
+
+-(void)removeClip:(SRClip *)clip
+{
+    [clip remove];
+    
+    [self.clips removeObject:clip];
+}
+
+-(SRClip *)duplicateClip:(SRClip *)clip
+{
+    SRClip *newClip = [clip duplicate];
+    
+    newClip.thumbnail = clip.thumbnail;
+    
+    return newClip;
 }
 
 -(void)addClipFromURL:(NSURL *)url

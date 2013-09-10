@@ -8,6 +8,8 @@
 
 #import "SQClipCell.h"
 
+#import <QuartzCore/QuartzCore.h>
+
 #import "SRClip.h"
 
 @implementation SQClipCell
@@ -15,20 +17,19 @@
     __weak IBOutlet UIImageView *imageViewThumb;
 }
 
-- (id)initWithFrame:(CGRect)frame
-{
-    self = [super initWithFrame:frame];
-    if (self) {
-        // Initialization code
-    }
-    return self;
-}
-
 -(void)setClip:(SRClip *)clip
 {
     _clip = clip;
     
     imageViewThumb.image = _clip.thumbnail;
+    
+    if (clip.isSelected)
+    {
+        self.layer.borderColor = [UIColor redColor].CGColor;
+        self.layer.borderWidth = 2;
+    }else{
+        self.layer.borderWidth = 0;
+    }
 }
 
 @end

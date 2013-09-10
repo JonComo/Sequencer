@@ -47,6 +47,7 @@
 								<string key="NSFrameSize">{60, 60}</string>
 								<reference key="NSSuperview" ref="32453323"/>
 								<reference key="NSWindow"/>
+								<int key="IBUIContentMode">1</int>
 								<int key="IBUITag">100</int>
 								<bool key="IBUIUserInteractionEnabled">NO</bool>
 								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
@@ -134,7 +135,7 @@
 								<reference key="containingView" ref="831231940"/>
 								<int key="scoringType">4</int>
 								<float key="scoringTypeFloat">20</float>
-								<int key="contentType">2</int>
+								<int key="contentType">3</int>
 							</object>
 							<object class="IBNSLayoutConstraint" id="796946795">
 								<reference key="firstItem" ref="1004419007"/>
@@ -150,7 +151,7 @@
 								<reference key="containingView" ref="831231940"/>
 								<int key="scoringType">4</int>
 								<float key="scoringTypeFloat">20</float>
-								<int key="contentType">2</int>
+								<int key="contentType">3</int>
 							</object>
 							<object class="IBNSLayoutConstraint" id="602067732">
 								<reference key="firstItem" ref="1004419007"/>
@@ -166,7 +167,7 @@
 								<reference key="containingView" ref="831231940"/>
 								<int key="scoringType">4</int>
 								<float key="scoringTypeFloat">20</float>
-								<int key="contentType">2</int>
+								<int key="contentType">3</int>
 							</object>
 							<object class="IBNSLayoutConstraint" id="769128345">
 								<reference key="firstItem" ref="1004419007"/>
@@ -182,7 +183,7 @@
 								<reference key="containingView" ref="831231940"/>
 								<int key="scoringType">4</int>
 								<float key="scoringTypeFloat">20</float>
-								<int key="contentType">2</int>
+								<int key="contentType">3</int>
 							</object>
 							<reference ref="1004419007"/>
 						</array>
@@ -235,10 +236,10 @@
 				<string key="9.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<reference key="9.IBUserGuides" ref="0"/>
 				<array key="9.IBViewMetadataConstraints">
-					<reference ref="769128345"/>
-					<reference ref="602067732"/>
-					<reference ref="796946795"/>
 					<reference ref="33016308"/>
+					<reference ref="796946795"/>
+					<reference ref="602067732"/>
+					<reference ref="769128345"/>
 				</array>
 				<boolean value="NO" key="9.showNotes"/>
 			</dictionary>

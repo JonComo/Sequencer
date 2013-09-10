@@ -112,7 +112,7 @@
     UIImagePickerController *picker = [[UIImagePickerController alloc] init];
     [picker setSourceType:source];
     picker.mediaTypes = [UIImagePickerController availableMediaTypesForSourceType:source];
-    
+    [picker setVideoQuality:UIImagePickerControllerQualityTypeHigh];
     
     
     if ([picker.mediaTypes containsObject:(id)kUTTypeMovie] && source == UIImagePickerControllerSourceTypeCamera)

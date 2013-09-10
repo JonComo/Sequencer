@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8601067617DF7DE5002AEFC2 /* icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8601067517DF7DE5002AEFC2 /* icon@2x.png */; };
+		8601067817DF7DE7002AEFC2 /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 8601067717DF7DE7002AEFC2 /* icon.png */; };
+		864AFD2717DFA7FD00A1286D /* SQClipTimeStretch.m in Sources */ = {isa = PBXBuildFile; fileRef = 864AFD2617DFA7FD00A1286D /* SQClipTimeStretch.m */; };
 		8658657D17CDCB6A00B5D7BD /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8658657C17CDCB6A00B5D7BD /* UIKit.framework */; };
 		8658657F17CDCB6A00B5D7BD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8658657E17CDCB6A00B5D7BD /* Foundation.framework */; };
 		8658658117CDCB6A00B5D7BD /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8658658017CDCB6A00B5D7BD /* CoreGraphics.framework */; };
@@ -33,13 +36,15 @@
 		865865C817CDF63F00B5D7BD /* JCActionSheetManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 865865C617CDF63F00B5D7BD /* JCActionSheetManager.m */; };
 		865865CA17CDF6DA00B5D7BD /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 865865C917CDF6DA00B5D7BD /* MobileCoreServices.framework */; };
 		86A271BC17D2BF5C0035A83F /* homeGraphic@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 86A271B817D2BF5C0035A83F /* homeGraphic@2x.png */; };
-		86A271C117D2C2220035A83F /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 86A271C017D2C2220035A83F /* icon.png */; };
-		86A271C317D2C2240035A83F /* icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 86A271C217D2C2240035A83F /* icon@2x.png */; };
 		86A271C517D2D5220035A83F /* clipCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 86A271C417D2D5220035A83F /* clipCell.xib */; };
 		86A271C817D2D5710035A83F /* SQClipCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 86A271C717D2D5710035A83F /* SQClipCell.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8601067517DF7DE5002AEFC2 /* icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon@2x.png"; sourceTree = "<group>"; };
+		8601067717DF7DE7002AEFC2 /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
+		864AFD2517DFA7FD00A1286D /* SQClipTimeStretch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQClipTimeStretch.h; sourceTree = "<group>"; };
+		864AFD2617DFA7FD00A1286D /* SQClipTimeStretch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SQClipTimeStretch.m; sourceTree = "<group>"; };
 		8658657917CDCB6A00B5D7BD /* Sequencer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Sequencer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8658657C17CDCB6A00B5D7BD /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		8658657E17CDCB6A00B5D7BD /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -79,8 +84,6 @@
 		865865C717CDF63F00B5D7BD /* JCActionSheetManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JCActionSheetManager.h; sourceTree = "<group>"; };
 		865865C917CDF6DA00B5D7BD /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		86A271B817D2BF5C0035A83F /* homeGraphic@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "homeGraphic@2x.png"; sourceTree = "<group>"; };
-		86A271C017D2C2220035A83F /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
-		86A271C217D2C2240035A83F /* icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon@2x.png"; sourceTree = "<group>"; };
 		86A271C417D2D5220035A83F /* clipCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = clipCell.xib; sourceTree = "<group>"; };
 		86A271C617D2D5710035A83F /* SQClipCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQClipCell.h; sourceTree = "<group>"; };
 		86A271C717D2D5710035A83F /* SQClipCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SQClipCell.m; sourceTree = "<group>"; };
@@ -110,8 +113,8 @@
 		8658657017CDCB6A00B5D7BD = {
 			isa = PBXGroup;
 			children = (
-				86A271C217D2C2240035A83F /* icon@2x.png */,
-				86A271C017D2C2220035A83F /* icon.png */,
+				8601067717DF7DE7002AEFC2 /* icon.png */,
+				8601067517DF7DE5002AEFC2 /* icon@2x.png */,
 				8658658217CDCB6A00B5D7BD /* Sequencer */,
 				8658657B17CDCB6A00B5D7BD /* Frameworks */,
 				8658657A17CDCB6A00B5D7BD /* Products */,
@@ -208,6 +211,8 @@
 				86A271C717D2D5710035A83F /* SQClipCell.m */,
 				865865A917CDCC3A00B5D7BD /* AVAssetStitcher.h */,
 				865865AA17CDCC3A00B5D7BD /* AVAssetStitcher.m */,
+				864AFD2517DFA7FD00A1286D /* SQClipTimeStretch.h */,
+				864AFD2617DFA7FD00A1286D /* SQClipTimeStretch.m */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -287,9 +292,9 @@
 				8658659317CDCB6A00B5D7BD /* Default-568h@2x.png in Resources */,
 				8658659617CDCB6A00B5D7BD /* MainStoryboard.storyboard in Resources */,
 				86A271BC17D2BF5C0035A83F /* homeGraphic@2x.png in Resources */,
-				86A271C117D2C2220035A83F /* icon.png in Resources */,
-				86A271C317D2C2240035A83F /* icon@2x.png in Resources */,
 				86A271C517D2D5220035A83F /* clipCell.xib in Resources */,
+				8601067617DF7DE5002AEFC2 /* icon@2x.png in Resources */,
+				8601067817DF7DE7002AEFC2 /* icon.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -311,6 +316,7 @@
 				865865C417CDF3A000B5D7BD /* MBProgressHUD.m in Sources */,
 				865865C817CDF63F00B5D7BD /* JCActionSheetManager.m in Sources */,
 				86A271C817D2D5710035A83F /* SQClipCell.m in Sources */,
+				864AFD2717DFA7FD00A1286D /* SQClipTimeStretch.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -395,10 +401,12 @@
 		8658659D17CDCB6A00B5D7BD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer: Jon Como (7X7G2JJC8P)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Sequencer/Sequencer-Prefix.pch";
 				INFOPLIST_FILE = "Sequencer/Sequencer-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "9E063390-D86C-45C6-B495-9FE7C06CF185";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -406,10 +414,12 @@
 		8658659E17CDCB6A00B5D7BD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer: Jon Como (7X7G2JJC8P)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Sequencer/Sequencer-Prefix.pch";
 				INFOPLIST_FILE = "Sequencer/Sequencer-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "9E063390-D86C-45C6-B495-9FE7C06CF185";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
