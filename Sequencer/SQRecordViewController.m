@@ -174,6 +174,19 @@
     }];
 }
 
+- (IBAction)timeStretch:(id)sender
+{
+    for (SRClip *clip in sequence.clips)
+    {
+        if (clip.isSelected)
+        {
+            [SQClipTimeStretch stretchClip:clip byAmount:.3 completion:^(SRClip *stretchedClip) {
+                [sequence addClip:stretchedClip];
+            }];
+        }
+    }
+}
+
 - (IBAction)deleteSelected:(id)sender {
     [sequence deleteSelectedClips];
     [collectionViewClips reloadData];
@@ -218,11 +231,6 @@
     SRClip *clip = [sequence.clips objectAtIndex:indexPath.row];
     
     clip.isSelected = !clip.isSelected;
-    
-//    SQClipTimeStretch *timeStretch = [SQClipTimeStretch new];
-//    [timeStretch stretchClip:clip byPercent:0.5 completion:^(SRClip *stretchedClip) {
-//        [sequence addClip:stretchedClip];
-//    }];
     
     [collectionViewClips reloadData];
 }

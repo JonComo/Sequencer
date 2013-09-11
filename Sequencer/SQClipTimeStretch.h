@@ -14,6 +14,6 @@ typedef void (^StretchCompletion)(SRClip *stretchedClip);
 
 @interface SQClipTimeStretch : NSObject
 
-- (void)stretchClip:(SRClip *)clip byPercent:(float)percent completion:(StretchCompletion)block;
++ (void)stretchClip:(SRClip *)clip byAmount:(float)percent completion:(StretchCompletion)block;
 
 @end
