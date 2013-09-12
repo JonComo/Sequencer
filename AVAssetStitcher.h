@@ -21,6 +21,8 @@
 
 @interface AVAssetStitcher : NSObject
 
+@property (nonatomic, strong) AVMutableComposition *composition;
+
 - (id)initWithOutputSize:(CGSize)outSize;
 
 - (void)addAsset:(AVURLAsset *)asset withTransform:(CGAffineTransform (^)(AVAssetTrack *videoTrack))transformToApply withErrorHandler:(void (^)(NSError *error))errorHandler;

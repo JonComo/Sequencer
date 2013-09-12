@@ -137,12 +137,7 @@
 }
 
 - (IBAction)preview:(id)sender {
-    if (sequence.moviePlayerController.playbackState != MPMoviePlaybackStatePlaying)
-    {
-        [sequence previewOverView:viewPreview];
-    }else{
-        [sequence stopPreview];
-    }
+    [sequence preview];
 }
 
 - (IBAction)done:(id)sender

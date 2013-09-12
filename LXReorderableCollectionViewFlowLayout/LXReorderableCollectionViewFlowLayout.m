@@ -77,13 +77,15 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
 @implementation LXReorderableCollectionViewFlowLayout
 
 - (void)setDefaults {
-    _scrollingSpeed = 300.0f;
-    _scrollingTriggerEdgeInsets = UIEdgeInsetsMake(50.0f, 50.0f, 50.0f, 50.0f);
+    _scrollingSpeed = 600.0f;
+    _scrollingTriggerEdgeInsets = UIEdgeInsetsMake(200.0f, 200.0f, 200.0f, 200.0f);
 }
 
 - (void)setupCollectionView {
     _longPressGestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self
                                                                                 action:@selector(handleLongPressGesture:)];
+    _longPressGestureRecognizer.minimumPressDuration = 0.1;
+    
     _longPressGestureRecognizer.delegate = self;
     
     // Links the default long press gesture recognizer to the custom long press gesture recognizer we are creating now

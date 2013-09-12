@@ -22,7 +22,6 @@
 {
     CGSize outputSize;
     
-    AVMutableComposition *composition;
     AVMutableCompositionTrack *compositionVideoTrack;
     AVMutableCompositionTrack *compositionAudioTrack;
     
@@ -36,9 +35,9 @@
     {
         outputSize = outSize;
         
-        composition = [AVMutableComposition composition];
-        compositionVideoTrack = [composition addMutableTrackWithMediaType:AVMediaTypeVideo preferredTrackID:kCMPersistentTrackID_Invalid];
-        compositionAudioTrack = [composition addMutableTrackWithMediaType:AVMediaTypeAudio preferredTrackID:kCMPersistentTrackID_Invalid];
+        _composition = [AVMutableComposition composition];
+        compositionVideoTrack = [_composition addMutableTrackWithMediaType:AVMediaTypeVideo preferredTrackID:kCMPersistentTrackID_Invalid];
+        compositionAudioTrack = [_composition addMutableTrackWithMediaType:AVMediaTypeAudio preferredTrackID:kCMPersistentTrackID_Invalid];
         
         instructions = [[NSMutableArray alloc] init];
     }
@@ -116,7 +115,7 @@
     AVMutableVideoCompositionInstruction *lastInstruction = ((AVMutableVideoCompositionInstruction *)instructions.lastObject);
     videoComposition.frameDuration = CMTimeAdd(lastInstruction.timeRange.start, lastInstruction.timeRange.duration);
     
-    AVAssetExportSession *exporter = [AVAssetExportSession exportSessionWithAsset:composition presetName:preset];
+    AVAssetExportSession *exporter = [AVAssetExportSession exportSessionWithAsset:self.composition presetName:preset];
     NSParameterAssert(exporter != nil);
     
     exporter.outputFileType = AVFileTypeMPEG4;

@@ -34,7 +34,6 @@ typedef void (^ErrorHandlingBlock)(NSError *error);
 
 @property (assign, readonly) BOOL isPaused;
 @property BOOL isRecording;
-@property (nonatomic, strong) MPMoviePlayerController *moviePlayerController;
 
 @property (copy, readwrite) ErrorHandlingBlock asyncErrorHandler;
 
@@ -48,8 +47,7 @@ typedef void (^ErrorHandlingBlock)(NSError *error);
 - (void)pauseRecording;
 - (void)flipCamera;
 
-- (void)previewOverView:(UIView *)placeholder;
-- (void)stopPreview;
+- (void)preview;
 
 - (void)reset;
 
