@@ -53,6 +53,13 @@ typedef void (^ErrorHandlingBlock)(NSError *error);
 
 - (void)finalizeClips:(NSArray *)clipsCombining toFile:(NSURL *)finalVideoLocationURL withVideoSize:(CGSize)videoSize withPreset:(NSString *)preset withCompletionHandler:(ErrorHandlingBlock)completionHandler;
 
+//Camera control
+-(void)toggleExposure;
+-(void)toggleFocus;
+
+-(AVCaptureFocusMode)focusMode;
+-(AVCaptureExposureMode)exposureMode;
+
 //Clip Modifications
 
 -(void)deleteSelectedClips;

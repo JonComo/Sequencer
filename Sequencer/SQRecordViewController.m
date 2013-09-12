@@ -126,6 +126,19 @@
 
 #pragma UIActions
 
+- (IBAction)lock:(UIButton *)sender
+{
+    [sequence toggleFocus];
+    [sequence toggleExposure];
+    
+    if ([sequence focusMode] == AVCaptureFocusModeLocked)
+    {
+        [sender setTitle:@"UNLOCK" forState:UIControlStateNormal];
+    }else{
+        [sender setTitle:@"LOCK" forState:UIControlStateNormal];
+    }
+}
+
 -(void)recordTapped
 {
     if (sequence.isRecording)

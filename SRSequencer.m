@@ -833,4 +833,38 @@
     }];
 }
 
+#pragma Camera operations
+
+-(void)toggleExposure
+{
+    NSError *lockError;
+    [videoInput.device lockForConfiguration:&lockError];
+    if (lockError) return;
+    
+    [videoInput.device setExposureMode: videoInput.device.exposureMode == AVCaptureExposureModeLocked ? AVCaptureExposureModeContinuousAutoExposure :  AVCaptureExposureModeLocked];
+    
+    [videoInput.device unlockForConfiguration];
+}
+
+-(void)toggleFocus
+{
+    NSError *lockError;
+    [videoInput.device lockForConfiguration:&lockError];
+    if (lockError) return;
+    
+    [videoInput.device setFocusMode: videoInput.device.focusMode == AVCaptureFocusModeLocked ? AVCaptureFocusModeContinuousAutoFocus :  AVCaptureFocusModeLocked];
+    
+    [videoInput.device unlockForConfiguration];
+}
+
+-(AVCaptureExposureMode)exposureMode
+{
+    return videoInput.device.exposureMode;
+}
+
+-(AVCaptureFocusMode)focusMode
+{
+    return videoInput.device.focusMode;
+}
+
 @end
