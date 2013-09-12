@@ -56,6 +56,13 @@
         [sequence setupSessionWithDefaults];
 }
 
+-(void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    
+    [sequence.captureSession stopRunning];
+}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];

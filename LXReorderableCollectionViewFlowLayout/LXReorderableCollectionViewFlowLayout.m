@@ -107,7 +107,7 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleApplicationWillResignActive:) name: UIApplicationWillResignActiveNotification object:nil];
 }
 
-- (id)init {
+- (id)init{
     self = [super init];
     if (self) {
         [self setDefaults];
@@ -125,9 +125,10 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
     return self;
 }
 
-- (void)dealloc {
+- (void)dealloc{
     [self invalidatesScrollTimer];
     [self removeObserver:self forKeyPath:kLXCollectionViewKeyPath];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillResignActiveNotification object:nil];
 }
 
 - (void)applyLayoutAttributes:(UICollectionViewLayoutAttributes *)layoutAttributes {

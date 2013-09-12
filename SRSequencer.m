@@ -620,7 +620,9 @@
 
 - (void)endNotificationObservers
 {
-    [[UIDevice currentDevice] endGeneratingDeviceOrientationNotifications];
+    //[[UIDevice currentDevice] endGeneratingDeviceOrientationNotifications];
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:AVPlayerItemDidPlayToEndTimeNotification object:nil];
     
     [[NSNotificationCenter defaultCenter] removeObserver:deviceConnectedObserver];
     [[NSNotificationCenter defaultCenter] removeObserver:deviceDisconnectedObserver];
