@@ -65,6 +65,9 @@
     NSTimer *timerStop;
     
     SRClip *clipRecording;
+    
+    BOOL hadSetFocusPoint;
+    BOOL hadSetExposurePoint;
 }
 
 - (id)initWithDelegate:(id<SRSequencerDelegate>)managerDelegate
@@ -93,8 +96,8 @@
         _lockExposure = NO;
         _lockFocus = NO;
         
-        _viewForExposurePoint = [self targetViewWithText:@"EXPOSURE" size:CGSizeMake(60, 60)];
-        _viewForFocusPoint = [self targetViewWithText:@"FOCUS" size:CGSizeMake(60, 60)];
+        _viewForExposurePoint = [self targetViewWithText:@"EXPOSURE" size:CGSizeMake(70, 70)];
+        _viewForFocusPoint = [self targetViewWithText:@"FOCUS" size:CGSizeMake(70, 70)];
         
         [self startNotificationObservers];
     }
@@ -110,10 +113,14 @@
     targetView.layer.borderColor = [UIColor whiteColor].CGColor;
     targetView.layer.borderWidth = 2;
     
-    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, size.height - 20, size.width, 20)];
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(4, size.height - 20, size.width - 8, 20)];
     [label setBackgroundColor:[UIColor clearColor]];
     [label setTextColor:[UIColor whiteColor]];
-    [label setFont:[UIFont systemFontOfSize:10]];
+    [label setFont:[UIFont systemFontOfSize:16]];
+    [label setMinimumScaleFactor:0.1];
+    
+    [label setAdjustsFontSizeToFitWidth:YES];
+    
     [label setTextAlignment:NSTextAlignmentCenter];
     label.text = text;
     
@@ -161,6 +168,9 @@
     _captureSession.sessionPreset = preset;
     
     videoInput = [[AVCaptureDeviceInput alloc] initWithDevice:captureDevice error:nil];
+    
+    [videoInput.device addObserver:self forKeyPath:@"adjustingExposure" options:NSKeyValueObservingOptionNew context:NULL];
+    [videoInput.device addObserver:self forKeyPath:@"adjustingFocus" options:NSKeyValueObservingOptionNew context:NULL];
     
     if([_captureSession canAddInput:videoInput])
     {
@@ -862,6 +872,7 @@
     
     [self configureDevice:^{
         [videoInput.device setExposureMode:mode];
+        hadSetExposurePoint = YES;
     }];
 }
 
@@ -871,7 +882,27 @@
     
     [self configureDevice:^{
         [videoInput.device setFocusMode:mode];
+        hadSetFocusPoint = YES;
     }];
+}
+
+-(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if ([keyPath isEqualToString:@"adjustingExposure"])
+    {
+        if (!videoInput.device.isAdjustingExposure && hadSetExposurePoint)
+        {
+            hadSetExposurePoint = NO;
+            [self lockCurrentExposure];
+        }
+    }else if ([keyPath isEqualToString:@"adjustingFocus"])
+    {
+        if (!videoInput.device.isAdjustingFocus && hadSetFocusPoint)
+        {
+            hadSetFocusPoint = NO;
+            [self lockCurrentFocus];
+        }
+    }
 }
 
 -(void)configureDevice:(void(^)(void))configureCode
@@ -933,6 +964,16 @@
 {
     [self setFocusMode:AVCaptureFocusModeLocked];
     [self setExposureMode:AVCaptureExposureModeLocked];
+}
+
+-(void)lockCurrentExposure
+{
+    [self setExposureMode:AVCaptureExposureModeLocked];
+}
+
+-(void)lockCurrentFocus
+{
+    [self setFocusMode:AVCaptureFocusModeLocked];
 }
 
 -(void)setExposureState
