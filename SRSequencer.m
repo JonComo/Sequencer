@@ -90,10 +90,38 @@
         
         [[movieFileOutput connectionWithMediaType:AVMediaTypeVideo] setVideoOrientation:AVCaptureVideoOrientationLandscapeLeft];
         
+        _lockExposure = NO;
+        _lockFocus = NO;
+        
+        _viewForExposurePoint = [self targetViewWithText:@"EXPOSURE" size:CGSizeMake(60, 60)];
+        _viewForFocusPoint = [self targetViewWithText:@"FOCUS" size:CGSizeMake(60, 60)];
+        
         [self startNotificationObservers];
     }
     
     return self;
+}
+
+-(UIView *)targetViewWithText:(NSString *)text size:(CGSize)size
+{
+    UIView *targetView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, size.width, size.height)];
+    
+    [targetView setBackgroundColor:[UIColor clearColor]];
+    targetView.layer.borderColor = [UIColor whiteColor].CGColor;
+    targetView.layer.borderWidth = 2;
+    
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, size.height - 20, size.width, 20)];
+    [label setBackgroundColor:[UIColor clearColor]];
+    [label setTextColor:[UIColor whiteColor]];
+    [label setFont:[UIFont systemFontOfSize:10]];
+    [label setTextAlignment:NSTextAlignmentCenter];
+    label.text = text;
+    
+    [targetView addSubview:label];
+    
+    [targetView setUserInteractionEnabled:NO];
+    
+    return targetView;
 }
 
 - (void)dealloc
@@ -199,13 +227,6 @@
         [self.viewPreview.layer insertSublayer:captureVideoPreviewLayer below:self.viewPreview.layer.sublayers[0]];
         
         [[captureVideoPreviewLayer connection] setVideoOrientation:AVCaptureVideoOrientationLandscapeRight];
-        
-        [videoInput.device lockForConfiguration:nil];
-        
-        [videoInput.device setFocusMode:AVCaptureFocusModeLocked];
-        [videoInput.device setExposureMode:AVCaptureExposureModeLocked];
-        
-        [videoInput.device unlockForConfiguration];
         
         // Start the session. This is done asychronously because startRunning doesn't return until the session is running.
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
@@ -835,36 +856,88 @@
 
 #pragma Camera operations
 
--(void)toggleExposure
+-(void)setExposureMode:(AVCaptureExposureMode)mode
+{
+    if (![videoInput.device isExposureModeSupported:mode]) return;
+    
+    [self configureDevice:^{
+        [videoInput.device setExposureMode:mode];
+    }];
+}
+
+-(void)setFocusMode:(AVCaptureFocusMode)mode
+{
+    if (![videoInput.device isFocusModeSupported:mode]) return;
+    
+    [self configureDevice:^{
+        [videoInput.device setFocusMode:mode];
+    }];
+}
+
+-(void)configureDevice:(void(^)(void))configureCode
 {
     NSError *lockError;
     [videoInput.device lockForConfiguration:&lockError];
     if (lockError) return;
     
-    [videoInput.device setExposureMode: videoInput.device.exposureMode == AVCaptureExposureModeLocked ? AVCaptureExposureModeContinuousAutoExposure :  AVCaptureExposureModeLocked];
+    if (configureCode) configureCode();
     
     [videoInput.device unlockForConfiguration];
 }
 
--(void)toggleFocus
+-(void)setFocusPoint:(CGPoint)point
 {
-    NSError *lockError;
-    [videoInput.device lockForConfiguration:&lockError];
-    if (lockError) return;
+    CGPoint pointOfInterest = [captureVideoPreviewLayer captureDevicePointOfInterestForPoint:point];
     
-    [videoInput.device setFocusMode: videoInput.device.focusMode == AVCaptureFocusModeLocked ? AVCaptureFocusModeContinuousAutoFocus :  AVCaptureFocusModeLocked];
+    [self configureDevice:^{
+        [videoInput.device setFocusPointOfInterest:pointOfInterest];
+        
+        [self displayView:self.viewForFocusPoint atPoint:point];
+    }];
     
-    [videoInput.device unlockForConfiguration];
+    [self setFocusMode:AVCaptureFocusModeContinuousAutoFocus];
 }
 
--(AVCaptureExposureMode)exposureMode
+-(void)setExposurePoint:(CGPoint)point
 {
-    return videoInput.device.exposureMode;
+    CGPoint pointOfInterest = [captureVideoPreviewLayer captureDevicePointOfInterestForPoint:point];
+    
+    [self configureDevice:^{
+        [videoInput.device setExposurePointOfInterest:pointOfInterest];
+        
+        [self displayView:self.viewForExposurePoint atPoint:point];
+    }];
+    
+    [self setExposureMode:AVCaptureExposureModeContinuousAutoExposure];
 }
 
--(AVCaptureFocusMode)focusMode
+-(void)displayView:(UIView *)view atPoint:(CGPoint)point
 {
-    return videoInput.device.focusMode;
+    view.frame = CGRectMake(point.x - view.frame.size.width/2, point.y - view.frame.size.height/2, view.frame.size.width, view.frame.size.height);
+    
+    [self.viewPreview addSubview:view];
+    
+    view.alpha = 0;
+    [UIView animateWithDuration:0.2 animations:^{
+        view.alpha = 1;
+    } completion:^(BOOL finished) {
+        [UIView animateWithDuration:0.3 delay:0.5 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+            view.alpha = 0;
+        } completion:^(BOOL finished) {
+            [view removeFromSuperview];
+        }];
+    }];
+}
+
+-(void)lock
+{
+    [self setFocusMode:AVCaptureFocusModeLocked];
+    [self setExposureMode:AVCaptureExposureModeLocked];
+}
+
+-(void)setExposureState
+{
+    [self setExposureMode:self.lockExposure ? AVCaptureExposureModeLocked : AVCaptureExposureModeContinuousAutoExposure];
 }
 
 @end

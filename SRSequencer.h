@@ -37,6 +37,12 @@ typedef void (^ErrorHandlingBlock)(NSError *error);
 
 @property (copy, readwrite) ErrorHandlingBlock asyncErrorHandler;
 
+@property BOOL lockExposure;
+@property BOOL lockFocus;
+
+@property (strong, nonatomic) UIView *viewForFocusPoint;
+@property (strong, nonatomic) UIView *viewForExposurePoint;
+
 -(id)initWithDelegate:(id <SRSequencerDelegate> )managerDelegate;
 
 - (void)setupSessionWithPreset:(NSString *)preset withCaptureDevice:(AVCaptureDevicePosition)cd withTorchMode:(AVCaptureTorchMode)tm withError:(NSError **)error;
@@ -54,11 +60,9 @@ typedef void (^ErrorHandlingBlock)(NSError *error);
 - (void)finalizeClips:(NSArray *)clipsCombining toFile:(NSURL *)finalVideoLocationURL withVideoSize:(CGSize)videoSize withPreset:(NSString *)preset withCompletionHandler:(ErrorHandlingBlock)completionHandler;
 
 //Camera control
--(void)toggleExposure;
--(void)toggleFocus;
-
--(AVCaptureFocusMode)focusMode;
--(AVCaptureExposureMode)exposureMode;
+-(void)setFocusPoint:(CGPoint)point;
+-(void)setExposurePoint:(CGPoint)point;
+-(void)lock;
 
 //Clip Modifications
 

@@ -18,8 +18,8 @@
 
 #import "SQClipTimeStretch.h"
 
-#define TIPRecord @"TAP HERE TO RECORD"
-#define TIPRecordStop @"TAP AGAIN TO STOP"
+#define TIPRecord @"TAP TO SET FOCUS"
+#define TIPRecordStop @"TAP TO SET EXPOSURE"
 
 @interface SQRecordViewController () <SRSequencerDelegate, UICollectionViewDelegateFlowLayout>
 {
@@ -28,6 +28,8 @@
     __weak IBOutlet UIView *viewPreview;
     __weak IBOutlet UICollectionView *collectionViewClips;
     __weak IBOutlet UILabel *labelHint;
+    
+    BOOL setFocus;
 }
 
 @end
@@ -43,7 +45,7 @@
     sequence.collectionViewClips = collectionViewClips;
     sequence.viewPreview = viewPreview;
     
-    [viewPreview addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(recordTapped)]];
+    [viewPreview addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewTapped:)]];
     
     [self initInterface];
 }
@@ -128,18 +130,29 @@
 
 - (IBAction)lock:(UIButton *)sender
 {
-    [sequence toggleFocus];
-    [sequence toggleExposure];
+    [sequence lock];
+}
+
+-(void)viewTapped:(UITapGestureRecognizer *)tap
+{
+    CGPoint viewLocation = [tap locationInView:tap.view];
     
-    if ([sequence focusMode] == AVCaptureFocusModeLocked)
+    if (!setFocus)
     {
-        [sender setTitle:@"UNLOCK" forState:UIControlStateNormal];
+        setFocus = YES;
+        [sequence setFocusPoint:viewLocation];
     }else{
-        [sender setTitle:@"LOCK" forState:UIControlStateNormal];
+        setFocus = NO;
+        [sequence setExposurePoint:viewLocation];
     }
 }
 
--(void)recordTapped
+- (IBAction)cancel:(id)sender
+{
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (IBAction)record:(id)sender
 {
     if (sequence.isRecording)
     {
@@ -147,13 +160,8 @@
     }else{
         [sequence record];
     }
-    
-    [self progressTips];
-}
 
-- (IBAction)cancel:(id)sender
-{
-    [self dismissViewControllerAnimated:YES completion:nil];
+    [self progressTips];
 }
 
 - (IBAction)preview:(id)sender {
