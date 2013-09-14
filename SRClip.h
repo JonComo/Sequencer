@@ -27,5 +27,6 @@
 
 -(SRClip *)duplicate;
 -(BOOL)remove;
+-(NSError *)replaceWithFileAtURL:(NSURL *)newURL;
 
 @end

@@ -60,8 +60,7 @@
     // with the preferred transform contained in the incoming video track.
     //
     
-//    [layerInstruction setTransform:videoTrack.preferredTransform
-//                            atTime:kCMTimeZero];
+    [layerInstruction setTransform:videoTrack.preferredTransform atTime:kCMTimeZero];
     
 //    if(transformToApply)
 //    {

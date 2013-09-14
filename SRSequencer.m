@@ -91,8 +91,6 @@
             [alertView show];
         };
         
-        [[movieFileOutput connectionWithMediaType:AVMediaTypeVideo] setVideoOrientation:AVCaptureVideoOrientationLandscapeLeft];
-        
         _lockExposure = NO;
         _lockFocus = NO;
         
@@ -232,8 +230,6 @@
         
         captureVideoPreviewLayer.videoGravity = AVLayerVideoGravityResizeAspect;
         
-        [captureVideoPreviewLayer connection].videoOrientation = AVCaptureVideoOrientationLandscapeLeft;
-        
         [self.viewPreview.layer insertSublayer:captureVideoPreviewLayer below:self.viewPreview.layer.sublayers[0]];
         
         [[captureVideoPreviewLayer connection] setVideoOrientation:AVCaptureVideoOrientationLandscapeRight];
@@ -337,6 +333,7 @@
     
     clipRecording = [[SRClip alloc] initWithURL:outputFileURL];
     
+    [[movieFileOutput connectionWithMediaType:AVMediaTypeVideo] setVideoOrientation:AVCaptureVideoOrientationLandscapeRight];
     [movieFileOutput startRecordingToOutputFileURL:outputFileURL recordingDelegate:self];
 }
 
@@ -451,8 +448,9 @@
     [clipsCombining enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         
         SRClip *clip = (SRClip *)obj;
+        AVURLAsset *asset = [AVURLAsset assetWithURL:clip.URL];
         
-        [stitcher addAsset:[AVURLAsset assetWithURL:clip.URL] withTransform:^CGAffineTransform(AVAssetTrack *videoTrack) {
+        [stitcher addAsset:asset withTransform:^CGAffineTransform(AVAssetTrack *videoTrack) {
             
             //
             // The following transform is applied to each video track. It changes the size of the
@@ -479,7 +477,7 @@
              }
              */
             
-            return CGAffineTransformIdentity;
+            return asset.preferredTransform;
             
         } withErrorHandler:^(NSError *error) {
             

@@ -10,7 +10,12 @@
 		8601067617DF7DE5002AEFC2 /* icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8601067517DF7DE5002AEFC2 /* icon@2x.png */; };
 		8601067817DF7DE7002AEFC2 /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 8601067717DF7DE7002AEFC2 /* icon.png */; };
 		8639E36D17E408AE001ED2F8 /* SQClipViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8639E36C17E408AE001ED2F8 /* SQClipViewController.m */; };
+		8639E37717E40D8E001ED2F8 /* SAResizibleBubble.m in Sources */ = {isa = PBXBuildFile; fileRef = 8639E37017E40D8E001ED2F8 /* SAResizibleBubble.m */; };
+		8639E37817E40D8E001ED2F8 /* SASliderLeft.m in Sources */ = {isa = PBXBuildFile; fileRef = 8639E37217E40D8E001ED2F8 /* SASliderLeft.m */; };
+		8639E37917E40D8E001ED2F8 /* SASliderRight.m in Sources */ = {isa = PBXBuildFile; fileRef = 8639E37417E40D8E001ED2F8 /* SASliderRight.m */; };
+		8639E37A17E40D8E001ED2F8 /* SAVideoRangeSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = 8639E37617E40D8E001ED2F8 /* SAVideoRangeSlider.m */; };
 		864AFD2717DFA7FD00A1286D /* SQClipTimeStretch.m in Sources */ = {isa = PBXBuildFile; fileRef = 864AFD2617DFA7FD00A1286D /* SQClipTimeStretch.m */; };
+		86544C2317E423AA00240E28 /* JCMoviePlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 86544C2217E423AA00240E28 /* JCMoviePlayer.m */; };
 		8658657D17CDCB6A00B5D7BD /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8658657C17CDCB6A00B5D7BD /* UIKit.framework */; };
 		8658657F17CDCB6A00B5D7BD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8658657E17CDCB6A00B5D7BD /* Foundation.framework */; };
 		8658658117CDCB6A00B5D7BD /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8658658017CDCB6A00B5D7BD /* CoreGraphics.framework */; };
@@ -46,8 +51,18 @@
 		8601067717DF7DE7002AEFC2 /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
 		8639E36B17E408AE001ED2F8 /* SQClipViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQClipViewController.h; sourceTree = "<group>"; };
 		8639E36C17E408AE001ED2F8 /* SQClipViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SQClipViewController.m; sourceTree = "<group>"; };
+		8639E36F17E40D8E001ED2F8 /* SAResizibleBubble.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SAResizibleBubble.h; sourceTree = "<group>"; };
+		8639E37017E40D8E001ED2F8 /* SAResizibleBubble.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SAResizibleBubble.m; sourceTree = "<group>"; };
+		8639E37117E40D8E001ED2F8 /* SASliderLeft.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SASliderLeft.h; sourceTree = "<group>"; };
+		8639E37217E40D8E001ED2F8 /* SASliderLeft.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SASliderLeft.m; sourceTree = "<group>"; };
+		8639E37317E40D8E001ED2F8 /* SASliderRight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SASliderRight.h; sourceTree = "<group>"; };
+		8639E37417E40D8E001ED2F8 /* SASliderRight.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SASliderRight.m; sourceTree = "<group>"; };
+		8639E37517E40D8E001ED2F8 /* SAVideoRangeSlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SAVideoRangeSlider.h; sourceTree = "<group>"; };
+		8639E37617E40D8E001ED2F8 /* SAVideoRangeSlider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SAVideoRangeSlider.m; sourceTree = "<group>"; };
 		864AFD2517DFA7FD00A1286D /* SQClipTimeStretch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQClipTimeStretch.h; sourceTree = "<group>"; };
 		864AFD2617DFA7FD00A1286D /* SQClipTimeStretch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SQClipTimeStretch.m; sourceTree = "<group>"; };
+		86544C2117E423AA00240E28 /* JCMoviePlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JCMoviePlayer.h; sourceTree = "<group>"; };
+		86544C2217E423AA00240E28 /* JCMoviePlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JCMoviePlayer.m; sourceTree = "<group>"; };
 		8658657917CDCB6A00B5D7BD /* Sequencer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Sequencer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8658657C17CDCB6A00B5D7BD /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		8658657E17CDCB6A00B5D7BD /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -113,6 +128,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8639E36E17E40D8E001ED2F8 /* SAVideoRangeSlider */ = {
+			isa = PBXGroup;
+			children = (
+				8639E36F17E40D8E001ED2F8 /* SAResizibleBubble.h */,
+				8639E37017E40D8E001ED2F8 /* SAResizibleBubble.m */,
+				8639E37117E40D8E001ED2F8 /* SASliderLeft.h */,
+				8639E37217E40D8E001ED2F8 /* SASliderLeft.m */,
+				8639E37317E40D8E001ED2F8 /* SASliderRight.h */,
+				8639E37417E40D8E001ED2F8 /* SASliderRight.m */,
+				8639E37517E40D8E001ED2F8 /* SAVideoRangeSlider.h */,
+				8639E37617E40D8E001ED2F8 /* SAVideoRangeSlider.m */,
+			);
+			path = SAVideoRangeSlider;
+			sourceTree = "<group>";
+		};
 		8658657017CDCB6A00B5D7BD = {
 			isa = PBXGroup;
 			children = (
@@ -135,6 +165,7 @@
 		8658657B17CDCB6A00B5D7BD /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8639E36E17E40D8E001ED2F8 /* SAVideoRangeSlider */,
 				865865C617CDF63F00B5D7BD /* JCActionSheetManager.m */,
 				865865C717CDF63F00B5D7BD /* JCActionSheetManager.h */,
 				865865C517CDF3A400B5D7BD /* MBProgress */,
@@ -201,6 +232,8 @@
 				86A271C417D2D5220035A83F /* clipCell.xib */,
 				8639E36B17E408AE001ED2F8 /* SQClipViewController.h */,
 				8639E36C17E408AE001ED2F8 /* SQClipViewController.m */,
+				86544C2117E423AA00240E28 /* JCMoviePlayer.h */,
+				86544C2217E423AA00240E28 /* JCMoviePlayer.m */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -323,6 +356,11 @@
 				86A271C817D2D5710035A83F /* SQClipCell.m in Sources */,
 				864AFD2717DFA7FD00A1286D /* SQClipTimeStretch.m in Sources */,
 				8639E36D17E408AE001ED2F8 /* SQClipViewController.m in Sources */,
+				8639E37717E40D8E001ED2F8 /* SAResizibleBubble.m in Sources */,
+				8639E37817E40D8E001ED2F8 /* SASliderLeft.m in Sources */,
+				8639E37917E40D8E001ED2F8 /* SASliderRight.m in Sources */,
+				8639E37A17E40D8E001ED2F8 /* SAVideoRangeSlider.m in Sources */,
+				86544C2317E423AA00240E28 /* JCMoviePlayer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

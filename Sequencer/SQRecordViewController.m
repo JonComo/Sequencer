@@ -58,6 +58,9 @@
     
     if (!sequence.captureSession)
         [sequence setupSessionWithDefaults];
+    
+    if (sequence.captureSession.isInterrupted || !sequence.captureSession.isRunning)
+        [sequence.captureSession startRunning];
 }
 
 -(void)viewWillDisappear:(BOOL)animated

@@ -63,8 +63,11 @@
 {
     NSURL *returnURL;
     
+    int i = 0;
+    
     do {
-        returnURL = [NSURL fileURLWithPath:[NSString stringWithFormat:@"%@/clip%f.mov", directory, [[NSDate date] timeIntervalSince1970]]];
+        returnURL = [NSURL fileURLWithPath:[NSString stringWithFormat:@"%@/clip%i.mov", directory, i]];
+        i++;
     } while ([[NSFileManager defaultManager] fileExistsAtPath:[returnURL path]]);
     
     return returnURL;
@@ -91,6 +94,15 @@
     [[NSFileManager defaultManager] removeItemAtURL:self.URL error:&error];
     
     return error ? NO : YES;
+}
+
+-(NSError *)replaceWithFileAtURL:(NSURL *)newURL
+{
+    NSError *error;
+    
+    [[NSFileManager defaultManager] replaceItemAtURL:self.URL withItemAtURL:newURL backupItemName:@"backup" options:NSFileManagerItemReplacementUsingNewMetadataOnly resultingItemURL:&newURL error:&error];
+    
+    return error;
 }
 
 @end

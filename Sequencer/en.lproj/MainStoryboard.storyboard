@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="2.0" toolsVersion="3084" systemVersion="12E3067" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="bgz-aP-HPi">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="2.0" toolsVersion="3084" systemVersion="12F37" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="bgz-aP-HPi">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="2083"/>
     </dependencies>
@@ -67,12 +67,6 @@
                         <rect key="frame" x="0.0" y="20" width="568" height="300"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Kj5-S3-idN">
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="294" type="user" id="0nr-kr-Ahh"/>
-                                    <constraint firstAttribute="height" constant="220" id="YD7-Be-Z2V"/>
-                                </constraints>
-                            </imageView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="II2-i0-LDS">
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
@@ -104,25 +98,54 @@
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <action selector="timeStretch:" destination="2" eventType="touchUpInside" id="599-oV-r4A"/>
                                     <action selector="trim:" destination="843-ik-w0O" eventType="touchUpInside" id="Yko-2q-Yvm"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aAQ-nK-nc2">
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="Mqq-Ln-lfH"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                <state key="normal" title="DONE">
+                                    <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <state key="highlighted">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="done:" destination="843-ik-w0O" eventType="touchUpInside" id="5sT-Q3-pms"/>
+                                </connections>
+                            </button>
+                            <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5HJ-3a-FPU" customClass="JCMoviePlayer">
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="294" type="user" id="LR9-ch-lBj"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
-                            <constraint firstItem="Niq-BV-d8g" firstAttribute="leading" secondItem="61S-RC-Uwx" secondAttribute="leading" type="user" id="IxI-3f-Pww"/>
-                            <constraint firstItem="Kj5-S3-idN" firstAttribute="leading" secondItem="II2-i0-LDS" secondAttribute="trailing" constant="8" symbolic="YES" type="default" id="PdL-wY-SRa"/>
-                            <constraint firstItem="Kj5-S3-idN" firstAttribute="leading" secondItem="Niq-BV-d8g" secondAttribute="trailing" constant="8" symbolic="YES" type="user" id="Rqx-2S-qW1"/>
-                            <constraint firstItem="Kj5-S3-idN" firstAttribute="top" secondItem="61S-RC-Uwx" secondAttribute="top" type="default" id="YZH-9R-WWJ"/>
-                            <constraint firstItem="Niq-BV-d8g" firstAttribute="top" secondItem="61S-RC-Uwx" secondAttribute="top" type="default" id="mdr-yX-x3l"/>
+                            <constraint firstAttribute="bottom" secondItem="5HJ-3a-FPU" secondAttribute="bottom" constant="80" id="1fe-bm-zrJ"/>
+                            <constraint firstItem="Niq-BV-d8g" firstAttribute="trailing" secondItem="61S-RC-Uwx" secondAttribute="trailing" type="default" id="1nn-k6-StP"/>
+                            <constraint firstItem="aAQ-nK-nc2" firstAttribute="top" secondItem="61S-RC-Uwx" secondAttribute="top" type="default" id="AFe-ti-AFB"/>
+                            <constraint firstItem="II2-i0-LDS" firstAttribute="top" secondItem="61S-RC-Uwx" secondAttribute="top" constant="38" id="F8M-Ac-JlK"/>
+                            <constraint firstItem="aAQ-nK-nc2" firstAttribute="trailing" secondItem="61S-RC-Uwx" secondAttribute="trailing" type="default" id="Ofg-Nx-Jep"/>
+                            <constraint firstItem="5HJ-3a-FPU" firstAttribute="top" secondItem="61S-RC-Uwx" secondAttribute="top" type="default" id="RoK-UR-5o0"/>
+                            <constraint firstItem="Niq-BV-d8g" firstAttribute="leading" secondItem="5HJ-3a-FPU" secondAttribute="trailing" constant="8" symbolic="YES" type="default" id="Ze9-dQ-Xb7"/>
+                            <constraint firstItem="Niq-BV-d8g" firstAttribute="bottom" secondItem="5HJ-3a-FPU" secondAttribute="bottom" type="default" id="eht-Ds-9R3"/>
+                            <constraint firstItem="5HJ-3a-FPU" firstAttribute="leading" secondItem="II2-i0-LDS" secondAttribute="trailing" constant="8" symbolic="YES" type="default" id="epR-jJ-DkF"/>
+                            <constraint firstItem="5HJ-3a-FPU" firstAttribute="centerX" secondItem="61S-RC-Uwx" secondAttribute="centerX" type="default" id="mvp-uP-Ncg"/>
                             <constraint firstItem="II2-i0-LDS" firstAttribute="leading" secondItem="61S-RC-Uwx" secondAttribute="leading" type="default" id="ob6-I1-ho5"/>
-                            <constraint firstItem="Kj5-S3-idN" firstAttribute="centerX" secondItem="61S-RC-Uwx" secondAttribute="centerX" type="default" id="t8j-he-Cy7"/>
-                            <constraint firstItem="II2-i0-LDS" firstAttribute="top" secondItem="Niq-BV-d8g" secondAttribute="bottom" constant="8" symbolic="YES" type="default" id="up7-hw-vCq"/>
+                            <constraint firstItem="aAQ-nK-nc2" firstAttribute="leading" secondItem="5HJ-3a-FPU" secondAttribute="trailing" constant="8" symbolic="YES" type="default" id="ozF-XH-ipg"/>
                         </constraints>
                         <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                     </view>
                     <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
+                    <connections>
+                        <outlet property="moviePlayer" destination="5HJ-3a-FPU" id="eIv-3w-3xB"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SKV-jj-z4K" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -285,7 +308,6 @@
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="30" id="BL8-hJ-f9E"/>
-                                    <constraint firstAttribute="width" constant="129" id="cDa-Yl-5R1"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                 <state key="normal" title="LOCK">
@@ -393,42 +415,6 @@
     <resources>
         <image name="homeGraphic@2x.png" width="640" height="640"/>
     </resources>
-    <classes>
-        <class className="NSLayoutConstraint" superclassName="NSObject">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/NSLayoutConstraint.h"/>
-        </class>
-        <class className="SQClipViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/SQClipViewController.h"/>
-            <relationships>
-                <relationship kind="action" name="trim:"/>
-            </relationships>
-        </class>
-        <class className="SQRecordViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/SQRecordViewController.h"/>
-            <relationships>
-                <relationship kind="action" name="cancel:"/>
-                <relationship kind="action" name="consolidateSelected:"/>
-                <relationship kind="action" name="deleteSelected:"/>
-                <relationship kind="action" name="done:"/>
-                <relationship kind="action" name="duplicateSelected:"/>
-                <relationship kind="action" name="edit:"/>
-                <relationship kind="action" name="import:"/>
-                <relationship kind="action" name="lock:" candidateClass="UIButton"/>
-                <relationship kind="action" name="preview:"/>
-                <relationship kind="action" name="record:"/>
-                <relationship kind="action" name="timeStretch:"/>
-                <relationship kind="outlet" name="collectionViewClips" candidateClass="UICollectionView"/>
-                <relationship kind="outlet" name="labelHint" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="viewPreview" candidateClass="UIView"/>
-            </relationships>
-        </class>
-        <class className="UICollectionViewFlowLayout" superclassName="UICollectionViewLayout">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/UICollectionViewFlowLayout.h"/>
-        </class>
-        <class className="UICollectionViewLayout" superclassName="NSObject">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/UICollectionViewLayout.h"/>
-        </class>
-    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>
