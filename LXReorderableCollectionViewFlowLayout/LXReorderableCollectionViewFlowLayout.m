@@ -84,7 +84,7 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
 - (void)setupCollectionView {
     _longPressGestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self
                                                                                 action:@selector(handleLongPressGesture:)];
-    _longPressGestureRecognizer.minimumPressDuration = 0.1;
+    _longPressGestureRecognizer.minimumPressDuration = 0.3;
     
     _longPressGestureRecognizer.delegate = self;
     
@@ -266,7 +266,6 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
     self.currentView.center = LXS_CGPointAdd(self.currentViewCenter, self.panTranslationInCollectionView);
     self.collectionView.contentOffset = LXS_CGPointAdd(contentOffset, translation);
 }
-
 
 - (void)handleLongPressGesture:(UILongPressGestureRecognizer *)gestureRecognizer {
     switch(gestureRecognizer.state) {

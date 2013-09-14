@@ -18,6 +18,8 @@
 
 #import "SQClipTimeStretch.h"
 
+#import "SQClipViewController.h"
+
 #define TIPRecord @"TAP TO SET FOCUS"
 #define TIPRecordStop @"TAP TO SET EXPOSURE"
 
@@ -150,6 +152,22 @@
 - (IBAction)cancel:(id)sender
 {
     [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (IBAction)edit:(id)sender
+{
+    SQClipViewController *clipVC = [self.storyboard instantiateViewControllerWithIdentifier:@"clipVC"];
+    
+    SRClip *selectedClip;
+    
+    for (SRClip *clip in sequence.clips)
+    {
+        if (clip.isSelected) selectedClip = clip;
+    }
+    
+    clipVC.clip = selectedClip;
+    
+    [self presentViewController:clipVC animated:YES completion:nil];
 }
 
 - (IBAction)record:(id)sender

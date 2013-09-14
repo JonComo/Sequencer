@@ -248,8 +248,6 @@
 -(void)setViewPreview:(UIView *)viewPreview
 {
     _viewPreview = viewPreview;
-    
-    
 }
 
 -(void)flipCamera

@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		8601067617DF7DE5002AEFC2 /* icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8601067517DF7DE5002AEFC2 /* icon@2x.png */; };
 		8601067817DF7DE7002AEFC2 /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 8601067717DF7DE7002AEFC2 /* icon.png */; };
+		8639E36D17E408AE001ED2F8 /* SQClipViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8639E36C17E408AE001ED2F8 /* SQClipViewController.m */; };
 		864AFD2717DFA7FD00A1286D /* SQClipTimeStretch.m in Sources */ = {isa = PBXBuildFile; fileRef = 864AFD2617DFA7FD00A1286D /* SQClipTimeStretch.m */; };
 		8658657D17CDCB6A00B5D7BD /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8658657C17CDCB6A00B5D7BD /* UIKit.framework */; };
 		8658657F17CDCB6A00B5D7BD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8658657E17CDCB6A00B5D7BD /* Foundation.framework */; };
@@ -43,6 +44,8 @@
 /* Begin PBXFileReference section */
 		8601067517DF7DE5002AEFC2 /* icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon@2x.png"; sourceTree = "<group>"; };
 		8601067717DF7DE7002AEFC2 /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
+		8639E36B17E408AE001ED2F8 /* SQClipViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQClipViewController.h; sourceTree = "<group>"; };
+		8639E36C17E408AE001ED2F8 /* SQClipViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SQClipViewController.m; sourceTree = "<group>"; };
 		864AFD2517DFA7FD00A1286D /* SQClipTimeStretch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQClipTimeStretch.h; sourceTree = "<group>"; };
 		864AFD2617DFA7FD00A1286D /* SQClipTimeStretch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SQClipTimeStretch.m; sourceTree = "<group>"; };
 		8658657917CDCB6A00B5D7BD /* Sequencer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Sequencer.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -196,6 +199,8 @@
 				865865BB17CDE8C000B5D7BD /* SQHomeViewController.h */,
 				865865BC17CDE8C000B5D7BD /* SQHomeViewController.m */,
 				86A271C417D2D5220035A83F /* clipCell.xib */,
+				8639E36B17E408AE001ED2F8 /* SQClipViewController.h */,
+				8639E36C17E408AE001ED2F8 /* SQClipViewController.m */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -317,6 +322,7 @@
 				865865C817CDF63F00B5D7BD /* JCActionSheetManager.m in Sources */,
 				86A271C817D2D5710035A83F /* SQClipCell.m in Sources */,
 				864AFD2717DFA7FD00A1286D /* SQClipTimeStretch.m in Sources */,
+				8639E36D17E408AE001ED2F8 /* SQClipViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

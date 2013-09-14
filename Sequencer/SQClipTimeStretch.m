@@ -33,7 +33,7 @@
 //    
 //    [mutableCompositionAudioTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, asset.duration) ofTrack:audioTrack atTime:kCMTimeZero error:nil];
     
-    double wholeDuration = CMTimeGetSeconds([asset duration]);
+    //double wholeDuration = CMTimeGetSeconds([asset duration]);
     double doubleDuration = CMTimeGetSeconds([asset duration]) * multiple;
     
     [mutableComposition scaleTimeRange:mutableCompositionVideoTrack.timeRange toDuration:CMTimeMakeWithSeconds(doubleDuration, 600.0)];
