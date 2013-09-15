@@ -18,7 +18,11 @@
 
 #import "SQClipTimeStretch.h"
 
-#import "SQClipViewController.h"
+#import "SQClipCell.h"
+
+#import "SQTrimViewController.h"
+
+#import "SQTimeline.h"
 
 #define TIPRecord @"TAP TO SET FOCUS"
 #define TIPRecordStop @"TAP TO SET EXPOSURE"
@@ -28,8 +32,7 @@
     SRSequencer *sequence;
     
     __weak IBOutlet UIView *viewPreview;
-    __weak IBOutlet UICollectionView *collectionViewClips;
-    __weak IBOutlet UILabel *labelHint;
+    __weak IBOutlet SQTimeline *collectionViewClips;
     
     BOOL setFocus;
 }
@@ -50,6 +53,13 @@
     [viewPreview addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewTapped:)]];
     
     [self initInterface];
+}
+
+-(void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    [collectionViewClips reloadData];
 }
 
 -(void)viewDidAppear:(BOOL)animated
@@ -89,14 +99,6 @@
 -(void)initInterface
 {
     viewPreview.layer.borderColor = [UIColor redColor].CGColor;
-    
-    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"TIPRecord"])
-    {
-        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"TIPRecord"];
-        labelHint.text = TIPRecord;
-    }else{
-        [labelHint removeFromSuperview];
-    }
 }
 
 #pragma SequenceDelegate
@@ -109,26 +111,6 @@
 -(void)sequencer:(SRSequencer *)sequencer isRecording:(BOOL)recording
 {
     viewPreview.layer.borderWidth = recording ? 3 : 0;
-}
-
-#pragma UIChanges
-
--(void)progressTips
-{
-    if ([labelHint.text isEqualToString:TIPRecord])
-    {
-        [UIView animateWithDuration:0.3 animations:^{
-            labelHint.alpha = 0;
-        } completion:^(BOOL finished) {
-            labelHint.text = TIPRecordStop;
-            [UIView animateWithDuration:0.3 animations:^{
-                labelHint.alpha = 1;
-            }];
-        }];
-    }else if ([labelHint.text isEqualToString:TIPRecordStop])
-    {
-        [labelHint removeFromSuperview];
-    }
 }
 
 #pragma UIActions
@@ -159,7 +141,7 @@
 
 - (IBAction)edit:(id)sender
 {
-    SQClipViewController *clipVC = [self.storyboard instantiateViewControllerWithIdentifier:@"clipVC"];
+    SQTrimViewController *trimVC = [self.storyboard instantiateViewControllerWithIdentifier:@"trimVC"];
     
     SRClip *selectedClip;
     
@@ -168,9 +150,11 @@
         if (clip.isSelected) selectedClip = clip;
     }
     
-    clipVC.clip = selectedClip;
+    trimVC.clip = selectedClip;
     
-    [self presentViewController:clipVC animated:YES completion:nil];
+    trimVC.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+    
+    [self presentViewController:trimVC animated:YES completion:nil];
 }
 
 - (IBAction)record:(id)sender
@@ -181,8 +165,6 @@
     }else{
         [sequence record];
     }
-
-    [self progressTips];
 }
 
 - (IBAction)preview:(id)sender {
@@ -277,6 +259,13 @@
     clip.isSelected = !clip.isSelected;
     
     [collectionViewClips reloadData];
+}
+
+-(CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    SRClip *clip = [sequence.clips objectAtIndex:indexPath.row];
+    
+    return [clip timelineSize];
 }
 
 @end

@@ -10,6 +10,8 @@
 #import "SQClipCell.h"
 #import "LXReorderableCollectionViewFlowLayout.h"
 
+#import "SQTimeline.h"
+
 #import "Macros.h"
 
 // Maximum and minumum length to record in seconds
@@ -727,14 +729,13 @@
 
 #pragma UICollectionViewDataSourceDelegate
 
--(void)setCollectionViewClips:(UICollectionView *)collectionViewClips
+-(void)setCollectionViewClips:(SQTimeline *)collectionViewClips
 {
     collectionViewClips.dataSource = self;
     
     LXReorderableCollectionViewFlowLayout *layout = [[LXReorderableCollectionViewFlowLayout alloc] init];
     [layout setMinimumInteritemSpacing:0];
     [layout setMinimumLineSpacing:0];
-    [layout setItemSize:CGSizeMake(80, 80)];
     layout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
     [collectionViewClips setCollectionViewLayout:layout];
     
@@ -770,10 +771,53 @@
 
 -(void)addClip:(SRClip *)clip
 {
-    [self.clips addObject:clip];
+    NSUInteger index = [self indexToInsert];
+    NSLog(@"Index: %i", index);
+    [self.clips insertObject:clip atIndex:index];
     
     [self.collectionViewClips reloadData];
-    [self.collectionViewClips scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:MAX(0,self.clips.count-1) inSection:0] atScrollPosition:UICollectionViewScrollPositionRight animated:YES];
+    [self.collectionViewClips scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:MAX(0,self.clips.count-1) inSection:0] atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally animated:YES];
+}
+
+-(NSUInteger)indexToInsert
+{
+//    NSInteger index = [self.clips count];
+//    
+//    for (SRClip *clip in self.clips)
+//    {
+//        if (clip.insertAfter)
+//        {
+//            NSUInteger indexOfCell = [self.clips indexOfObject:clip];
+//            index = indexOfCell + 1;
+//            break;
+//        }else if (clip.insertBefore)
+//        {
+//            NSUInteger indexOfCell = [self.clips indexOfObject:clip];
+//            index = indexOfCell - 1;
+//            break;
+//        }
+//    }
+//    
+//    if (index < 0) index = 0;
+//    if (index > self.clips.count) index = self.clips.count;
+//    
+//    return index;
+    
+    __block NSInteger index = [self.clips count];
+    
+    [self.clips enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        SRClip *clip = obj;
+        
+        if (clip.isSelected) {
+            index = idx + 1;
+            *stop = YES;
+        }
+    }];
+    
+    if (index < 0) index = 0;
+    if (index > self.clips.count) index = self.clips.count;
+    
+    return index;
 }
 
 -(void)deleteSelectedClips

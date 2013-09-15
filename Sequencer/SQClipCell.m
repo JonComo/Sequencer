@@ -17,6 +17,38 @@
     __weak IBOutlet UIImageView *imageViewThumb;
 }
 
+-(id)initWithCoder:(NSCoder *)aDecoder
+{
+    if (self = [super initWithCoder:aDecoder]) {
+        //init
+        [self setup];
+    }
+    
+    return self;
+}
+
+- (id)initWithFrame:(CGRect)frame
+{
+    self = [super initWithFrame:frame];
+    if (self) {
+        // Initialization code
+        [self setup];
+    }
+    
+    return self;
+}
+
+-(void)setup
+{
+    
+}
+
+-(void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    NSLog(@"bye clip cell");
+}
+
 -(void)setClip:(SRClip *)clip
 {
     _clip = clip;
@@ -25,10 +57,10 @@
     
     if (clip.isSelected)
     {
-        self.layer.borderColor = [UIColor redColor].CGColor;
-        self.layer.borderWidth = 2;
+        imageViewThumb.layer.borderColor = [UIColor whiteColor].CGColor;
+        imageViewThumb.layer.borderWidth = 2;
     }else{
-        self.layer.borderWidth = 0;
+        imageViewThumb.layer.borderWidth = 0;
     }
 }
 

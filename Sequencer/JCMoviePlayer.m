@@ -12,6 +12,8 @@
 {
     AVPlayerLayer *layer;
     AVPlayerItem *playerItem;
+    
+    NSTimer *timerPlaying;
 }
 
 @end
@@ -58,6 +60,8 @@
     [self.layer addSublayer:layer];
     
     layer.player = self.player;
+    
+    self.range = CMTimeRangeMake(kCMTimeZero, playerItem.duration);
 }
 
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
@@ -71,18 +75,41 @@
 
 -(void)play
 {
+    [self.player seekToTime:self.range.start];
     [self.player play];
+    
+    [timerPlaying invalidate];
+    timerPlaying = nil;
+    timerPlaying = [NSTimer scheduledTimerWithTimeInterval:0.01 target:self selector:@selector(playProgress) userInfo:nil repeats:YES];
 }
 
 -(void)pause
 {
     [self.player pause];
+    
+    [timerPlaying invalidate];
+    timerPlaying = nil;
 }
 
 -(void)stop
 {
     [self.player pause];
     [self.player seekToTime:kCMTimeZero];
+    
+    [timerPlaying invalidate];
+    timerPlaying = nil;
+}
+
+-(void)playProgress
+{
+    CMTime endTime = CMTimeAdd(self.range.start, self.range.duration);
+    
+    if (CMTimeCompare(self.player.currentTime,  endTime) == 1)
+    {
+        //stop it
+        [self.player pause];
+        [self.player seekToTime:endTime];
+    }
 }
 
 @end

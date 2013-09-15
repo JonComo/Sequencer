@@ -37,7 +37,7 @@
 }
 
 
-
+/*
 - (void)drawRect:(CGRect)rect
 {
     //// General Declarations
@@ -134,7 +134,7 @@
     //// Cleanup
     CGGradientRelease(bubbleGradient);
     CGColorSpaceRelease(colorSpace);
-}
+}*/
 
 
 @end

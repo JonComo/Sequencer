@@ -29,4 +29,6 @@
 -(BOOL)remove;
 -(NSError *)replaceWithFileAtURL:(NSURL *)newURL;
 
+-(CGSize)timelineSize;
+
 @end

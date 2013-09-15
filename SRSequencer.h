@@ -9,6 +9,7 @@
 #import "SRClip.h"
 
 @class SRSequencer;
+@class SQTimeline;
 
 typedef void (^ErrorHandlingBlock)(NSError *error);
 
@@ -28,7 +29,7 @@ typedef void (^ErrorHandlingBlock)(NSError *error);
 @property (strong, readonly) AVCaptureSession *captureSession;
 
 @property (nonatomic, weak) UIView *viewPreview;
-@property (nonatomic, weak) UICollectionView *collectionViewClips;
+@property (nonatomic, weak) SQTimeline *collectionViewClips;
 
 @property (nonatomic, strong) NSMutableArray *clips;
 

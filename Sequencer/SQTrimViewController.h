@@ -1,5 +1,5 @@
 //
-//  SQClipViewController.h
+//  SQTrimViewController.h
 //  Sequencer
 //
 //  Created by Jon Como on 9/13/13.
@@ -10,7 +10,7 @@
 
 @class SRClip;
 
-@interface SQClipViewController : UIViewController
+@interface SQTrimViewController : UIViewController
 
 @property (nonatomic, weak) SRClip *clip;
 

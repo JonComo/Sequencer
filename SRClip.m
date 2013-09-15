@@ -22,6 +22,11 @@
     return self;
 }
 
+-(void)dealloc
+{
+    
+}
+
 -(void)generateThumbnailCompletion:(void (^)(BOOL success))block
 {
     [self thumbnailCompletion:^(UIImage *thumb) {
@@ -103,6 +108,11 @@
     [[NSFileManager defaultManager] replaceItemAtURL:self.URL withItemAtURL:newURL backupItemName:@"backup" options:NSFileManagerItemReplacementUsingNewMetadataOnly resultingItemURL:&newURL error:&error];
     
     return error;
+}
+
+-(CGSize)timelineSize
+{
+    return CGSizeMake(80, 80);
 }
 
 @end

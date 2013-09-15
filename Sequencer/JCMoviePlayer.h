@@ -13,8 +13,9 @@
 @interface JCMoviePlayer : UIView
 
 @property (nonatomic, strong) NSURL *URL;
-
 @property (nonatomic, strong) AVPlayer *player;
+
+@property (nonatomic, assign) CMTimeRange range;
 
 -(void)play;
 -(void)pause;

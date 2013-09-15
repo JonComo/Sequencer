@@ -58,9 +58,9 @@
 
 - (void)videoRange:(SAVideoRangeSlider *)videoRange didChangeLeftPosition:(CGFloat)leftPosition rightPosition:(CGFloat)rightPosition;
 
+-(void)videoRange:(SAVideoRangeSlider *)videoRange didPanToTime:(CMTime)time;
+
 - (void)videoRange:(SAVideoRangeSlider *)videoRange didGestureStateEndedLeftPosition:(CGFloat)leftPosition rightPosition:(CGFloat)rightPosition;
-
-
 @end
 
 
