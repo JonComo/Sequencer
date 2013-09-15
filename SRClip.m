@@ -39,7 +39,7 @@
 -(void)thumbnailCompletion:(void (^)(UIImage *thumb))block
 {
     AVAssetImageGenerator *generator = [[AVAssetImageGenerator alloc] initWithAsset:self.asset];
-    //generator.appliesPreferredTrackTransform = YES;
+    generator.appliesPreferredTrackTransform = YES;
     
     CMTime thumbTime = CMTimeMakeWithSeconds(0,30);
     
@@ -112,7 +112,7 @@
 
 -(CGSize)timelineSize
 {
-    return CGSizeMake(80, 80);
+    return CGSizeMake(80 + CMTimeGetSeconds(self.asset.duration) * 10, 80);
 }
 
 @end

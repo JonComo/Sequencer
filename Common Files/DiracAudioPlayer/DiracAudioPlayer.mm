@@ -57,7 +57,7 @@ long DiracCoreDataProviderCallback(float **chdata, long numFrames, void *userDat
 	if (ret < numFrames && ret >= 0) {
 		Self.mTotalFramesConsumed += ret;
 #ifdef DEBUG
-		printf("ret (%d) < numFrames (%ld)\n", ret, numFrames);
+		//printf("ret (%d) < numFrames (%ld)\n", ret, numFrames);
 #endif
 		remaining = numFrames-ret;
 		

@@ -35,11 +35,13 @@
     
     __weak IBOutlet JCDropDown *dropDownClip;
     __weak IBOutlet JCDropDown *dropDownCam;
+    __weak IBOutlet JCDropDown *dropDownTime;
     
     __weak IBOutlet UIView *viewPreview;
     __weak IBOutlet SQTimeline *collectionViewClips;
     
     BOOL setFocus;
+    BOOL rePitch;
 }
 
 @end
@@ -127,6 +129,10 @@
         [self import];
     }];
     
+    dropDownClip.actions = [@[import, trim, join, delete, duplicate] mutableCopy];
+    
+    //Time actions
+    
     JCDropDownAction *retimeSlow = [JCDropDownAction dropDownActionWithName:@"RETIME SLOW" action:^{
         [self retime:2.0];
     }];
@@ -135,7 +141,15 @@
         [self retime:0.5];
     }];
     
-    dropDownClip.actions = [@[import, retimeSlow, retimeFast, trim, join, delete, duplicate] mutableCopy];
+    JCDropDownAction *retimePitch = [JCDropDownAction dropDownActionWithName:@"REPITCH NO" action:nil];
+    
+    __weak JCDropDownAction *weakPitch = retimePitch;
+    [retimePitch setAction:^{
+        rePitch = !rePitch;
+        weakPitch.name = rePitch ? @"REPITCH YES" : @"REPITCH NO";
+    }];
+    
+    dropDownTime.actions = [@[retimePitch, retimeFast, retimeSlow] mutableCopy];
     
     
     //Cam actions
@@ -148,7 +162,11 @@
         setFocus = NO;
     }];
     
-    dropDownCam.actions = [@[setFocusAction, setExposureAction] mutableCopy];
+    JCDropDownAction *flipCamera = [JCDropDownAction dropDownActionWithName:@"FLIP" action:^{
+        [sequence flipCamera];
+    }];
+    
+    dropDownCam.actions = [@[setFocusAction, setExposureAction, flipCamera] mutableCopy];
 }
 
 #pragma SequenceDelegate
@@ -231,7 +249,7 @@
     MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     hud.labelText = [NSString stringWithFormat:@"RETIMING %.2f X %.1f", CMTimeGetSeconds(lastSelected.asset.duration), amout];
     
-    [SQClipTimeStretch stretchClip:lastSelected byAmount:amout completion:^(SRClip *stretchedClip) {
+    [SQClipTimeStretch stretchClip:lastSelected byAmount:amout rePitch:rePitch completion:^(SRClip *stretchedClip) {
         [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
         [sequence addClip:stretchedClip];
     }];

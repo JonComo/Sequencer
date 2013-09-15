@@ -259,9 +259,7 @@
     if (currentCameraPosition == AVCaptureDevicePositionBack)
     {
         currentCameraPosition = AVCaptureDevicePositionFront;
-    }
-    else
-    {
+    }else{
         currentCameraPosition = AVCaptureDevicePositionBack;
     }
     
@@ -269,8 +267,7 @@
     NSArray *devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
 	for (AVCaptureDevice *device in devices)
 	{
-		if ([device position] == currentCameraPosition)
-		{
+		if ([device position] == currentCameraPosition){
 			backFacingCamera = device;
 		}
 	}
@@ -282,15 +279,27 @@
         [_captureSession beginConfiguration];
         
         [_captureSession removeInput:videoInput];
+        
         if ([_captureSession canAddInput:newVideoInput])
         {
             [_captureSession addInput:newVideoInput];
             videoInput = newVideoInput;
+            
+            if(currentCameraPosition == AVCaptureDevicePositionBack)
+            {
+                
+                //[[captureVideoPreviewLayer connection] setVideoOrientation:AVCaptureVideoOrientationLandscapeRight];
+            }else{
+                
+                
+                //[[captureVideoPreviewLayer connection] setVideoOrientation:AVCaptureVideoOrientationLandscapeLeft];
+            }
         }
         else
         {
             [_captureSession addInput:videoInput];
         }
+        
         //captureSession.sessionPreset = oriPreset;
         [_captureSession commitConfiguration];
     }
@@ -337,7 +346,20 @@
     
     clipRecording = [[SRClip alloc] initWithURL:outputFileURL];
     
+    
     [[movieFileOutput connectionWithMediaType:AVMediaTypeVideo] setVideoOrientation:AVCaptureVideoOrientationLandscapeRight];
+    
+    if([videoInput device].position == AVCaptureDevicePositionBack)
+    {
+        if ([[movieFileOutput connectionWithMediaType:AVMediaTypeVideo] isVideoMirrored])
+            [[movieFileOutput connectionWithMediaType:AVMediaTypeVideo] setVideoMirrored:NO];
+        //[[movieFileOutput connectionWithMediaType:AVMediaTypeVideo] setVideoOrientation:AVCaptureVideoOrientationLandscapeRight];
+    }else{
+        if (![[movieFileOutput connectionWithMediaType:AVMediaTypeVideo] isVideoMirrored])
+            [[movieFileOutput connectionWithMediaType:AVMediaTypeVideo] setVideoMirrored:YES];
+        //[[movieFileOutput connectionWithMediaType:AVMediaTypeVideo] setVideoOrientation:AVCaptureVideoOrientationLandscapeLeft];
+    }
+    
     [movieFileOutput startRecordingToOutputFileURL:outputFileURL recordingDelegate:self];
 }
 

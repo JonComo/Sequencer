@@ -309,6 +309,7 @@
     {
         myAsset = [[AVURLAsset alloc] initWithURL:_videoUrl options:nil];
         self.imageGenerator = [AVAssetImageGenerator assetImageGeneratorWithAsset:myAsset];
+        self.imageGenerator.appliesPreferredTrackTransform = YES;
         self.imageGenerator.requestedTimeToleranceAfter = kCMTimeZero;
         self.imageGenerator.requestedTimeToleranceBefore = kCMTimeZero;
     }

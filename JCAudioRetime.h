@@ -19,6 +19,6 @@
 
 @property (readonly) EAFRead *reader;
 
--(void)retimeAudioAtURL:(NSURL *)originalURL withRatio:(float)ratio completion:(void(^)(NSURL *outURL))block;
+-(void)retimeAudioAtURL:(NSURL *)originalURL withRatio:(float)ratio rePitch:(BOOL)rePitch completion:(void(^)(NSURL *outURL))block;
 
 @end

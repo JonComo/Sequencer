@@ -17,14 +17,13 @@
 
 @implementation SQClipTimeStretch
 
-+ (void)stretchClip:(SRClip *)clip byAmount:(float)multiple completion:(StretchCompletion)block
++ (void)stretchClip:(SRClip *)clip byAmount:(float)multiple rePitch:(BOOL)rePitch completion:(StretchCompletion)block
 {
     [SQClipTimeStretch extractAudioFromClip:clip completion:^(NSURL *extractedAudioURL)
     {
         [JCAudioConverter convertAudioAtURL:extractedAudioURL compress:NO completion:^(NSURL *convertedURL)
         {
-            [[JCAudioRetime new] retimeAudioAtURL:convertedURL withRatio:multiple completion:^(NSURL *outURL)
-            {
+            [[JCAudioRetime new] retimeAudioAtURL:convertedURL withRatio:multiple rePitch:rePitch completion:^(NSURL *outURL) {
                 [self retimeClip:clip byAmount:multiple withAudio:outURL completion:block];
             }];
         }];

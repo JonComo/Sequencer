@@ -112,13 +112,11 @@
                     case AVAssetReaderStatusCompleted:
                         NSLog(@"Writer completed");
                         [writer endSessionAtSourceTime:asset.duration];
-                        [writer finishWriting];
-                        
-                        
-                        dispatch_async(dispatch_get_main_queue(), ^{
-                            if (block) block(outputURL);
-                        });
-                        
+                        [writer finishWritingWithCompletionHandler:^{
+                            dispatch_async(dispatch_get_main_queue(), ^{
+                                if (block) block(outputURL);
+                            });
+                        }];
                         break;
                 }
                 break;
