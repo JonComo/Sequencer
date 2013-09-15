@@ -6,11 +6,11 @@
 //  Copyright (c) 2013 Jon Como. All rights reserved.
 //
 
+#import <AVFoundation/AVFoundation.h>
+
 #import "SQClipTimeStretch.h"
 
 #import "SRClip.h"
-
-#import <AVFoundation/AVFoundation.h>
 
 @implementation SQClipTimeStretch
 
