@@ -17,6 +17,7 @@
     if (self = [super init]) {
         //init
         _URL = URL;
+        _asset = [AVURLAsset URLAssetWithURL:URL options:nil];
     }
     
     return self;
@@ -37,8 +38,7 @@
 
 -(void)thumbnailCompletion:(void (^)(UIImage *thumb))block
 {
-    AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:self.URL options:nil];
-    AVAssetImageGenerator *generator = [[AVAssetImageGenerator alloc] initWithAsset:asset];
+    AVAssetImageGenerator *generator = [[AVAssetImageGenerator alloc] initWithAsset:self.asset];
     //generator.appliesPreferredTrackTransform = YES;
     
     CMTime thumbTime = CMTimeMakeWithSeconds(0,30);

@@ -172,6 +172,8 @@
     [videoInput.device addObserver:self forKeyPath:@"adjustingExposure" options:NSKeyValueObservingOptionNew context:NULL];
     [videoInput.device addObserver:self forKeyPath:@"adjustingFocus" options:NSKeyValueObservingOptionNew context:NULL];
     
+    [self lock];
+    
     if([_captureSession canAddInput:videoInput])
     {
         [_captureSession addInput:videoInput];
@@ -834,26 +836,14 @@
 
 -(void)duplicateSelectedClips
 {
-    NSMutableArray *newClips = [NSMutableArray array];
-    
-    SRClip *clip;
-    
-    for (int i = 0; i<self.clips.count; i++)
-    {
-        clip = self.clips[i];
+    for (int i = 0; i<self.clips.count; i++){
+        SRClip *clip = self.clips[i];
         
         if (clip.isSelected){
             SRClip *newClip = [self duplicateClip:clip];
-            if (newClip)
-                [newClips addObject:newClip];
+            [self addClip:newClip];
         }
     }
-    
-    NSInteger insertIndex = [self.clips indexOfObject:clip];
-    
-    NSIndexSet *set = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(insertIndex, newClips.count)];
-    
-    [self.clips insertObjects:newClips atIndexes:set];
 }
 
 -(void)consolidateSelectedClipsCompletion:(void (^)(SRClip *))consolidateHandler
@@ -933,14 +923,14 @@
         if (!videoInput.device.isAdjustingExposure && hadSetExposurePoint)
         {
             hadSetExposurePoint = NO;
-            [self lockCurrentExposure];
+            [self performSelector:@selector(lockCurrentExposure) withObject:nil afterDelay:2];
         }
     }else if ([keyPath isEqualToString:@"adjustingFocus"])
     {
         if (!videoInput.device.isAdjustingFocus && hadSetFocusPoint)
         {
             hadSetFocusPoint = NO;
-            [self lockCurrentFocus];
+            [self performSelector:@selector(lockCurrentFocus) withObject:nil afterDelay:2];
         }
     }
 }

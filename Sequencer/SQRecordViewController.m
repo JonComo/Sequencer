@@ -24,12 +24,17 @@
 
 #import "SQTimeline.h"
 
+#import "JCDropDown.h"
+
 #define TIPRecord @"TAP TO SET FOCUS"
 #define TIPRecordStop @"TAP TO SET EXPOSURE"
 
 @interface SQRecordViewController () <SRSequencerDelegate, UICollectionViewDelegateFlowLayout>
 {
     SRSequencer *sequence;
+    
+    __weak IBOutlet JCDropDown *dropDownClip;
+    __weak IBOutlet JCDropDown *dropDownCam;
     
     __weak IBOutlet UIView *viewPreview;
     __weak IBOutlet SQTimeline *collectionViewClips;
@@ -99,6 +104,47 @@
 -(void)initInterface
 {
     viewPreview.layer.borderColor = [UIColor redColor].CGColor;
+    
+    //Clip actions
+    
+    JCDropDownAction *duplicate = [JCDropDownAction dropDownActionWithName:@"DUPLICATE" action:^{
+        [self duplicateSelected];
+    }];
+    
+    JCDropDownAction *delete = [JCDropDownAction dropDownActionWithName:@"DELETE" action:^{
+        [self deleteSelected];
+    }];
+    
+    JCDropDownAction *trim = [JCDropDownAction dropDownActionWithName:@"TRIM" action:^{
+        [self trim];
+    }];
+    
+    JCDropDownAction *join = [JCDropDownAction dropDownActionWithName:@"JOIN" action:^{
+        [self join];
+    }];
+    
+    JCDropDownAction *import = [JCDropDownAction dropDownActionWithName:@"IMPORT" action:^{
+        [self import];
+    }];
+    
+    JCDropDownAction *retime = [JCDropDownAction dropDownActionWithName:@"RETIME" action:^{
+        [self retime];
+    }];
+    
+    dropDownClip.actions = [@[duplicate, delete, trim, join, retime, import] mutableCopy];
+    
+    
+    //Cam actions
+    
+    JCDropDownAction *setFocusAction = [JCDropDownAction dropDownActionWithName:@"SET FOCUS" action:^{
+        setFocus = YES;
+    }];
+    
+    JCDropDownAction *setExposureAction = [JCDropDownAction dropDownActionWithName:@"SET EXPOSURE" action:^{
+        setFocus = NO;
+    }];
+    
+    dropDownCam.actions = [@[setFocusAction, setExposureAction] mutableCopy];
 }
 
 #pragma SequenceDelegate
@@ -115,21 +161,14 @@
 
 #pragma UIActions
 
-- (IBAction)lock:(UIButton *)sender
-{
-    [sequence lock];
-}
-
 -(void)viewTapped:(UITapGestureRecognizer *)tap
 {
     CGPoint viewLocation = [tap locationInView:tap.view];
     
-    if (!setFocus)
+    if (setFocus)
     {
-        setFocus = YES;
         [sequence setFocusPoint:viewLocation];
     }else{
-        setFocus = NO;
         [sequence setExposurePoint:viewLocation];
     }
 }
@@ -137,24 +176,6 @@
 - (IBAction)cancel:(id)sender
 {
     [self dismissViewControllerAnimated:YES completion:nil];
-}
-
-- (IBAction)edit:(id)sender
-{
-    SQTrimViewController *trimVC = [self.storyboard instantiateViewControllerWithIdentifier:@"trimVC"];
-    
-    SRClip *selectedClip;
-    
-    for (SRClip *clip in sequence.clips)
-    {
-        if (clip.isSelected) selectedClip = clip;
-    }
-    
-    trimVC.clip = selectedClip;
-    
-    trimVC.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-    
-    [self presentViewController:trimVC animated:YES completion:nil];
 }
 
 - (IBAction)record:(id)sender
@@ -187,20 +208,9 @@
     }];
 }
 
-- (IBAction)import:(id)sender {
-    
-    [sequence.captureSession stopRunning];
-    
-    [[JCActionSheetManager sharedManager] setDelegate:self];
-    [[JCActionSheetManager sharedManager] imagePickerInView:self.view onlyLibrary:YES completion:^(UIImage *image, NSURL *movieURL) {
-        
-        [sequence.captureSession startRunning];
-        
-        [sequence addClipFromURL:movieURL];
-    }];
-}
+//clip actions
 
-- (IBAction)timeStretch:(id)sender
+- (void)retime
 {
     for (SRClip *clip in sequence.clips)
     {
@@ -213,17 +223,61 @@
     }
 }
 
-- (IBAction)deleteSelected:(id)sender {
+- (void)import
+{
+    
+    [sequence.captureSession stopRunning];
+    
+    [[JCActionSheetManager sharedManager] setDelegate:self];
+    [[JCActionSheetManager sharedManager] imagePickerInView:self.view onlyLibrary:YES completion:^(UIImage *image, NSURL *movieURL) {
+        
+        [sequence.captureSession startRunning];
+        
+        [sequence addClipFromURL:movieURL];
+    }];
+}
+
+- (void)deleteSelected
+{
     [sequence deleteSelectedClips];
     [collectionViewClips reloadData];
 }
 
-- (IBAction)duplicateSelected:(id)sender {
+- (void)duplicateSelected
+{
     [sequence duplicateSelectedClips];
     [collectionViewClips reloadData];
 }
 
-- (IBAction)consolidateSelected:(id)sender {
+- (void)trim
+{
+    SQTrimViewController *trimVC = [self.storyboard instantiateViewControllerWithIdentifier:@"trimVC"];
+    
+    SRClip *selectedClip;
+    
+    for (SRClip *clip in sequence.clips){
+        if (clip.isSelected) selectedClip = clip;
+    }
+    
+    if (!selectedClip) return;
+    
+    trimVC.clip = selectedClip;
+    
+    trimVC.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+    
+    [self presentViewController:trimVC animated:YES completion:nil];
+}
+
+- (void)join
+{
+    SRClip *selectedClip;
+    
+    for (SRClip *clip in sequence.clips){
+        if (clip.isSelected) selectedClip = clip;
+    }
+    
+    if (!selectedClip) return;
+    
     MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     hud.labelText = @"Consolidating";
     

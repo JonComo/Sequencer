@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <AVFoundation/AVFoundation.h>
 
 #import "Macros.h"
 
@@ -14,6 +15,7 @@
 
 @property (nonatomic, strong) UIImage *thumbnail;
 @property (nonatomic, strong) NSURL *URL;
+@property (nonatomic, strong) AVURLAsset *asset;
 
 @property BOOL isSelected;
 

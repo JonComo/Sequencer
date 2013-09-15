@@ -45,6 +45,8 @@
 		86A271BC17D2BF5C0035A83F /* homeGraphic@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 86A271B817D2BF5C0035A83F /* homeGraphic@2x.png */; };
 		86A271C517D2D5220035A83F /* clipCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 86A271C417D2D5220035A83F /* clipCell.xib */; };
 		86A271C817D2D5710035A83F /* SQClipCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 86A271C717D2D5710035A83F /* SQClipCell.m */; };
+		86D43FF717E540810092C1D0 /* JCDropDown.m in Sources */ = {isa = PBXBuildFile; fileRef = 86D43FF617E540810092C1D0 /* JCDropDown.m */; };
+		86D43FFA17E540D30092C1D0 /* JCDropDownAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 86D43FF917E540D30092C1D0 /* JCDropDownAction.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -108,6 +110,10 @@
 		86A271C417D2D5220035A83F /* clipCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = clipCell.xib; sourceTree = "<group>"; };
 		86A271C617D2D5710035A83F /* SQClipCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQClipCell.h; sourceTree = "<group>"; };
 		86A271C717D2D5710035A83F /* SQClipCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SQClipCell.m; sourceTree = "<group>"; };
+		86D43FF517E540810092C1D0 /* JCDropDown.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JCDropDown.h; sourceTree = "<group>"; };
+		86D43FF617E540810092C1D0 /* JCDropDown.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JCDropDown.m; sourceTree = "<group>"; };
+		86D43FF817E540D30092C1D0 /* JCDropDownAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JCDropDownAction.h; sourceTree = "<group>"; };
+		86D43FF917E540D30092C1D0 /* JCDropDownAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JCDropDownAction.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -234,13 +240,6 @@
 				865865BC17CDE8C000B5D7BD /* SQHomeViewController.m */,
 				8639E36B17E408AE001ED2F8 /* SQTrimViewController.h */,
 				8639E36C17E408AE001ED2F8 /* SQTrimViewController.m */,
-				86A271C417D2D5220035A83F /* clipCell.xib */,
-				86A271C617D2D5710035A83F /* SQClipCell.h */,
-				86A271C717D2D5710035A83F /* SQClipCell.m */,
-				86544C2117E423AA00240E28 /* JCMoviePlayer.h */,
-				86544C2217E423AA00240E28 /* JCMoviePlayer.m */,
-				863F62C317E50B7400C52AC9 /* SQTimeline.h */,
-				863F62C417E50B7400C52AC9 /* SQTimeline.m */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -248,6 +247,17 @@
 		865865BF17CDE8CE00B5D7BD /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				86A271C417D2D5220035A83F /* clipCell.xib */,
+				86A271C617D2D5710035A83F /* SQClipCell.h */,
+				86A271C717D2D5710035A83F /* SQClipCell.m */,
+				86544C2117E423AA00240E28 /* JCMoviePlayer.h */,
+				86544C2217E423AA00240E28 /* JCMoviePlayer.m */,
+				863F62C317E50B7400C52AC9 /* SQTimeline.h */,
+				863F62C417E50B7400C52AC9 /* SQTimeline.m */,
+				86D43FF517E540810092C1D0 /* JCDropDown.h */,
+				86D43FF617E540810092C1D0 /* JCDropDown.m */,
+				86D43FF817E540D30092C1D0 /* JCDropDownAction.h */,
+				86D43FF917E540D30092C1D0 /* JCDropDownAction.m */,
 				865865A317CDCC2C00B5D7BD /* SRClip.h */,
 				865865A417CDCC2C00B5D7BD /* SRClip.m */,
 				865865A517CDCC2C00B5D7BD /* SRSequencer.h */,
@@ -367,6 +377,8 @@
 				8639E37A17E40D8E001ED2F8 /* SAVideoRangeSlider.m in Sources */,
 				86544C2317E423AA00240E28 /* JCMoviePlayer.m in Sources */,
 				863F62C517E50B7400C52AC9 /* SQTimeline.m in Sources */,
+				86D43FF717E540810092C1D0 /* JCDropDown.m in Sources */,
+				86D43FFA17E540D30092C1D0 /* JCDropDownAction.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
