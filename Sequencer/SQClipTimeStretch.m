@@ -120,7 +120,10 @@
     
     
     NSURL *exportURL = [[[SRClip uniqueFileURLInDirectory:DOCUMENTS] URLByDeletingPathExtension] URLByAppendingPathExtension:@"m4a"];
-
+    
+    if ([[NSFileManager defaultManager] fileExistsAtPath:[exportURL path]]){
+        [[NSFileManager defaultManager] removeItemAtURL:exportURL error:nil];
+    }
     
     AVAssetExportSession *exporter = [AVAssetExportSession exportSessionWithAsset:mutableComposition presetName:AVAssetExportPresetAppleM4A];
     

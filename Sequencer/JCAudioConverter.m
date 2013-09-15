@@ -46,8 +46,7 @@
     
     NSURL *outputURL = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent: compress ? @"audio.m4a" : @"audio.aif"]];
     
-    if ([[NSFileManager defaultManager] fileExistsAtPath:[outputURL path]])
-    {
+    if ([[NSFileManager defaultManager] fileExistsAtPath:[outputURL path]]){
         [[NSFileManager defaultManager] removeItemAtURL:outputURL error:nil];
     }
     

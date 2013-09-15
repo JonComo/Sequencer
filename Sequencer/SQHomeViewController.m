@@ -8,6 +8,8 @@
 
 #import "SQHomeViewController.h"
 
+#import "Macros.h"
+
 @interface SQHomeViewController ()
 
 @end
@@ -20,15 +22,28 @@
 	// Do any additional setup after loading the view.
 }
 
+-(void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    [self clearFilesAtPath:NSTemporaryDirectory()];
+    [self clearFilesAtPath:DOCUMENTS];
+}
+
+-(void)clearFilesAtPath:(NSString *)path
+{
+    NSArray *files = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:path error:nil];
+    for (NSString *filename in files)
+    {
+        NSLog(@"FILE: %@", filename);
+        [[NSFileManager defaultManager] removeItemAtPath:[NSString stringWithFormat:@"%@/%@", path, filename] error:nil];
+    }
+}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
-}
-
--(NSUInteger)supportedInterfaceOrientations
-{
-    return UIInterfaceOrientationMaskPortrait;
 }
 
 @end

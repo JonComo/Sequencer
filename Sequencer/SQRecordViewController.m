@@ -135,7 +135,7 @@
         [self retime:0.5];
     }];
     
-    dropDownClip.actions = [@[delete, import, retimeSlow, retimeFast, trim, join, duplicate] mutableCopy];
+    dropDownClip.actions = [@[import, retimeSlow, retimeFast, trim, join, delete, duplicate] mutableCopy];
     
     
     //Cam actions
