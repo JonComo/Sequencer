@@ -216,7 +216,7 @@
     {
         if (clip.isSelected)
         {
-            [SQClipTimeStretch stretchClip:clip byAmount:.3 completion:^(SRClip *stretchedClip) {
+            [SQClipTimeStretch stretchClip:clip byAmount:3 completion:^(SRClip *stretchedClip) {
                 [sequence addClip:stretchedClip];
             }];
         }

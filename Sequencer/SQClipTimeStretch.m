@@ -10,18 +10,36 @@
 
 #import "SQClipTimeStretch.h"
 
+#import "JCAudioRetime.h"
+#import "JCAudioConverter.h"
+
 #import "SRClip.h"
 
 @implementation SQClipTimeStretch
 
 + (void)stretchClip:(SRClip *)clip byAmount:(float)multiple completion:(StretchCompletion)block
 {
+    [SQClipTimeStretch extractAudioFromClip:clip completion:^(NSURL *extractedAudioURL)
+    {
+        [JCAudioConverter convertAudioAtURL:extractedAudioURL compress:NO completion:^(NSURL *convertedURL)
+        {
+            [[JCAudioRetime new] retimeAudioAtURL:convertedURL withRatio:multiple completion:^(NSURL *outURL)
+            {
+                [self retimeClip:clip byAmount:multiple withAudio:outURL completion:block];
+            }];
+        }];
+    }];
+}
+
++(void)retimeClip:(SRClip *)clip byAmount:(float)multiple withAudio:(NSURL *)audioURL completion:(StretchCompletion)block
+{
     AVURLAsset *asset = [AVURLAsset assetWithURL:clip.URL];
+    AVURLAsset *assetAudio = [AVURLAsset assetWithURL:audioURL];
     
     AVMutableComposition *mutableComposition = [AVMutableComposition composition];
     
     AVMutableCompositionTrack *mutableCompositionVideoTrack = [mutableComposition addMutableTrackWithMediaType:AVMediaTypeVideo preferredTrackID:kCMPersistentTrackID_Invalid];
-//    AVMutableCompositionTrack *mutableCompositionAudioTrack = [mutableComposition addMutableTrackWithMediaType:AVMediaTypeAudio preferredTrackID:kCMPersistentTrackID_Invalid];
+    AVMutableCompositionTrack *mutableCompositionAudioTrack = [mutableComposition addMutableTrackWithMediaType:AVMediaTypeAudio preferredTrackID:kCMPersistentTrackID_Invalid];
     
     //Add video
     AVAssetTrack *videoAssetTrack = [[asset tracksWithMediaType:AVMediaTypeVideo] objectAtIndex:0];
@@ -29,45 +47,13 @@
     [mutableCompositionVideoTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero,videoAssetTrack.timeRange.duration) ofTrack:videoAssetTrack atTime:kCMTimeZero error:nil];
     
     //Add audio
-//    AVAssetTrack *audioTrack = [[asset tracksWithMediaType:AVMediaTypeAudio] objectAtIndex:0];
-//    
-//    [mutableCompositionAudioTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, asset.duration) ofTrack:audioTrack atTime:kCMTimeZero error:nil];
+    AVAssetTrack *audioTrack = [[assetAudio tracksWithMediaType:AVMediaTypeAudio] objectAtIndex:0];
+    [mutableCompositionAudioTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, assetAudio.duration) ofTrack:audioTrack atTime:kCMTimeZero error:nil];
     
     //double wholeDuration = CMTimeGetSeconds([asset duration]);
     double doubleDuration = CMTimeGetSeconds([asset duration]) * multiple;
     
     [mutableComposition scaleTimeRange:mutableCompositionVideoTrack.timeRange toDuration:CMTimeMakeWithSeconds(doubleDuration, 600.0)];
-    
-    //Audio
-    
-    
-    //NSURL *audioURL = [[[SRClip uniqueFileURLInDirectory:DOCUMENTS] URLByDeletingPathExtension] URLByAppendingPathExtension:@"m4a"];
-//    
-//    AVAssetReader *audioReader = [AVAssetReader assetReaderWithAsset:asset error:nil];
-//    
-//    AVAssetReaderTrackOutput *audioOutput = [[AVAssetReaderTrackOutput alloc] initWithTrack:audioTrack outputSettings:nil];
-//    
-//    [audioReader addOutput:audioOutput];
-//    
-//    CMItemCount countsample;
-//    CMSampleBufferRef nextBuffer;
-//    NSMutableData *samples = [NSMutableData data];
-//    
-//    [audioReader startReading];
-//    
-//    while(countsample)
-//    {
-//        nextBuffer = [audioOutput copyNextSampleBuffer];
-//        if(nextBuffer)
-//        {
-//            countsample = CMSampleBufferGetNumSamples(nextBuffer);
-//            [samples appendBytes:nextBuffer length:countsample];
-//        }else{
-//            [audioReader cancelReading];
-//        }
-//    }
-    
-    
     
     NSURL *exportURL = [SRClip uniqueFileURLInDirectory:DOCUMENTS];
     
@@ -106,65 +92,63 @@
     }];
 }
 
-/*
-- (void)modifySpeedOf:(CFURLRef)inputURL byFactor:(float)factor andWriteTo:(CFURLRef)outputURL {
++(void)extractAudioFromClip:(SRClip *)clip completion:(void(^)(NSURL *extractedAudioURL))block
+{
+    AVURLAsset *asset = [AVURLAsset assetWithURL:clip.URL];
     
-    ExtAudioFileRef inputFile = NULL;
-    ExtAudioFileRef outputFile = NULL;
+    AVMutableComposition *mutableComposition = [AVMutableComposition composition];
     
-    AudioStreamBasicDescription destFormat;
+    //AVMutableCompositionTrack *mutableCompositionVideoTrack = [mutableComposition addMutableTrackWithMediaType:AVMediaTypeVideo preferredTrackID:kCMPersistentTrackID_Invalid];
+    AVMutableCompositionTrack *mutableCompositionAudioTrack = [mutableComposition addMutableTrackWithMediaType:AVMediaTypeAudio preferredTrackID:kCMPersistentTrackID_Invalid];
     
-    destFormat.mFormatID = kAudioFormatLinearPCM;
-    destFormat.mFormatFlags = kAudioFormatFlagsCanonical;
-    destFormat.mSampleRate = 44100 * factor;
-    destFormat.mBytesPerPacket = 2;
-    destFormat.mFramesPerPacket = 1;
-    destFormat.mBytesPerFrame = 2;
-    destFormat.mChannelsPerFrame = 1;
-    destFormat.mBitsPerChannel = 16;
-    destFormat.mReserved = 0;
+    //Add video
+    //AVAssetTrack *videoAssetTrack = [[asset tracksWithMediaType:AVMediaTypeVideo] objectAtIndex:0];
     
-    ExtAudioFileCreateWithURL(outputURL, kAudioFileCAFType,
-                              &destFormat, NULL, kAudioFileFlags_EraseFile, &outputFile);
+    //[mutableCompositionVideoTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero,videoAssetTrack.timeRange.duration) ofTrack:videoAssetTrack atTime:kCMTimeZero error:nil];
     
-    ExtAudioFileOpenURL(inputURL, &inputFile);
+    //Add audio
+    AVAssetTrack *audioTrack = [[asset tracksWithMediaType:AVMediaTypeAudio] objectAtIndex:0];
     
-    //find out how many frames is this file long
-    SInt64 length = 0;
-    UInt32 dataSize2 = (UInt32)sizeof(length);
-    ExtAudioFileGetProperty(inputFile,
-                            kExtAudioFileProperty_FileLengthFrames, &dataSize2, &length);
+    [mutableCompositionAudioTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, asset.duration) ofTrack:audioTrack atTime:kCMTimeZero error:nil];
     
-    SInt16 *buffer = (SInt16*)malloc(kBufferSize * sizeof(SInt16));
+    //double wholeDuration = CMTimeGetSeconds([asset duration]);
+    //double doubleDuration = CMTimeGetSeconds([asset duration]) * multiple;
     
-    UInt32 totalFramecount = 0;
+    //[mutableComposition scaleTimeRange:mutableCompositionVideoTrack.timeRange toDuration:CMTimeMakeWithSeconds(doubleDuration, 600.0)];
     
-    AudioBufferList bufferList;
-    bufferList.mNumberBuffers = 1;
-    bufferList.mBuffers[0].mNumberChannels = 1;
-    bufferList.mBuffers[0].mData = buffer; // pointer to buffer of audio data
-    bufferList.mBuffers[0].mDataByteSize = kBufferSize *
-    sizeof(SInt16); // number of bytes in the buffer
+    //Audio
     
-    while(true) {
+    
+    NSURL *exportURL = [[[SRClip uniqueFileURLInDirectory:DOCUMENTS] URLByDeletingPathExtension] URLByAppendingPathExtension:@"m4a"];
+
+    
+    AVAssetExportSession *exporter = [AVAssetExportSession exportSessionWithAsset:mutableComposition presetName:AVAssetExportPresetAppleM4A];
+    
+    NSParameterAssert(exporter != nil);
+    
+    exporter.outputFileType = AVFileTypeAppleM4A;
+    exporter.outputURL = exportURL;
+    
+    [exporter exportAsynchronouslyWithCompletionHandler:^{
         
-        UInt32 frameCount = kBufferSize * sizeof(SInt16) / 2;
-        // Read a chunk of input
-        ExtAudioFileRead(inputFile, &frameCount, &bufferList);
-        totalFramecount += frameCount;
-        
-        if (!frameCount || totalFramecount >= length) {
-            //termination condition
-            break;
+        switch([exporter status])
+        {
+            case AVAssetExportSessionStatusFailed:
+            {
+                if (block) block(nil);
+            } break;
+            case AVAssetExportSessionStatusCancelled:
+            case AVAssetExportSessionStatusCompleted:
+            {
+                if (block) block(exportURL);
+            } break;
+            default:
+            {
+                if (block) block(nil);
+            } break;
         }
-        ExtAudioFileWrite(outputFile, frameCount, &bufferList);
-    }
-    
-    free(buffer);
-    
-    ExtAudioFileDispose(inputFile);
-    ExtAudioFileDispose(outputFile);
-    
+        
+    }];
 }
-*/
+
 @end

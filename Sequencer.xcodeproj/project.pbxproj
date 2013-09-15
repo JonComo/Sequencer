@@ -45,6 +45,23 @@
 		86A271BC17D2BF5C0035A83F /* homeGraphic@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 86A271B817D2BF5C0035A83F /* homeGraphic@2x.png */; };
 		86A271C517D2D5220035A83F /* clipCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 86A271C417D2D5220035A83F /* clipCell.xib */; };
 		86A271C817D2D5710035A83F /* SQClipCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 86A271C717D2D5710035A83F /* SQClipCell.m */; };
+		86A6016717E59B3800666168 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86A6016617E59B3800666168 /* Accelerate.framework */; };
+		86A6016917E59B5400666168 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86A6016817E59B5400666168 /* AudioToolbox.framework */; };
+		86A6018717E59BA100666168 /*  DiracAudioPlayer ReadMe.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 86A6016C17E59BA100666168 /*  DiracAudioPlayer ReadMe.rtf */; };
+		86A6018817E59BA100666168 /* DiracAudioPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 86A6016E17E59BA100666168 /* DiracAudioPlayer.mm */; };
+		86A6018917E59BA100666168 /* DiracAudioPlayerBase.mm in Sources */ = {isa = PBXBuildFile; fileRef = 86A6017017E59BA100666168 /* DiracAudioPlayerBase.mm */; };
+		86A6018A17E59BA100666168 /* DiracFxAudioPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 86A6017217E59BA100666168 /* DiracFxAudioPlayer.mm */; };
+		86A6018B17E59BA100666168 /* EAFRead.mm in Sources */ = {isa = PBXBuildFile; fileRef = 86A6017517E59BA100666168 /* EAFRead.mm */; };
+		86A6018C17E59BA100666168 /* EAFWrite.mm in Sources */ = {isa = PBXBuildFile; fileRef = 86A6017717E59BA100666168 /* EAFWrite.mm */; };
+		86A6018D17E59BA100666168 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 86A6017917E59BA100666168 /* MainWindow.xib */; };
+		86A6018E17E59BA100666168 /* song.aif in Resources */ = {isa = PBXBuildFile; fileRef = 86A6017A17E59BA100666168 /* song.aif */; };
+		86A6018F17E59BA100666168 /* song2.caf in Resources */ = {isa = PBXBuildFile; fileRef = 86A6017B17E59BA100666168 /* song2.caf */; };
+		86A6019017E59BA100666168 /* test.aif in Resources */ = {isa = PBXBuildFile; fileRef = 86A6017C17E59BA100666168 /* test.aif */; };
+		86A6019117E59BA100666168 /* voice.aif in Resources */ = {isa = PBXBuildFile; fileRef = 86A6017D17E59BA100666168 /* voice.aif */; };
+		86A6019217E59BA100666168 /* libDIRAC_iOS-fat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 86A6018017E59BA100666168 /* libDIRAC_iOS-fat.a */; };
+		86A6019417E59BA100666168 /* Utilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = 86A6018417E59BA100666168 /* Utilities.mm */; };
+		86A6019517E59BA100666168 /* JCAudioRetime.mm in Sources */ = {isa = PBXBuildFile; fileRef = 86A6018617E59BA100666168 /* JCAudioRetime.mm */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		86A6019B17E59F9C00666168 /* JCAudioConverter.m in Sources */ = {isa = PBXBuildFile; fileRef = 86A6019A17E59F9C00666168 /* JCAudioConverter.m */; };
 		86D43FF717E540810092C1D0 /* JCDropDown.m in Sources */ = {isa = PBXBuildFile; fileRef = 86D43FF617E540810092C1D0 /* JCDropDown.m */; };
 		86D43FFA17E540D30092C1D0 /* JCDropDownAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 86D43FF917E540D30092C1D0 /* JCDropDownAction.m */; };
 /* End PBXBuildFile section */
@@ -110,6 +127,33 @@
 		86A271C417D2D5220035A83F /* clipCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = clipCell.xib; sourceTree = "<group>"; };
 		86A271C617D2D5710035A83F /* SQClipCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQClipCell.h; sourceTree = "<group>"; };
 		86A271C717D2D5710035A83F /* SQClipCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SQClipCell.m; sourceTree = "<group>"; };
+		86A6016617E59B3800666168 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
+		86A6016817E59B5400666168 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		86A6016C17E59BA100666168 /*  DiracAudioPlayer ReadMe.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; path = " DiracAudioPlayer ReadMe.rtf"; sourceTree = "<group>"; };
+		86A6016D17E59BA100666168 /* DiracAudioPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DiracAudioPlayer.h; sourceTree = "<group>"; };
+		86A6016E17E59BA100666168 /* DiracAudioPlayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DiracAudioPlayer.mm; sourceTree = "<group>"; };
+		86A6016F17E59BA100666168 /* DiracAudioPlayerBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DiracAudioPlayerBase.h; sourceTree = "<group>"; };
+		86A6017017E59BA100666168 /* DiracAudioPlayerBase.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DiracAudioPlayerBase.mm; sourceTree = "<group>"; };
+		86A6017117E59BA100666168 /* DiracFxAudioPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DiracFxAudioPlayer.h; sourceTree = "<group>"; };
+		86A6017217E59BA100666168 /* DiracFxAudioPlayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DiracFxAudioPlayer.mm; sourceTree = "<group>"; };
+		86A6017417E59BA100666168 /* EAFRead.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EAFRead.h; sourceTree = "<group>"; };
+		86A6017517E59BA100666168 /* EAFRead.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EAFRead.mm; sourceTree = "<group>"; };
+		86A6017617E59BA100666168 /* EAFWrite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EAFWrite.h; sourceTree = "<group>"; };
+		86A6017717E59BA100666168 /* EAFWrite.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EAFWrite.mm; sourceTree = "<group>"; };
+		86A6017917E59BA100666168 /* MainWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainWindow.xib; sourceTree = "<group>"; };
+		86A6017A17E59BA100666168 /* song.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = song.aif; sourceTree = "<group>"; };
+		86A6017B17E59BA100666168 /* song2.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = song2.caf; sourceTree = "<group>"; };
+		86A6017C17E59BA100666168 /* test.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = test.aif; sourceTree = "<group>"; };
+		86A6017D17E59BA100666168 /* voice.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = voice.aif; sourceTree = "<group>"; };
+		86A6017F17E59BA100666168 /* Dirac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Dirac.h; sourceTree = "<group>"; };
+		86A6018017E59BA100666168 /* libDIRAC_iOS-fat.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libDIRAC_iOS-fat.a"; sourceTree = "<group>"; };
+		86A6018117E59BA100666168 /* libDIRAC_iOS4-fat.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libDIRAC_iOS4-fat.a"; sourceTree = "<group>"; };
+		86A6018317E59BA100666168 /* Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Utilities.h; sourceTree = "<group>"; };
+		86A6018417E59BA100666168 /* Utilities.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Utilities.mm; sourceTree = "<group>"; };
+		86A6018517E59BA100666168 /* JCAudioRetime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JCAudioRetime.h; sourceTree = "<group>"; };
+		86A6018617E59BA100666168 /* JCAudioRetime.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = JCAudioRetime.mm; sourceTree = "<group>"; };
+		86A6019917E59F9C00666168 /* JCAudioConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JCAudioConverter.h; path = Sequencer/JCAudioConverter.h; sourceTree = "<group>"; };
+		86A6019A17E59F9C00666168 /* JCAudioConverter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = JCAudioConverter.m; path = Sequencer/JCAudioConverter.m; sourceTree = "<group>"; };
 		86D43FF517E540810092C1D0 /* JCDropDown.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JCDropDown.h; sourceTree = "<group>"; };
 		86D43FF617E540810092C1D0 /* JCDropDown.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JCDropDown.m; sourceTree = "<group>"; };
 		86D43FF817E540D30092C1D0 /* JCDropDownAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JCDropDownAction.h; sourceTree = "<group>"; };
@@ -121,6 +165,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				86A6016917E59B5400666168 /* AudioToolbox.framework in Frameworks */,
+				86A6016717E59B3800666168 /* Accelerate.framework in Frameworks */,
 				865865CA17CDF6DA00B5D7BD /* MobileCoreServices.framework in Frameworks */,
 				865865C117CDE99B00B5D7BD /* MediaPlayer.framework in Frameworks */,
 				865865BA17CDD09300B5D7BD /* QuartzCore.framework in Frameworks */,
@@ -131,6 +177,7 @@
 				8658657D17CDCB6A00B5D7BD /* UIKit.framework in Frameworks */,
 				8658657F17CDCB6A00B5D7BD /* Foundation.framework in Frameworks */,
 				8658658117CDCB6A00B5D7BD /* CoreGraphics.framework in Frameworks */,
+				86A6019217E59BA100666168 /* libDIRAC_iOS-fat.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -174,12 +221,17 @@
 		8658657B17CDCB6A00B5D7BD /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				86A6019917E59F9C00666168 /* JCAudioConverter.h */,
+				86A6019A17E59F9C00666168 /* JCAudioConverter.m */,
+				86A6019C17E5A02F00666168 /* Audio Retime */,
 				8639E36E17E40D8E001ED2F8 /* SAVideoRangeSlider */,
 				865865C617CDF63F00B5D7BD /* JCActionSheetManager.m */,
 				865865C717CDF63F00B5D7BD /* JCActionSheetManager.h */,
 				865865C517CDF3A400B5D7BD /* MBProgress */,
 				865865B417CDD01300B5D7BD /* Macros.h */,
 				8658659F17CDCB9200B5D7BD /* LXReorderableCollectionViewFlowLayout */,
+				86A6016817E59B5400666168 /* AudioToolbox.framework */,
+				86A6016617E59B3800666168 /* Accelerate.framework */,
 				865865C917CDF6DA00B5D7BD /* MobileCoreServices.framework */,
 				865865C017CDE99B00B5D7BD /* MediaPlayer.framework */,
 				865865B917CDD09300B5D7BD /* QuartzCore.framework */,
@@ -287,6 +339,84 @@
 			path = media;
 			sourceTree = "<group>";
 		};
+		86A6016A17E59BA100666168 /* Common Files */ = {
+			isa = PBXGroup;
+			children = (
+				86A6016B17E59BA100666168 /* DiracAudioPlayer */,
+				86A6017317E59BA100666168 /* ExtAudioFile */,
+				86A6017817E59BA100666168 /* res */,
+				86A6017E17E59BA100666168 /* src */,
+				86A6018217E59BA100666168 /* util */,
+			);
+			path = "Common Files";
+			sourceTree = "<group>";
+		};
+		86A6016B17E59BA100666168 /* DiracAudioPlayer */ = {
+			isa = PBXGroup;
+			children = (
+				86A6016C17E59BA100666168 /*  DiracAudioPlayer ReadMe.rtf */,
+				86A6016D17E59BA100666168 /* DiracAudioPlayer.h */,
+				86A6016E17E59BA100666168 /* DiracAudioPlayer.mm */,
+				86A6016F17E59BA100666168 /* DiracAudioPlayerBase.h */,
+				86A6017017E59BA100666168 /* DiracAudioPlayerBase.mm */,
+				86A6017117E59BA100666168 /* DiracFxAudioPlayer.h */,
+				86A6017217E59BA100666168 /* DiracFxAudioPlayer.mm */,
+			);
+			path = DiracAudioPlayer;
+			sourceTree = "<group>";
+		};
+		86A6017317E59BA100666168 /* ExtAudioFile */ = {
+			isa = PBXGroup;
+			children = (
+				86A6017417E59BA100666168 /* EAFRead.h */,
+				86A6017517E59BA100666168 /* EAFRead.mm */,
+				86A6017617E59BA100666168 /* EAFWrite.h */,
+				86A6017717E59BA100666168 /* EAFWrite.mm */,
+			);
+			path = ExtAudioFile;
+			sourceTree = "<group>";
+		};
+		86A6017817E59BA100666168 /* res */ = {
+			isa = PBXGroup;
+			children = (
+				86A6017917E59BA100666168 /* MainWindow.xib */,
+				86A6017A17E59BA100666168 /* song.aif */,
+				86A6017B17E59BA100666168 /* song2.caf */,
+				86A6017C17E59BA100666168 /* test.aif */,
+				86A6017D17E59BA100666168 /* voice.aif */,
+			);
+			path = res;
+			sourceTree = "<group>";
+		};
+		86A6017E17E59BA100666168 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				86A6017F17E59BA100666168 /* Dirac.h */,
+				86A6018017E59BA100666168 /* libDIRAC_iOS-fat.a */,
+				86A6018117E59BA100666168 /* libDIRAC_iOS4-fat.a */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
+		86A6018217E59BA100666168 /* util */ = {
+			isa = PBXGroup;
+			children = (
+				86A6018317E59BA100666168 /* Utilities.h */,
+				86A6018417E59BA100666168 /* Utilities.mm */,
+			);
+			path = util;
+			sourceTree = "<group>";
+		};
+		86A6019C17E5A02F00666168 /* Audio Retime */ = {
+			isa = PBXGroup;
+			children = (
+				86A6016A17E59BA100666168 /* Common Files */,
+				86A6018517E59BA100666168 /* JCAudioRetime.h */,
+				86A6018617E59BA100666168 /* JCAudioRetime.mm */,
+			);
+			name = "Audio Retime";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -348,6 +478,12 @@
 				86A271C517D2D5220035A83F /* clipCell.xib in Resources */,
 				8601067617DF7DE5002AEFC2 /* icon@2x.png in Resources */,
 				8601067817DF7DE7002AEFC2 /* icon.png in Resources */,
+				86A6018717E59BA100666168 /*  DiracAudioPlayer ReadMe.rtf in Resources */,
+				86A6018D17E59BA100666168 /* MainWindow.xib in Resources */,
+				86A6018E17E59BA100666168 /* song.aif in Resources */,
+				86A6018F17E59BA100666168 /* song2.caf in Resources */,
+				86A6019017E59BA100666168 /* test.aif in Resources */,
+				86A6019117E59BA100666168 /* voice.aif in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -379,6 +515,14 @@
 				863F62C517E50B7400C52AC9 /* SQTimeline.m in Sources */,
 				86D43FF717E540810092C1D0 /* JCDropDown.m in Sources */,
 				86D43FFA17E540D30092C1D0 /* JCDropDownAction.m in Sources */,
+				86A6018817E59BA100666168 /* DiracAudioPlayer.mm in Sources */,
+				86A6018917E59BA100666168 /* DiracAudioPlayerBase.mm in Sources */,
+				86A6018A17E59BA100666168 /* DiracFxAudioPlayer.mm in Sources */,
+				86A6018B17E59BA100666168 /* EAFRead.mm in Sources */,
+				86A6018C17E59BA100666168 /* EAFWrite.mm in Sources */,
+				86A6019417E59BA100666168 /* Utilities.mm in Sources */,
+				86A6019517E59BA100666168 /* JCAudioRetime.mm in Sources */,
+				86A6019B17E59F9C00666168 /* JCAudioConverter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -467,6 +611,11 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Sequencer/Sequencer-Prefix.pch";
 				INFOPLIST_FILE = "Sequencer/Sequencer-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/JCAudioRetime/JCAudioRetime/Common Files/src\"",
+					"\"$(SRCROOT)/Common Files/src\"",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "9E063390-D86C-45C6-B495-9FE7C06CF185";
 				WRAPPER_EXTENSION = app;
@@ -480,6 +629,11 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Sequencer/Sequencer-Prefix.pch";
 				INFOPLIST_FILE = "Sequencer/Sequencer-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/JCAudioRetime/JCAudioRetime/Common Files/src\"",
+					"\"$(SRCROOT)/Common Files/src\"",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "9E063390-D86C-45C6-B495-9FE7C06CF185";
 				WRAPPER_EXTENSION = app;
