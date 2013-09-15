@@ -127,11 +127,15 @@
         [self import];
     }];
     
-    JCDropDownAction *retime = [JCDropDownAction dropDownActionWithName:@"RETIME" action:^{
-        [self retime];
+    JCDropDownAction *retimeSlow = [JCDropDownAction dropDownActionWithName:@"RETIME SLOW" action:^{
+        [self retime:2.0];
     }];
     
-    dropDownClip.actions = [@[duplicate, delete, trim, join, retime, import] mutableCopy];
+    JCDropDownAction *retimeFast = [JCDropDownAction dropDownActionWithName:@"RETIME FAST" action:^{
+        [self retime:0.5];
+    }];
+    
+    dropDownClip.actions = [@[delete, import, retimeSlow, retimeFast, trim, join, duplicate] mutableCopy];
     
     
     //Cam actions
@@ -195,7 +199,7 @@
 - (IBAction)done:(id)sender
 {
     MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    hud.labelText = @"Rendering";
+    hud.labelText = @"RENDERING";
     
     NSURL *outputURL = [SRClip uniqueFileURLInDirectory:DOCUMENTS];
     
@@ -210,17 +214,27 @@
 
 //clip actions
 
-- (void)retime
+- (void)retime:(float)amout
 {
+    SRClip *lastSelected;
+    
     for (SRClip *clip in sequence.clips)
     {
         if (clip.isSelected)
         {
-            [SQClipTimeStretch stretchClip:clip byAmount:3 completion:^(SRClip *stretchedClip) {
-                [sequence addClip:stretchedClip];
-            }];
+            lastSelected = clip;
         }
     }
+    
+    if (!lastSelected) return;
+    
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    hud.labelText = [NSString stringWithFormat:@"RETIMING %.2f X %.1f", CMTimeGetSeconds(lastSelected.asset.duration), amout];
+    
+    [SQClipTimeStretch stretchClip:lastSelected byAmount:amout completion:^(SRClip *stretchedClip) {
+        [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+        [sequence addClip:stretchedClip];
+    }];
 }
 
 - (void)import
@@ -279,7 +293,7 @@
     if (!selectedClip) return;
     
     MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    hud.labelText = @"Consolidating";
+    hud.labelText = @"CONSOLIDATING";
     
     [sequence consolidateSelectedClipsCompletion:^(SRClip *consolidated) {
         
@@ -300,7 +314,7 @@
     dispatch_async(dispatch_get_main_queue(), ^{
         MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
         [hud setMode:MBProgressHUDModeText];
-        hud.labelText = @"Saved to Photo Library";
+        hud.labelText = @"SAVED TO PHOTO LIBRARY";
         
         [hud hide:YES afterDelay:2];
     });
