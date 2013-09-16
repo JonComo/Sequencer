@@ -791,8 +791,8 @@
     collectionViewClips.dataSource = self;
     
     LXReorderableCollectionViewFlowLayout *layout = [[LXReorderableCollectionViewFlowLayout alloc] init];
-    [layout setMinimumInteritemSpacing:0];
-    [layout setMinimumLineSpacing:0];
+    [layout setMinimumInteritemSpacing:10];
+    [layout setMinimumLineSpacing:10];
     layout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
     [collectionViewClips setCollectionViewLayout:layout];
     

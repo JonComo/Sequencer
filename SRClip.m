@@ -76,7 +76,9 @@
 
 -(CGSize)timelineSize
 {
-    return CGSizeMake(80 + CMTimeGetSeconds(self.asset.duration) * 40, 80);
+    CGSize defaultSize = CGSizeMake(60, 60);
+    
+    return CGSizeMake(defaultSize.width*2 + ceil(CMTimeGetSeconds(self.asset.duration)) * defaultSize.width/40, defaultSize.height);
 }
 
 -(void)generateThumbnailsCompletion:(void(^)(NSError *error))block
@@ -97,19 +99,24 @@
     imageGenerator.maximumSize = CGSizeMake(picWidth, picWidth);
     
     //Generate rest of the images
-    float durationSeconds = CMTimeGetSeconds([self.asset duration]);
+    float durationSeconds = CMTimeGetSeconds(self.asset.duration);
     
-    int numberOfPics = size.width / picWidth;
+    int numberToGenerate = ceil(size.width / picWidth);
+    numberToGenerate -= 2; //account for the start and end thumb
     
     NSMutableArray *times = [NSMutableArray array];
     
-    for (int i = 0; i<numberOfPics; i++)
+    [times addObject:[NSValue valueWithCMTime:kCMTimeZero]]; //first image
+    
+    for (int i = 0; i<numberToGenerate; i++)
     {
         int timeForThumb = i * picWidth;
         CMTime timeFrame = CMTimeMakeWithSeconds(durationSeconds * timeForThumb / size.width, 600);
         
         [times addObject:[NSValue valueWithCMTime:timeFrame]];
     }
+    
+    [times addObject:[NSValue valueWithCMTime:self.asset.duration]]; //last image
     
     [imageGenerator generateCGImagesAsynchronouslyForTimes:times completionHandler:^(CMTime requestedTime, CGImageRef image, CMTime actualTime, AVAssetImageGeneratorResult result, NSError *error)
      {
@@ -121,7 +128,7 @@
                  
                  [self.thumbnails addObject:thumb];
                  
-                 if (self.thumbnails.count == numberOfPics)
+                 if (self.thumbnails.count == times.count)
                      if (block) block(nil);
                  
              });
