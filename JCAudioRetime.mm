@@ -79,16 +79,16 @@ long myReadData(float **chdata, long numFrames, void *userData)
         // DIRAC parameters
         // Here we set our time an pitch manipulation values
         
-        //float repitchValue = [JCMath mapValue:ratio range:CGPointMake(0.5, 2) range:CGPointMake(-12, 12)];
+        float repitchValue = [JCMath mapValue:ratio range:CGPointMake(0.5, 2) range:CGPointMake(-12, 12)];
         
         float time      = ratio;                 // 115% length
-        float pitch     = pow(2.0, 0.0/12.0);     // pitch shift (0 semitones)
+        float pitch     = pow(2.0, (rePitch ? repitchValue : 0.0)/12.0);     // pitch shift (0 semitones)
         float formant   = pow(2.0, 0.0/12.0);    // formant shift (0 semitones). Note formants are reciprocal to pitch in natural transposing
         
         // First we set up DIRAC to process numChannels of audio at 44.1kHz
         // N.b.: The fastest option is kDiracLambdaPreview / kDiracQualityPreview, best is kDiracLambda3, kDiracQualityBest
         // The probably best *default* option for general purpose signals is kDiracLambda3 / kDiracQualityGood
-        void *dirac = DiracCreate(kDiracLambdaPreview, kDiracQualityPreview, numChannels, sampleRate, &myReadData, (void*)self);
+        void *dirac = DiracCreate(kDiracLambda3, kDiracQualityGood, numChannels, sampleRate, &myReadData, (void*)self);
         //	void *dirac = DiracCreate(kDiracLambda3, kDiracQualityBest, numChannels, sampleRate, &myReadData);
         if (!dirac) {
             printf("!! ERROR !!\n\n\tCould not create DIRAC instance\n\tCheck number of channels and sample rate!\n");
