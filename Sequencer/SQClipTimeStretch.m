@@ -23,7 +23,8 @@
     {
         [JCAudioConverter convertAudioAtURL:extractedAudioURL compress:NO completion:^(NSURL *convertedURL)
         {
-            [[JCAudioRetime new] retimeAudioAtURL:convertedURL withRatio:multiple rePitch:rePitch completion:^(NSURL *outURL) {
+            [[JCAudioRetime new] retimeAudioAtURL:convertedURL withRatio:multiple rePitch:rePitch completion:^(NSURL *outURL)
+            {
                 [self retimeClip:clip byAmount:multiple withAudio:outURL completion:block];
             }];
         }];
