@@ -77,7 +77,7 @@
                 
                 SRClip *stretched = [[SRClip alloc] initWithURL:exportURL];
                 
-                [stretched generateThumbnailCompletion:^(BOOL success) {
+                [stretched generateThumbnailsCompletion:^(NSError *error) {
                     if (block) block(stretched);
                 }];
                 

@@ -14,6 +14,7 @@
 @interface SRClip : NSObject
 
 @property (nonatomic, strong) UIImage *thumbnail;
+@property (nonatomic, strong) NSMutableArray *thumbnails;
 @property (nonatomic, strong) NSURL *URL;
 @property (nonatomic, strong) AVURLAsset *asset;
 
@@ -21,7 +22,7 @@
 
 -(id)initWithURL:(NSURL *)URL;
 
--(void)generateThumbnailCompletion:(void(^)(BOOL success))block;
+-(void)generateThumbnailsCompletion:(void(^)(NSError *error))block;
 
 +(NSURL *)uniqueFileURLInDirectory:(NSString *)directory;
 

@@ -28,42 +28,6 @@
     
 }
 
--(void)generateThumbnailCompletion:(void (^)(BOOL success))block
-{
-    [self thumbnailCompletion:^(UIImage *thumb) {
-        _thumbnail = thumb;
-        if (block) block(YES);
-    }];
-}
-
--(void)thumbnailCompletion:(void (^)(UIImage *thumb))block
-{
-    AVAssetImageGenerator *generator = [[AVAssetImageGenerator alloc] initWithAsset:self.asset];
-    generator.appliesPreferredTrackTransform = YES;
-    
-    CMTime thumbTime = CMTimeMakeWithSeconds(0,30);
-    
-    CGSize maxSize = CGSizeMake(100, 100);
-    generator.maximumSize = maxSize;
-    [generator generateCGImagesAsynchronouslyForTimes:[NSArray arrayWithObject:[NSValue valueWithCMTime:thumbTime]] completionHandler:^(CMTime requestedTime, CGImageRef image, CMTime actualTime, AVAssetImageGeneratorResult result, NSError *error) {
-        if (result != AVAssetImageGeneratorSucceeded) {
-            NSLog(@"couldn't generate thumbnail, error:%@", error);
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                if (block) block(nil);
-            });
-            
-            return;
-        }
-        
-        UIImage *thumb = [UIImage imageWithCGImage:image];
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if (block) block(thumb);
-        });
-    }];
-}
-
 +(NSURL *)uniqueFileURLInDirectory:(NSString *)directory
 {
     NSURL *returnURL;
@@ -112,7 +76,64 @@
 
 -(CGSize)timelineSize
 {
-    return CGSizeMake(80 + CMTimeGetSeconds(self.asset.duration) * 10, 80);
+    return CGSizeMake(80 + CMTimeGetSeconds(self.asset.duration) * 40, 80);
+}
+
+-(void)generateThumbnailsCompletion:(void(^)(NSError *error))block
+{
+    if (!self.thumbnails)
+        self.thumbnails = [NSMutableArray array];
+    
+    [self.thumbnails removeAllObjects];
+    
+    CGSize size = [self timelineSize];
+    
+    AVAssetImageGenerator *imageGenerator = [AVAssetImageGenerator assetImageGeneratorWithAsset:self.asset];
+    imageGenerator.appliesPreferredTrackTransform = YES;
+    imageGenerator.requestedTimeToleranceAfter = kCMTimeZero;
+    imageGenerator.requestedTimeToleranceBefore = kCMTimeZero;
+    
+    int picWidth = size.height;
+    imageGenerator.maximumSize = CGSizeMake(picWidth, picWidth);
+    
+    //Generate rest of the images
+    float durationSeconds = CMTimeGetSeconds([self.asset duration]);
+    
+    int numberOfPics = size.width / picWidth;
+    
+    NSMutableArray *times = [NSMutableArray array];
+    
+    for (int i = 0; i<numberOfPics; i++)
+    {
+        int timeForThumb = i * picWidth;
+        CMTime timeFrame = CMTimeMakeWithSeconds(durationSeconds * timeForThumb / size.width, 600);
+        
+        [times addObject:[NSValue valueWithCMTime:timeFrame]];
+    }
+    
+    [imageGenerator generateCGImagesAsynchronouslyForTimes:times completionHandler:^(CMTime requestedTime, CGImageRef image, CMTime actualTime, AVAssetImageGeneratorResult result, NSError *error)
+     {
+         if (result == AVAssetImageGeneratorSucceeded) {
+             
+             UIImage *thumb = [[UIImage alloc] initWithCGImage:image];
+             
+             dispatch_async(dispatch_get_main_queue(), ^{
+                 
+                 [self.thumbnails addObject:thumb];
+                 
+                 if (self.thumbnails.count == numberOfPics)
+                     if (block) block(nil);
+                 
+             });
+         }
+         
+         if (result == AVAssetImageGeneratorFailed) {
+             if (block) block(error);
+         }
+         if (result == AVAssetImageGeneratorCancelled) {
+             if (block) block([NSError errorWithDomain:@"Canceled" code:0 userInfo:nil]);
+         }
+     }];
 }
 
 @end

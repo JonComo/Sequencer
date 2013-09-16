@@ -46,8 +46,7 @@ typedef void (^ErrorHandlingBlock)(NSError *error);
 
 -(id)initWithDelegate:(id <SRSequencerDelegate> )managerDelegate;
 
-- (void)setupSessionWithPreset:(NSString *)preset withCaptureDevice:(AVCaptureDevicePosition)cd withTorchMode:(AVCaptureTorchMode)tm withError:(NSError **)error;
-
+- (void)setupSessionWithPreset:(NSString *)preset withCaptureDevice:(AVCaptureDevicePosition)cd withError:(NSError **)error;
 -(void)setupSessionWithDefaults;
 
 - (void)record;
@@ -58,7 +57,7 @@ typedef void (^ErrorHandlingBlock)(NSError *error);
 
 - (void)reset;
 
-- (void)finalizeClips:(NSArray *)clipsCombining toFile:(NSURL *)finalVideoLocationURL withVideoSize:(CGSize)videoSize withPreset:(NSString *)preset withCompletionHandler:(ErrorHandlingBlock)completionHandler;
+- (void)finalizeClips:(NSArray *)clipsCombining toFile:(NSURL *)finalVideoLocationURL withCompletionHandler:(ErrorHandlingBlock)completionHandler;
 
 //Camera control
 -(void)setFocusPoint:(CGPoint)point;

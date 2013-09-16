@@ -18,6 +18,8 @@
 
 #import "AVAssetStitcher.h"
 
+#import "SRClip.h"
+
 @implementation AVAssetStitcher
 {
     CGSize outputSize;
@@ -53,6 +55,7 @@
     AVAssetTrack *videoTrack = [videoTracks objectAtIndex:0];
     
     AVMutableVideoCompositionInstruction *instruction = [AVMutableVideoCompositionInstruction videoCompositionInstruction];
+    
     AVMutableVideoCompositionLayerInstruction *layerInstruction = [AVMutableVideoCompositionLayerInstruction videoCompositionLayerInstructionWithAssetTrack:compositionVideoTrack];
     
     //
@@ -60,7 +63,7 @@
     // with the preferred transform contained in the incoming video track.
     //
     
-    [layerInstruction setTransform:videoTrack.preferredTransform atTime:kCMTimeZero];
+    //[layerInstruction setTransform:videoTrack.preferredTransform atTime:kCMTimeZero];
     
 //    if(transformToApply)
 //    {
@@ -109,8 +112,10 @@
 - (void)exportTo:(NSURL *)outputFile withPreset:(NSString *)preset withCompletionHandler:(void (^)(NSError *error))completionHandler
 {
     AVMutableVideoComposition *videoComposition = [AVMutableVideoComposition videoComposition];
+    
     videoComposition.instructions = instructions;
     videoComposition.renderSize = outputSize;
+    
     AVMutableVideoCompositionInstruction *lastInstruction = ((AVMutableVideoCompositionInstruction *)instructions.lastObject);
     videoComposition.frameDuration = CMTimeAdd(lastInstruction.timeRange.start, lastInstruction.timeRange.duration);
     

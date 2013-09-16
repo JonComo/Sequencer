@@ -70,7 +70,7 @@
     [videoRangeSlider exportVideoToURL:outputURL completion:^(BOOL success) {
         [self.clip replaceWithFileAtURL:outputURL];
         
-        [self.clip generateThumbnailCompletion:^(BOOL success) {
+        [self.clip generateThumbnailsCompletion:^(NSError *error) {
             [self refreshUI];
         }];
     }];

@@ -10,6 +10,8 @@
 #import "SQClipCell.h"
 #import "LXReorderableCollectionViewFlowLayout.h"
 
+#import "SQVideoComposer.h"
+
 #import "SQTimeline.h"
 
 #import "Macros.h"
@@ -70,6 +72,9 @@
     
     BOOL hadSetFocusPoint;
     BOOL hadSetExposurePoint;
+    
+    CGSize videoSize;
+    NSString *exportPreset;
 }
 
 - (id)initWithDelegate:(id<SRSequencerDelegate>)managerDelegate
@@ -103,6 +108,87 @@
     }
     
     return self;
+}
+
+- (void)setupSessionWithPreset:(NSString *)preset withCaptureDevice:(AVCaptureDevicePosition)cd withError:(NSError **)error
+{
+    if(setupComplete){
+        //*error = [NSError errorWithDomain:@"Setup session already complete." code:102 userInfo:nil];
+        //return;
+    }
+    
+    if (_captureSession)
+    {       
+        [_captureSession stopRunning];
+        [_captureSession removeInput:videoInput];
+        [_captureSession removeOutput:movieFileOutput];
+    }
+    
+    setupComplete = YES;
+    
+	AVCaptureDevice *captureDevice = [self cameraWithPosition:cd];
+    
+    _captureSession = [[AVCaptureSession alloc] init];
+    _captureSession.sessionPreset = preset;
+    
+    videoInput = [[AVCaptureDeviceInput alloc] initWithDevice:captureDevice error:nil];
+    
+    [videoInput.device addObserver:self forKeyPath:@"adjustingExposure" options:NSKeyValueObservingOptionNew context:NULL];
+    [videoInput.device addObserver:self forKeyPath:@"adjustingFocus" options:NSKeyValueObservingOptionNew context:NULL];
+    
+    [self lock];
+    
+    if([_captureSession canAddInput:videoInput])
+    {
+        [_captureSession addInput:videoInput];
+    }else{
+        *error = [NSError errorWithDomain:@"Error setting video input." code:101 userInfo:nil];
+        return;
+    }
+    
+    audioInput = [[AVCaptureDeviceInput alloc] initWithDevice:[self audioDevice] error:nil];
+    if([_captureSession canAddInput:audioInput])
+    {
+        [_captureSession addInput:audioInput];
+    }else{
+        *error = [NSError errorWithDomain:@"Error setting audio input." code:101 userInfo:nil];
+        return;
+    }
+    
+    if([_captureSession canAddOutput:movieFileOutput])
+    {
+        [_captureSession addOutput:movieFileOutput];
+    }else{
+        *error = [NSError errorWithDomain:@"Error setting file output." code:101 userInfo:nil];
+        return;
+    }
+    
+    if ([preset isEqualToString:AVCaptureSessionPreset1920x1080])
+    {
+        videoSize = CGSizeMake(1920, 1080);
+        exportPreset = AVAssetExportPreset1920x1080;
+    }else if ([preset isEqualToString:AVCaptureSessionPreset1280x720])
+    {
+        videoSize = CGSizeMake(1280, 720);
+        exportPreset = AVAssetExportPreset1280x720;
+    }else if ([preset isEqualToString:AVCaptureSessionPreset640x480])
+    {
+        videoSize = CGSizeMake(640, 480);
+        exportPreset = AVAssetExportPreset640x480;
+    }
+    
+    [self setupPreviewLayer];
+}
+
+-(void)setupSessionWithDefaults
+{
+    NSError *error;
+    [self setupSessionWithPreset:CAPTURE_SESSION_PRESET withCaptureDevice:INITIAL_CAPTURE_DEVICE_POSITION withError:&error];
+    
+    if(error){
+        self.asyncErrorHandler(error);
+        return;
+    }
 }
 
 -(UIView *)targetViewWithText:(NSString *)text size:(CGSize)size
@@ -140,72 +226,6 @@
     NSLog(@"Sequencer out");
 }
 
-- (void)setupSessionWithPreset:(NSString *)preset withCaptureDevice:(AVCaptureDevicePosition)cd withTorchMode:(AVCaptureTorchMode)tm withError:(NSError **)error
-{
-    if(setupComplete){
-        *error = [NSError errorWithDomain:@"Setup session already complete." code:102 userInfo:nil];
-        return;
-    }
-    
-    setupComplete = YES;
-
-	AVCaptureDevice *captureDevice = [self cameraWithPosition:cd];
-    
-	if ([captureDevice hasTorch])
-    {
-		if ([captureDevice lockForConfiguration:nil])
-        {
-			if ([captureDevice isTorchModeSupported:tm])
-            {
-				[captureDevice setTorchMode:AVCaptureTorchModeOff];
-			}
-            
-			[captureDevice unlockForConfiguration];
-		}
-	}
-    
-    _captureSession = [[AVCaptureSession alloc] init];
-    _captureSession.sessionPreset = preset;
-    
-    videoInput = [[AVCaptureDeviceInput alloc] initWithDevice:captureDevice error:nil];
-    
-    [videoInput.device addObserver:self forKeyPath:@"adjustingExposure" options:NSKeyValueObservingOptionNew context:NULL];
-    [videoInput.device addObserver:self forKeyPath:@"adjustingFocus" options:NSKeyValueObservingOptionNew context:NULL];
-    
-    [self lock];
-    
-    if([_captureSession canAddInput:videoInput])
-    {
-        [_captureSession addInput:videoInput];
-    }
-    else
-    {
-        *error = [NSError errorWithDomain:@"Error setting video input." code:101 userInfo:nil];
-        return;
-    }
-
-    audioInput = [[AVCaptureDeviceInput alloc] initWithDevice:[self audioDevice] error:nil];
-    if([_captureSession canAddInput:audioInput])
-    {
-        [_captureSession addInput:audioInput];
-    }
-    else
-    {
-        *error = [NSError errorWithDomain:@"Error setting audio input." code:101 userInfo:nil];
-        return;
-    }
-    
-    if([_captureSession canAddOutput:movieFileOutput])
-    {
-        [_captureSession addOutput:movieFileOutput];
-    }
-    else
-    {
-        *error = [NSError errorWithDomain:@"Error setting file output." code:101 userInfo:nil];
-        return;
-    }
-}
-
 + (AVCaptureConnection *)connectionWithMediaType:(NSString *)mediaType fromConnections:(NSArray *)connections
 {
 	for ( AVCaptureConnection *connection in connections ) {
@@ -218,31 +238,30 @@
 	return nil;
 }
 
--(void)setupSessionWithDefaults
+-(void)setupPreviewLayer
 {
-    NSError *error;
-    [self setupSessionWithPreset:CAPTURE_SESSION_PRESET withCaptureDevice:INITIAL_CAPTURE_DEVICE_POSITION withTorchMode:INITIAL_TORCH_MODE withError:&error];
-    
-    if(error)
+    if (captureVideoPreviewLayer)
     {
-        self.asyncErrorHandler(error);
-    }else{
-        captureVideoPreviewLayer = [AVCaptureVideoPreviewLayer layerWithSession:self.captureSession];
-        
-        self.viewPreview.layer.masksToBounds = NO;
-        captureVideoPreviewLayer.frame = self.viewPreview.bounds;
-        
-        captureVideoPreviewLayer.videoGravity = AVLayerVideoGravityResizeAspect;
-        
-        [self.viewPreview.layer insertSublayer:captureVideoPreviewLayer below:self.viewPreview.layer.sublayers[0]];
-        
-        [[captureVideoPreviewLayer connection] setVideoOrientation:AVCaptureVideoOrientationLandscapeRight];
-        
-        // Start the session. This is done asychronously because startRunning doesn't return until the session is running.
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            [self.captureSession startRunning];
-        });
+        [captureVideoPreviewLayer removeFromSuperlayer];
+        captureVideoPreviewLayer.session = nil;
+        captureVideoPreviewLayer = nil;
     }
+    
+    captureVideoPreviewLayer = [AVCaptureVideoPreviewLayer layerWithSession:self.captureSession];
+    
+    self.viewPreview.layer.masksToBounds = NO;
+    captureVideoPreviewLayer.frame = self.viewPreview.bounds;
+    
+    captureVideoPreviewLayer.videoGravity = AVLayerVideoGravityResizeAspect;
+    
+    [self.viewPreview.layer insertSublayer:captureVideoPreviewLayer below:self.viewPreview.layer.sublayers[0]];
+    
+    [[captureVideoPreviewLayer connection] setVideoOrientation:AVCaptureVideoOrientationLandscapeRight];
+    
+    // Start the session. This is done asychronously because startRunning doesn't return until the session is running.
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [self.captureSession startRunning];
+    });
 }
 
 -(void)setViewPreview:(UIView *)viewPreview
@@ -347,17 +366,17 @@
     clipRecording = [[SRClip alloc] initWithURL:outputFileURL];
     
     
-    [[movieFileOutput connectionWithMediaType:AVMediaTypeVideo] setVideoOrientation:AVCaptureVideoOrientationLandscapeRight];
-    
     if([videoInput device].position == AVCaptureDevicePositionBack)
     {
         if ([[movieFileOutput connectionWithMediaType:AVMediaTypeVideo] isVideoMirrored])
             [[movieFileOutput connectionWithMediaType:AVMediaTypeVideo] setVideoMirrored:NO];
-        //[[movieFileOutput connectionWithMediaType:AVMediaTypeVideo] setVideoOrientation:AVCaptureVideoOrientationLandscapeRight];
+        
+        [[movieFileOutput connectionWithMediaType:AVMediaTypeVideo] setVideoOrientation:AVCaptureVideoOrientationLandscapeRight];
     }else{
         if (![[movieFileOutput connectionWithMediaType:AVMediaTypeVideo] isVideoMirrored])
             [[movieFileOutput connectionWithMediaType:AVMediaTypeVideo] setVideoMirrored:YES];
-        //[[movieFileOutput connectionWithMediaType:AVMediaTypeVideo] setVideoOrientation:AVCaptureVideoOrientationLandscapeLeft];
+        
+        [[movieFileOutput connectionWithMediaType:AVMediaTypeVideo] setVideoOrientation:AVCaptureVideoOrientationLandscapeLeft];
     }
     
     [movieFileOutput startRecordingToOutputFileURL:outputFileURL recordingDelegate:self];
@@ -427,8 +446,8 @@
     }
     
     dispatch_async(dispatch_get_main_queue(), ^{
-        [clipRecording generateThumbnailCompletion:^(BOOL success) {
-            if (success)
+        [clipRecording generateThumbnailsCompletion:^(NSError *error) {
+            if (!error)
             {
                 [self addClip:clipRecording];
                 
@@ -467,7 +486,7 @@
 
 -(AVAssetStitcher *)stitcherFromClips:(NSArray *)clipsCombining
 {
-    AVAssetStitcher *stitcher = [[AVAssetStitcher alloc] initWithOutputSize:CGSizeMake(640, 480)];
+    AVAssetStitcher *stitcher = [[AVAssetStitcher alloc] initWithOutputSize:videoSize];
     
     __block NSError *stitcherError;
     
@@ -520,7 +539,7 @@
     return stitcher;
 }
 
-- (void)finalizeClips:(NSArray *)clipsCombining toFile:(NSURL *)finalVideoLocationURL withVideoSize:(CGSize)videoSize withPreset:(NSString *)preset withCompletionHandler:(ErrorHandlingBlock)completionHandler
+- (void)finalizeClips:(NSArray *)clipsCombining toFile:(NSURL *)finalVideoLocationURL withCompletionHandler:(ErrorHandlingBlock)completionHandler
 {
     //[self reset];
     
@@ -541,9 +560,25 @@
         return;
     }
     
+    /*
+    
+    SQVideoComposer *videoComposer = [SQVideoComposer new];
+    
+    [videoComposer exportClips:clipsCombining toURL:finalVideoLocationURL withPreset:preset withCompletionHandler:^(NSError *error) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if(error){
+                completionHandler(error);
+            }else{
+                completionHandler(nil);
+            }
+        });
+    }]; */
+    
+    
+    
     AVAssetStitcher *stitcher = [self stitcherFromClips:clipsCombining];
     
-    [stitcher exportTo:finalVideoLocationURL withPreset:preset withCompletionHandler:^(NSError *error) {
+    [stitcher exportTo:finalVideoLocationURL withPreset:exportPreset withCompletionHandler:^(NSError *error) {
         
         dispatch_async(dispatch_get_main_queue(), ^{
             if(error){
@@ -602,9 +637,7 @@
                         if(self.asyncErrorHandler)
                         {
                             self.asyncErrorHandler(error);
-                        }
-                        else
-                        {
+                        }else{
                             NSLog(@"Error reconnecting device input: %@", error);
                         }
                     }
@@ -880,7 +913,7 @@
     
     NSURL *exportURL = [SRClip uniqueFileURLInDirectory:DOCUMENTS];
     
-    [self finalizeClips:clipsToCombine toFile:exportURL withVideoSize:CGSizeMake(640, 480) withPreset:AVAssetExportPreset640x480 withCompletionHandler:^(NSError *error) {
+    [self finalizeClips:clipsToCombine toFile:exportURL withCompletionHandler:^(NSError *error) {
         if (!error)
         {
             SRClip *newClip = [[SRClip alloc] initWithURL:exportURL];
@@ -911,8 +944,9 @@
 {
     SRClip *newClip = [[SRClip alloc] initWithURL:url];
     
-    [newClip generateThumbnailCompletion:^(BOOL success) {
-        [self addClip:newClip];
+    [newClip generateThumbnailsCompletion:^(NSError *error) {
+        if (!error)
+            [self addClip:newClip];
     }];
 }
 

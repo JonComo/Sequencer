@@ -21,7 +21,8 @@
         sizeForMenu = [self sizeForMenuItems];
         float offsetY = 0;
         
-        dropDownView = [[UIView alloc] initWithFrame:CGRectMake(self.frame.size.width, self.frame.size.height - sizeForMenu.height, sizeForMenu.width, sizeForMenu.height)];
+        dropDownView = [[UIView alloc] initWithFrame:CGRectMake(self.frame.size.width, self.frame.size.height/2 - sizeForMenu.height/2, sizeForMenu.width, sizeForMenu.height)];
+        
         dropDownView.backgroundColor = [UIColor clearColor];
         
         [dropDownView setUserInteractionEnabled:YES];

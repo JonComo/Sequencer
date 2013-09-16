@@ -162,11 +162,23 @@
         setFocus = NO;
     }];
     
+    JCDropDownAction *session1080 = [JCDropDownAction dropDownActionWithName:@"1920 X 1080" action:^{
+        [sequence setupSessionWithPreset:AVCaptureSessionPreset1920x1080 withCaptureDevice:AVCaptureDevicePositionBack withError:nil];
+    }];
+    
+    JCDropDownAction *session720 = [JCDropDownAction dropDownActionWithName:@"1280 X 720" action:^{
+        [sequence setupSessionWithPreset:AVCaptureSessionPreset1280x720 withCaptureDevice:AVCaptureDevicePositionBack withError:nil];
+    }];
+    
+    JCDropDownAction *session480 = [JCDropDownAction dropDownActionWithName:@"640 X 480" action:^{
+        [sequence setupSessionWithPreset:AVCaptureSessionPreset640x480 withCaptureDevice:AVCaptureDevicePositionBack withError:nil];
+    }];
+    
     JCDropDownAction *flipCamera = [JCDropDownAction dropDownActionWithName:@"FLIP" action:^{
         [sequence flipCamera];
     }];
     
-    dropDownCam.actions = [@[setFocusAction, setExposureAction, flipCamera] mutableCopy];
+    dropDownCam.actions = [@[setFocusAction, setExposureAction, flipCamera, session1080, session720, session480] mutableCopy];
 }
 
 #pragma SequenceDelegate
@@ -221,7 +233,7 @@
     
     NSURL *outputURL = [SRClip uniqueFileURLInDirectory:DOCUMENTS];
     
-    [sequence finalizeClips:sequence.clips toFile:outputURL withVideoSize:CGSizeMake(640, 480) withPreset:AVAssetExportPreset640x480 withCompletionHandler:^(NSError *error) {
+    [sequence finalizeClips:sequence.clips toFile:outputURL withCompletionHandler:^(NSError *error) {
         [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
         
         if (error) return;
@@ -317,9 +329,8 @@
         
         [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
         
-        [consolidated generateThumbnailCompletion:^(BOOL success) {
-            if (success)
-            {
+        [consolidated generateThumbnailsCompletion:^(NSError *error) {
+            if (!error){
                 [sequence addClip:consolidated];
                 [collectionViewClips reloadData];
             }
