@@ -54,6 +54,8 @@
     if (!error)
         newClip = [[SRClip alloc] initWithURL:newURL];
     
+    newClip.thumbnails = [self.thumbnails mutableCopy];
+    
     return newClip;
 }
 

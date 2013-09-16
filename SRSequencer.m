@@ -826,6 +826,32 @@
 
 #pragma Clip Operations
 
+-(SRClip *)lastSelectedClip
+{
+    SRClip *selectedClip;
+    
+    for (SRClip *clip in self.clips)
+    {
+        if (clip.isSelected)
+            selectedClip = clip;
+    }
+    
+    return selectedClip;
+}
+
+-(NSArray *)selectedClips
+{
+    NSMutableArray *clips = [NSMutableArray array];
+    
+    for (SRClip *clip in self.clips)
+    {
+        if (clip.isSelected)
+            [clips addObject:clip];
+    }
+    
+    return clips;
+}
+
 -(void)addClip:(SRClip *)clip
 {
     NSUInteger index = [self indexToInsert];
@@ -879,25 +905,21 @@
 
 -(void)deleteSelectedClips
 {
-    for (int i = self.clips.count-1; i>=0; i--)
-    {
-        SRClip *clip = self.clips[i];
-        
-        if (clip.isSelected){
-            [self removeClip:clip];
-        }
-    }
+    NSArray *selected = [self selectedClips];
+    
+    for (SRClip *clip in selected)
+        [self removeClip:clip];
+    
+    [self.collectionViewClips reloadData];
 }
 
 -(void)duplicateSelectedClips
 {
-    for (int i = 0; i<self.clips.count; i++){
-        SRClip *clip = self.clips[i];
-        
-        if (clip.isSelected){
-            SRClip *newClip = [self duplicateClip:clip];
-            [self addClip:newClip];
-        }
+    NSArray *selected = [self selectedClips];
+    
+    for (SRClip *clip in selected){
+        SRClip *newClip = [clip duplicate];
+        [self addClip:newClip];
     }
 }
 
@@ -927,17 +949,7 @@
 -(void)removeClip:(SRClip *)clip
 {
     [clip remove];
-    
     [self.clips removeObject:clip];
-}
-
--(SRClip *)duplicateClip:(SRClip *)clip
-{
-    SRClip *newClip = [clip duplicate];
-    
-    newClip.thumbnail = clip.thumbnail;
-    
-    return newClip;
 }
 
 -(void)addClipFromURL:(NSURL *)url

@@ -284,13 +284,11 @@
 - (void)deleteSelected
 {
     [sequence deleteSelectedClips];
-    [collectionViewClips reloadData];
 }
 
 - (void)duplicateSelected
 {
     [sequence duplicateSelectedClips];
-    [collectionViewClips reloadData];
 }
 
 - (void)trim

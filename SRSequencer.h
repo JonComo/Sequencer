@@ -71,7 +71,6 @@ typedef void (^ErrorHandlingBlock)(NSError *error);
 -(void)consolidateSelectedClipsCompletion:(void(^)(SRClip *consolidated))consolidateHandler;
 
 
--(SRClip *)duplicateClip:(SRClip *)clip;
 -(void)removeClip:(SRClip *)clip;
 -(void)addClipFromURL:(NSURL *)url;
 -(void)addClip:(SRClip *)clip;
