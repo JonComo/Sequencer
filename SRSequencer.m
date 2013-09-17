@@ -256,7 +256,7 @@
     
     [self.viewPreview.layer insertSublayer:captureVideoPreviewLayer below:self.viewPreview.layer.sublayers[0]];
     
-    [[captureVideoPreviewLayer connection] setVideoOrientation:AVCaptureVideoOrientationLandscapeRight];
+    [[captureVideoPreviewLayer connection] setVideoOrientation:AVCaptureVideoOrientationLandscapeLeft];
     
     // Start the session. This is done asychronously because startRunning doesn't return until the session is running.
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
@@ -365,19 +365,19 @@
     
     clipRecording = [[SRClip alloc] initWithURL:outputFileURL];
     
-    
-    if([videoInput device].position == AVCaptureDevicePositionBack)
+    if (videoInput.device.position == AVCaptureDevicePositionFront)
     {
-        if ([[movieFileOutput connectionWithMediaType:AVMediaTypeVideo] isVideoMirrored])
-            [[movieFileOutput connectionWithMediaType:AVMediaTypeVideo] setVideoMirrored:NO];
-        
-        [[movieFileOutput connectionWithMediaType:AVMediaTypeVideo] setVideoOrientation:AVCaptureVideoOrientationLandscapeRight];
-    }else{
         if (![[movieFileOutput connectionWithMediaType:AVMediaTypeVideo] isVideoMirrored])
             [[movieFileOutput connectionWithMediaType:AVMediaTypeVideo] setVideoMirrored:YES];
-        
-        [[movieFileOutput connectionWithMediaType:AVMediaTypeVideo] setVideoOrientation:AVCaptureVideoOrientationLandscapeLeft];
+    }else{
+        if (videoInput.device.position == AVCaptureDevicePositionBack)
+        {
+            if ([[movieFileOutput connectionWithMediaType:AVMediaTypeVideo] isVideoMirrored])
+                [[movieFileOutput connectionWithMediaType:AVMediaTypeVideo] setVideoMirrored:NO];
+        }
     }
+    
+    [[movieFileOutput connectionWithMediaType:AVMediaTypeVideo] setVideoOrientation:AVCaptureVideoOrientationLandscapeLeft];
     
     [movieFileOutput startRecordingToOutputFileURL:outputFileURL recordingDelegate:self];
 }

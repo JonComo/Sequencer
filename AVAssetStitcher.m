@@ -76,6 +76,8 @@
 //                                atTime:kCMTimeZero];
 //    }
     
+    [layerInstruction setTransform:videoTrack.preferredTransform atTime:kCMTimeZero];
+    
     instruction.layerInstructions = @[layerInstruction];
     
     __block CMTime startTime = kCMTimeZero;
