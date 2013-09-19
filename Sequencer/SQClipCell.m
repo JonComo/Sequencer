@@ -12,6 +12,10 @@
 
 #import "SRClip.h"
 
+@interface SQClipCell ()
+
+@end
+
 @implementation SQClipCell
 
 -(void)setClip:(SRClip *)clip

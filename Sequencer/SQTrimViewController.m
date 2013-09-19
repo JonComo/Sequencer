@@ -46,7 +46,8 @@
 
 -(void)refreshUI
 {
-    moviePlayer.URL = self.clip.URL;
+    AVPlayerItem *item = [AVPlayerItem playerItemWithURL:self.clip.URL];
+    [moviePlayer setupWithPlayerItem:item];
     
     [self addRange];
 }

@@ -8,7 +8,6 @@
 
 #import "SRClip.h"
 #import "Macros.h"
-#import <AVFoundation/AVFoundation.h>
 
 @implementation SRClip
 
@@ -143,6 +142,16 @@
              if (block) block([NSError errorWithDomain:@"Canceled" code:0 userInfo:nil]);
          }
      }];
+}
+
+-(BOOL)isPlayingAtTime:(CMTime)time
+{
+    if (CMTimeCompare(time, self.positionInComposition.start) == 1 && CMTimeCompare(time, CMTimeAdd(self.positionInComposition.start, self.positionInComposition.duration)) == -1)
+    {
+        return YES;
+    }
+    
+    return NO;
 }
 
 @end

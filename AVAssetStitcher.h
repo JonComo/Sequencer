@@ -17,7 +17,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <AVFoundation/AVFoundation.h>
+#import "SRClip.h"
 
 @interface AVAssetStitcher : NSObject
 
@@ -25,7 +25,7 @@
 
 - (id)initWithOutputSize:(CGSize)outSize;
 
-- (void)addAsset:(AVURLAsset *)asset withTransform:(CGAffineTransform (^)(AVAssetTrack *videoTrack))transformToApply withErrorHandler:(void (^)(NSError *error))errorHandler;
+- (void)addClip:(SRClip *)clip withTransform:(CGAffineTransform (^)(AVAssetTrack *videoTrack))transformToApply withErrorHandler:(void (^)(NSError *error))errorHandler;
 - (void)exportTo:(NSURL *)outputFile withPreset:(NSString *)preset withCompletionHandler:(void (^)(NSError *error))completed;
 
 @end

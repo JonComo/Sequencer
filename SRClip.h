@@ -7,9 +7,12 @@
 //
 
 #import <Foundation/Foundation.h>
+
 #import <AVFoundation/AVFoundation.h>
 
 #import "Macros.h"
+
+@class SRClip;
 
 @interface SRClip : NSObject
 
@@ -17,6 +20,8 @@
 @property (nonatomic, strong) NSMutableArray *thumbnails;
 @property (nonatomic, strong) NSURL *URL;
 @property (nonatomic, strong) AVURLAsset *asset;
+
+@property (nonatomic, assign) CMTimeRange positionInComposition;
 
 @property BOOL isSelected;
 
@@ -33,5 +38,7 @@
 -(NSError *)replaceWithFileAtURL:(NSURL *)newURL;
 
 -(CGSize)timelineSize;
+
+-(BOOL)isPlayingAtTime:(CMTime)time;
 
 @end

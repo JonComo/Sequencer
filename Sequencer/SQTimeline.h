@@ -8,6 +8,14 @@
 
 #import <UIKit/UIKit.h>
 
+#import <AVFoundation/AVFoundation.h>
+
+@class SRSequencer;
+
 @interface SQTimeline : UICollectionView
+
+@property (nonatomic, weak) SRSequencer *sequence;
+
+-(void)playAtTime:(CMTime)time;
 
 @end

@@ -8,17 +8,12 @@
 #import <MobileCoreServices/UTCoreTypes.h>
 
 #import "SQClipCell.h"
-#import "LXReorderableCollectionViewFlowLayout.h"
 
 #import "SQVideoComposer.h"
 
 #import "SQTimeline.h"
 
 #import "Macros.h"
-
-// Maximum and minumum length to record in seconds
-#define MAX_RECORDING_LENGTH 600.0
-#define MIN_RECORDING_LENGTH 1.0
 
 // Set the recording preset to use
 #define CAPTURE_SESSION_PRESET AVCaptureSessionPreset640x480
@@ -29,7 +24,7 @@
 // Set the initial torch mode
 #define INITIAL_TORCH_MODE AVCaptureTorchModeOff
 
-@interface SRSequencer (Private) <UICollectionViewDataSource>
+@interface SRSequencer (Private) <JCMoviePlayerDelegate>
 
 - (void)startNotificationObservers;
 - (void)endNotificationObservers;
@@ -39,29 +34,18 @@
 
 - (AVCaptureConnection *)connectionWithMediaType:(NSString *)mediaType fromConnections:(NSArray *)connections;
 
-- (void)cleanTemporaryFiles;
-
 @end
 
 @implementation SRSequencer
 {
-    bool setupComplete;
-    
     AVCaptureDeviceInput *videoInput;
     AVCaptureDeviceInput *audioInput;
     
     AVCaptureVideoPreviewLayer *captureVideoPreviewLayer;
     AVCaptureMovieFileOutput *movieFileOutput;
     
-    AVCaptureVideoOrientation orientation;
-    
     id deviceConnectedObserver;
     id deviceDisconnectedObserver;
-    id deviceOrientationDidChangeObserver;
-    
-    AVPlayerLayer *playLayer;
-    
-    int currentRecordingSegment;
     
     CMTime currentFinalDurration;
     int inFlightWrites;
@@ -83,11 +67,8 @@
     {
         _delegate = managerDelegate;
         
-        setupComplete = NO;
-        
         _clips = [NSMutableArray array];
         
-        currentRecordingSegment = 0;
         _isPaused = NO;
         inFlightWrites = 0;
         
@@ -112,19 +93,12 @@
 
 - (void)setupSessionWithPreset:(NSString *)preset withCaptureDevice:(AVCaptureDevicePosition)cd withError:(NSError **)error
 {
-    if(setupComplete){
-        //*error = [NSError errorWithDomain:@"Setup session already complete." code:102 userInfo:nil];
-        //return;
-    }
-    
     if (_captureSession)
     {       
         [_captureSession stopRunning];
         [_captureSession removeInput:videoInput];
         [_captureSession removeOutput:movieFileOutput];
     }
-    
-    setupComplete = YES;
     
 	AVCaptureDevice *captureDevice = [self cameraWithPosition:cd];
     
@@ -217,6 +191,13 @@
     return targetView;
 }
 
+-(AVComposition *)composition
+{
+    _composition = [self stitcherFromClips:self.clips].composition;
+    
+    return _composition;
+}
+
 - (void)dealloc
 {
     [_captureSession removeOutput:movieFileOutput];
@@ -256,7 +237,7 @@
     
     [self.viewPreview.layer insertSublayer:captureVideoPreviewLayer below:self.viewPreview.layer.sublayers[0]];
     
-    [[captureVideoPreviewLayer connection] setVideoOrientation:AVCaptureVideoOrientationLandscapeLeft];
+    [[captureVideoPreviewLayer connection] setVideoOrientation:AVCaptureVideoOrientationLandscapeRight];
     
     // Start the session. This is done asychronously because startRunning doesn't return until the session is running.
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
@@ -377,47 +358,49 @@
         }
     }
     
-    [[movieFileOutput connectionWithMediaType:AVMediaTypeVideo] setVideoOrientation:AVCaptureVideoOrientationLandscapeLeft];
+    [[movieFileOutput connectionWithMediaType:AVMediaTypeVideo] setVideoOrientation:AVCaptureVideoOrientationLandscapeRight];
     
     [movieFileOutput startRecordingToOutputFileURL:outputFileURL recordingDelegate:self];
 }
 
 -(void)preview
 {
-    if (playLayer){
+    if (!self.player)
+    {
+        [self.captureSession stopRunning];
+        
+        self.player = [JCMoviePlayer new];
+        self.player.frame = CGRectMake(0, 0, self.viewPreview.bounds.size.width, self.viewPreview.bounds.size.height);
+        [self.viewPreview addSubview:self.player];
+        
+        AVPlayerItem *item = [AVPlayerItem playerItemWithAsset:self.composition];
+        
+        [self.player setupWithPlayerItem:item];
+        self.player.delegate = self;
+        
+        [self.player play];
+    }else{
         [self stopPreview];
-        return;
     }
-    
-    [self.captureSession stopRunning];
-    
-    AVAssetStitcher *combined = [self stitcherFromClips:self.clips];
-    
-    AVPlayerItem *playerItem = [AVPlayerItem playerItemWithAsset:combined.composition];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(stopPreview) name:AVPlayerItemDidPlayToEndTimeNotification object:playerItem];
-    
-    
-    playLayer = [AVPlayerLayer layer];
-    
-    AVPlayer *player = [AVPlayer playerWithPlayerItem:playerItem];
-    
-    playLayer.player = player;
-    
-    [player play];
-    
-    playLayer.frame = CGRectMake(0, 0, self.viewPreview.bounds.size.width, self.viewPreview.bounds.size.height);
-    [self.viewPreview.layer addSublayer:playLayer];
 }
 
 -(void)stopPreview
 {
-    [playLayer removeFromSuperlayer];
-    playLayer = nil;
-    
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:AVPlayerItemDidPlayToEndTimeNotification object:nil];
-    
+    [self.player removeFromSuperview];
+    [self.player stop];
+    self.player = nil;
+        
     [self.captureSession startRunning];
+}
+
+-(void)moviePlayer:(JCMoviePlayer *)player playbackStateChanged:(JCMoviePlayerState)state
+{
+    if (state == JCMoviePlayerStateFinished) [self stopPreview];
+}
+
+-(void)moviePlayer:(JCMoviePlayer *)player playingAtTime:(CMTime)currentTime
+{
+    [self.timeline playAtTime:currentTime];
 }
 
 #pragma mark - AVCaptureFileOutputRecordingDelegate implementation
@@ -447,12 +430,8 @@
     
     dispatch_async(dispatch_get_main_queue(), ^{
         [clipRecording generateThumbnailsCompletion:^(NSError *error) {
-            if (!error)
-            {
+            if (!error){
                 [self addClip:clipRecording];
-                
-                if ([self.delegate respondsToSelector:@selector(sequencer:clipCountChanged:)])
-                    [self.delegate sequencer:self clipCountChanged:self.clips.count];
             }
             
             clipRecording = nil;
@@ -478,10 +457,7 @@
         [self removeClip:clip];
     }
     
-    if ([self.delegate respondsToSelector:@selector(sequencer:clipCountChanged:)])
-        [self.delegate sequencer:self clipCountChanged:self.clips.count];
-    
-    [self.collectionViewClips reloadData];
+    [self.timeline reloadData];
 }
 
 -(AVAssetStitcher *)stitcherFromClips:(NSArray *)clipsCombining
@@ -490,12 +466,19 @@
     
     __block NSError *stitcherError;
     
+    CMTime startTime = kCMTimeZero;
+    
+    for (SRClip *clip in clipsCombining)
+    {
+        clip.positionInComposition = CMTimeRangeMake(startTime, clip.asset.duration);
+        startTime = CMTimeAdd(startTime, clip.asset.duration);
+    }
+    
     [clipsCombining enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         
         SRClip *clip = (SRClip *)obj;
-        AVURLAsset *asset = [AVURLAsset assetWithURL:clip.URL];
-        
-        [stitcher addAsset:asset withTransform:^CGAffineTransform(AVAssetTrack *videoTrack) {
+         
+        [stitcher addClip:clip withTransform:^CGAffineTransform(AVAssetTrack *videoTrack) {
             
             //
             // The following transform is applied to each video track. It changes the size of the
@@ -522,7 +505,7 @@
              }
              */
             
-            return asset.preferredTransform;
+            return clip.asset.preferredTransform;
             
         } withErrorHandler:^(NSError *error) {
             
@@ -560,21 +543,6 @@
         return;
     }
     
-    /*
-    
-    SQVideoComposer *videoComposer = [SQVideoComposer new];
-    
-    [videoComposer exportClips:clipsCombining toURL:finalVideoLocationURL withPreset:preset withCompletionHandler:^(NSError *error) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if(error){
-                completionHandler(error);
-            }else{
-                completionHandler(nil);
-            }
-        });
-    }]; */
-    
-    
     
     AVAssetStitcher *stitcher = [self stitcherFromClips:clipsCombining];
     
@@ -584,9 +552,6 @@
             if(error){
                 completionHandler(error);
             }else{
-                //[self cleanTemporaryFiles];
-                //[temporaryFileURLs removeAllObjects];
-                
                 completionHandler(nil);
             }
         });
@@ -712,7 +677,6 @@
     
     [[NSNotificationCenter defaultCenter] removeObserver:deviceConnectedObserver];
     [[NSNotificationCenter defaultCenter] removeObserver:deviceDisconnectedObserver];
-    [[NSNotificationCenter defaultCenter] removeObserver:deviceOrientationDidChangeObserver];
 }
 
 #pragma mark - Device finding methods
@@ -769,36 +733,22 @@
 	return foundConnection;
 }
 
-#pragma  mark - Temporary file handling functions
-
-- (void)cleanTemporaryFiles
+- (void)removeAllClips
 {
-    for(SRClip *clip in self.clips)
-    {
-        [[NSFileManager defaultManager] removeItemAtURL:clip.URL error:nil];
+    for(SRClip *clip in self.clips){
+        [clip remove];
     }
     
     [self.clips removeAllObjects];
-    
-    if ([self.delegate respondsToSelector:@selector(sequencer:clipCountChanged:)])
-        [self.delegate sequencer:self clipCountChanged:self.clips.count];
 }
 
 #pragma UICollectionViewDataSourceDelegate
 
--(void)setCollectionViewClips:(SQTimeline *)collectionViewClips
+-(void)setTimeline:(SQTimeline *)collectionViewTimeline
 {
-    collectionViewClips.dataSource = self;
+    _timeline = collectionViewTimeline;
     
-    LXReorderableCollectionViewFlowLayout *layout = [[LXReorderableCollectionViewFlowLayout alloc] init];
-    [layout setMinimumInteritemSpacing:10];
-    [layout setMinimumLineSpacing:10];
-    layout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
-    [collectionViewClips setCollectionViewLayout:layout];
-    
-    [collectionViewClips registerNib:[UINib nibWithNibName:@"clipCell" bundle:[NSBundle mainBundle]] forCellWithReuseIdentifier:@"clipCell"];
-    
-    _collectionViewClips = collectionViewClips;
+    _timeline.sequence = self;
 }
 
 -(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
@@ -852,40 +802,28 @@
     return clips;
 }
 
+-(void)addClipFromURL:(NSURL *)url
+{
+    SRClip *newClip = [[SRClip alloc] initWithURL:url];
+    
+    [newClip generateThumbnailsCompletion:^(NSError *error) {
+        if (!error)
+            [self addClip:newClip];
+    }];
+}
+
 -(void)addClip:(SRClip *)clip
 {
     NSUInteger index = [self indexToInsert];
     NSLog(@"Index: %i", index);
     [self.clips insertObject:clip atIndex:index];
     
-    [self.collectionViewClips reloadData];
-    [self.collectionViewClips scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:MAX(0,self.clips.count-1) inSection:0] atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally animated:YES];
+    [self.timeline reloadData];
+    [self.timeline scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:MAX(0,self.clips.count-1) inSection:0] atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally animated:YES];
 }
 
 -(NSUInteger)indexToInsert
 {
-//    NSInteger index = [self.clips count];
-//    
-//    for (SRClip *clip in self.clips)
-//    {
-//        if (clip.insertAfter)
-//        {
-//            NSUInteger indexOfCell = [self.clips indexOfObject:clip];
-//            index = indexOfCell + 1;
-//            break;
-//        }else if (clip.insertBefore)
-//        {
-//            NSUInteger indexOfCell = [self.clips indexOfObject:clip];
-//            index = indexOfCell - 1;
-//            break;
-//        }
-//    }
-//    
-//    if (index < 0) index = 0;
-//    if (index > self.clips.count) index = self.clips.count;
-//    
-//    return index;
-    
     __block NSInteger index = [self.clips count];
     
     [self.clips enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
@@ -910,7 +848,7 @@
     for (SRClip *clip in selected)
         [self removeClip:clip];
     
-    [self.collectionViewClips reloadData];
+    [self.timeline reloadData];
 }
 
 -(void)duplicateSelectedClips
@@ -950,16 +888,6 @@
 {
     [clip remove];
     [self.clips removeObject:clip];
-}
-
--(void)addClipFromURL:(NSURL *)url
-{
-    SRClip *newClip = [[SRClip alloc] initWithURL:url];
-    
-    [newClip generateThumbnailsCompletion:^(NSError *error) {
-        if (!error)
-            [self addClip:newClip];
-    }];
 }
 
 #pragma Camera operations

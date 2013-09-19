@@ -306,10 +306,10 @@
                         <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                     </view>
                     <connections>
-                        <outlet property="collectionViewClips" destination="eK7-Tm-qol" id="Bc5-ho-fz9"/>
                         <outlet property="dropDownCam" destination="i7z-77-cIC" id="Thz-Rj-kcc"/>
                         <outlet property="dropDownClip" destination="cwj-aE-RFv" id="X1u-vt-uRY"/>
                         <outlet property="dropDownTime" destination="mz1-82-1mI" id="zXc-2i-Ilx"/>
+                        <outlet property="timeline" destination="eK7-Tm-qol" id="Oz4-rk-dyO"/>
                         <outlet property="viewPreview" destination="UJS-0a-nvU" id="aKm-cx-GNh"/>
                     </connections>
                 </viewController>
@@ -337,10 +337,14 @@
         <class className="SQRecordViewController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/SQRecordViewController.h"/>
             <relationships>
-                <relationship kind="outlet" name="collectionViewClips" candidateClass="SQTimeline"/>
+                <relationship kind="action" name="cancel:"/>
+                <relationship kind="action" name="done:"/>
+                <relationship kind="action" name="preview:"/>
+                <relationship kind="action" name="record:"/>
                 <relationship kind="outlet" name="dropDownCam" candidateClass="JCDropDown"/>
                 <relationship kind="outlet" name="dropDownClip" candidateClass="JCDropDown"/>
                 <relationship kind="outlet" name="dropDownTime" candidateClass="JCDropDown"/>
+                <relationship kind="outlet" name="timeline" candidateClass="SQTimeline"/>
                 <relationship kind="outlet" name="viewPreview" candidateClass="UIView"/>
             </relationships>
         </class>
@@ -355,6 +359,9 @@
         </class>
         <class className="UICollectionViewFlowLayout" superclassName="UICollectionViewLayout">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/UICollectionViewFlowLayout.h"/>
+        </class>
+        <class className="UICollectionViewLayout" superclassName="NSObject">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/UICollectionViewLayout.h"/>
         </class>
     </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">

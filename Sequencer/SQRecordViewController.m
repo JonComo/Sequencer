@@ -38,7 +38,7 @@
     __weak IBOutlet JCDropDown *dropDownTime;
     
     __weak IBOutlet UIView *viewPreview;
-    __weak IBOutlet SQTimeline *collectionViewClips;
+    __weak IBOutlet SQTimeline *timeline;
     
     BOOL setFocus;
     BOOL rePitch;
@@ -54,7 +54,7 @@
 	// Do any additional setup after loading the view.
     
     sequence = [[SRSequencer alloc] initWithDelegate:self];
-    sequence.collectionViewClips = collectionViewClips;
+    sequence.timeline = timeline;
     sequence.viewPreview = viewPreview;
     
     [viewPreview addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewTapped:)]];
@@ -66,7 +66,7 @@
 {
     [super viewWillAppear:animated];
     
-    [collectionViewClips reloadData];
+    [timeline reloadData];
 }
 
 -(void)viewDidAppear:(BOOL)animated
@@ -183,11 +183,6 @@
 
 #pragma SequenceDelegate
 
--(void)sequencer:(SRSequencer *)sequencer clipCountChanged:(int)count
-{
-    [collectionViewClips reloadData];
-}
-
 -(void)sequencer:(SRSequencer *)sequencer isRecording:(BOOL)recording
 {
     viewPreview.layer.borderWidth = recording ? 3 : 0;
@@ -222,7 +217,8 @@
     }
 }
 
-- (IBAction)preview:(id)sender {
+- (IBAction)preview:(id)sender
+{
     [sequence preview];
 }
 
@@ -330,7 +326,7 @@
         [consolidated generateThumbnailsCompletion:^(NSError *error) {
             if (!error){
                 [sequence addClip:consolidated];
-                [collectionViewClips reloadData];
+                [timeline reloadData];
             }
         }];
     }];
@@ -353,7 +349,7 @@
     
     clip.isSelected = !clip.isSelected;
     
-    [collectionViewClips reloadData];
+    [timeline reloadData];
 }
 
 -(CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath

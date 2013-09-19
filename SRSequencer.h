@@ -6,6 +6,8 @@
 #import <AVFoundation/AVFoundation.h>
 #import <MediaPlayer/MediaPlayer.h>
 
+#import "JCMoviePlayer.h"
+
 #import "SRClip.h"
 
 @class SRSequencer;
@@ -16,20 +18,20 @@ typedef void (^ErrorHandlingBlock)(NSError *error);
 @protocol SRSequencerDelegate <NSObject>
 
 @optional
--(void)sequencer:(SRSequencer *)sequencer clipCountChanged:(int)count;
-
 -(void)sequencer:(SRSequencer *)sequencer isRecording:(BOOL)recording;
 
 @end
 
-@interface SRSequencer : NSObject <AVCaptureFileOutputRecordingDelegate>
+@interface SRSequencer : NSObject <AVCaptureFileOutputRecordingDelegate, UICollectionViewDataSource>
 
 @property (nonatomic, weak) id delegate;
 
 @property (strong, readonly) AVCaptureSession *captureSession;
+@property (strong, nonatomic) JCMoviePlayer *player;
 
 @property (nonatomic, weak) UIView *viewPreview;
-@property (nonatomic, weak) SQTimeline *collectionViewClips;
+@property (nonatomic, weak) SQTimeline *timeline;
+@property (nonatomic, strong) AVComposition *composition;
 
 @property (nonatomic, strong) NSMutableArray *clips;
 
@@ -69,7 +71,6 @@ typedef void (^ErrorHandlingBlock)(NSError *error);
 -(void)deleteSelectedClips;
 -(void)duplicateSelectedClips;
 -(void)consolidateSelectedClipsCompletion:(void(^)(SRClip *consolidated))consolidateHandler;
-
 
 -(void)removeClip:(SRClip *)clip;
 -(void)addClipFromURL:(NSURL *)url;
