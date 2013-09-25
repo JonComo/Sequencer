@@ -359,4 +359,9 @@
     return [clip timelineSize];
 }
 
+-(UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
+
 @end
