@@ -59,6 +59,9 @@
     
     CGSize videoSize;
     NSString *exportPreset;
+    
+    float zoomScale;
+    CGRect viewPreviewOriginalRect;
 }
 
 - (id)initWithDelegate:(id<SRSequencerDelegate>)managerDelegate
@@ -248,6 +251,42 @@
 -(void)setViewPreview:(UIView *)viewPreview
 {
     _viewPreview = viewPreview;
+    
+    UIPinchGestureRecognizer *zoom = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(pinched:)];
+    [viewPreview addGestureRecognizer:zoom];
+}
+
+-(void)pinched:(UIPinchGestureRecognizer *)pinch
+{
+    switch (pinch.state) {
+        case UIGestureRecognizerStateBegan:
+            //set init scale
+            zoomScale = pinch.scale;
+            break;
+        case UIGestureRecognizerStateEnded:
+        {
+            //determin if pinched up or down.
+            if (pinch.scale > zoomScale)
+            {
+                self.isZoomed = YES;
+                viewPreviewOriginalRect = self.viewPreview.frame;
+                
+                UIView *superview = self.viewPreview.superview;
+                
+                self.viewPreview.frame = CGRectMake(0, 0, superview.bounds.size.width, superview.bounds.size.height);
+                captureVideoPreviewLayer.frame = CGRectMake(0, 0, superview.bounds.size.width, superview.bounds.size.height);
+            }else{
+                self.isZoomed = NO;
+                self.viewPreview.frame = viewPreviewOriginalRect;
+                captureVideoPreviewLayer.frame = CGRectMake(0, 0, self.viewPreview.bounds.size.width, self.viewPreview.bounds.size.height);
+            }
+            
+            if ([self.delegate respondsToSelector:@selector(sequencer:isZoomedIn:)])
+                [self.delegate sequencer:self isZoomedIn:self.isZoomed];
+        }
+        default:
+            break;
+    }
 }
 
 -(void)flipCamera

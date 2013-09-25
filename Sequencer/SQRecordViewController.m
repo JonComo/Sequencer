@@ -188,6 +188,11 @@
     viewPreview.layer.borderWidth = recording ? 3 : 0;
 }
 
+-(void)sequencer:(SRSequencer *)sequencer isZoomedIn:(BOOL)isZoomed
+{
+    
+}
+
 #pragma UIActions
 
 -(void)viewTapped:(UITapGestureRecognizer *)tap
