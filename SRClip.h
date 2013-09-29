@@ -21,6 +21,9 @@ typedef void (^LayerInstructionModifier)(AVMutableVideoCompositionLayerInstructi
 @property (nonatomic, strong) UIImage *thumbnail;
 @property (nonatomic, strong) NSMutableArray *thumbnails;
 @property (nonatomic, strong) NSURL *URL;
+@property (nonatomic, strong) AVURLAsset *asset;
+
+@property CGSize timelineSize;
 
 @property (nonatomic, assign) CMTimeRange positionInComposition;
 
@@ -29,6 +32,7 @@ typedef void (^LayerInstructionModifier)(AVMutableVideoCompositionLayerInstructi
 @property BOOL isSelected;
 
 -(id)initWithURL:(NSURL *)URL;
+-(void)refreshProperties;
 
 -(void)generateThumbnailsCompletion:(void(^)(NSError *error))block;
 -(void)generateThumbnailsForSize:(CGSize)size completion:(void(^)(NSError *error))block;
@@ -43,7 +47,6 @@ typedef void (^LayerInstructionModifier)(AVMutableVideoCompositionLayerInstructi
 -(BOOL)remove;
 -(NSError *)replaceWithFileAtURL:(NSURL *)newURL;
 
--(CGSize)timelineSize;
 -(AVAssetTrack *)trackWithMediaType:(NSString *)type;
 
 -(BOOL)isPlayingAtTime:(CMTime)time;

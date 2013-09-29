@@ -34,14 +34,6 @@
         [self setupLayout];
 }
 
--(void)reloadData
-{
-    [super reloadData];
-    
-    //CGSize size = self.frame.size;
-    //self.contentInset = UIEdgeInsetsMake(0, size.width/3, 0, size.width/3);
-}
-
 -(void)setupLayout
 {
     hasSetupLayout = YES;
@@ -58,16 +50,39 @@
 
 -(void)playAtTime:(CMTime)time
 {
+    if (!playhead)
+    {
+        playhead = [[UIView alloc] initWithFrame:CGRectZero];
+        [playhead setBackgroundColor:[UIColor clearColor]];
+        playhead.layer.borderColor = [UIColor redColor].CGColor;
+        playhead.layer.borderWidth = 2;
+        [playhead setUserInteractionEnabled:NO];
+    }
+    
     for (SRClip *clip in self.sequence.clips){
         BOOL isPlaying = [clip isPlayingAtTime:time];
         
         if (isPlaying && clipCurrentlyPlaying != clip){
             clipCurrentlyPlaying = clip;
             
-            NSInteger index = [self.sequence.clips indexOfObject:clipCurrentlyPlaying];
-            [self scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:index inSection:0] atScrollPosition:UICollectionViewScrollPositionRight animated:YES];
+            NSIndexPath *indexPath = [NSIndexPath indexPathForItem:[self.sequence.clips indexOfObject:clip] inSection:0];
+            [self scrollToItemAtIndexPath:indexPath atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally animated:NO];
         }
+        
+
+        NSIndexPath *indexPath = [NSIndexPath indexPathForItem:[self.sequence.clips indexOfObject:clipCurrentlyPlaying] inSection:0];
+        SQClipCell *cell = (SQClipCell *)[self cellForItemAtIndexPath:indexPath];
+        
+        if (!playhead.superview)
+            [self addSubview:playhead];
+        
+        playhead.frame = cell.frame;
     }
+}
+
+-(void)finishedPlaying
+{
+    [playhead removeFromSuperview];
 }
 
 -(SRClip *)lastSelectedClip
@@ -92,6 +107,15 @@
     }
     
     return clips;
+}
+
+-(void)deselectAll
+{
+    for (SRClip *clip in self.sequence.clips){
+        clip.isSelected = NO;
+    }
+    
+    [self reloadData];
 }
 
 @end

@@ -58,6 +58,7 @@
         AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:clip.URL options:nil];
         
         _durationSeconds = CMTimeGetSeconds(asset.duration);
+        [self updateRange];
         
         int thumbWidth = ceil(frame.size.width*0.05);
         
@@ -159,9 +160,16 @@
 
 - (void)delegateNotification
 {
+    [self updateRange];
+    
     if ([_delegate respondsToSelector:@selector(videoRange:didChangeLeftPosition:rightPosition:)]){
         [_delegate videoRange:self didChangeLeftPosition:self.leftPosition rightPosition:self.rightPosition];
     }
+}
+
+-(void)updateRange
+{
+    self.range = CMTimeRangeMake(CMTimeMake(self.leftPosition * 1000, 1000), CMTimeMake((self.rightPosition - self.leftPosition) * 1000, 1000));
 }
 
 #pragma mark - Gestures
@@ -315,103 +323,13 @@
         for (UIImage *thumb in self.clip.thumbnails)
         {
             UIImageView *imageView = [[UIImageView alloc] initWithImage:thumb];
+            imageView.contentMode = UIViewContentModeScaleAspectFit;
             imageView.frame = CGRectMake(xOffset, 0, self.frame.size.height, self.frame.size.height);
             [self.bgView addSubview:imageView];
             
             xOffset += self.frame.size.height;
         }
     }];
-    /*
-    AVAsset *myAsset;
-    
-    if (!self.imageGenerator)
-    {
-        myAsset = [[AVURLAsset alloc] initWithURL:_videoUrl options:nil];
-        self.imageGenerator = [AVAssetImageGenerator assetImageGeneratorWithAsset:myAsset];
-        self.imageGenerator.appliesPreferredTrackTransform = YES;
-        self.imageGenerator.requestedTimeToleranceAfter = kCMTimeZero;
-        self.imageGenerator.requestedTimeToleranceBefore = kCMTimeZero;
-    }
-    
-    if ([self isRetina]){
-        self.imageGenerator.maximumSize = CGSizeMake(_bgView.frame.size.width*2, _bgView.frame.size.height*2);
-    } else {
-        self.imageGenerator.maximumSize = CGSizeMake(_bgView.frame.size.width, _bgView.frame.size.height);
-    }
-    
-    int picWidth = 49;
-    
-    // First image
-    UIImage *firstImage = [self generateThumbnailForTime:kCMTimeZero];
-        
-    UIImageView *tmp = [[UIImageView alloc] initWithImage:firstImage];
-    [_bgView addSubview:tmp];
-    picWidth = tmp.frame.size.width;
-
-    //Generate rest of the images
-    _durationSeconds = CMTimeGetSeconds([myAsset duration]);
-    
-    int picsCnt = ceil(_bgView.frame.size.width / picWidth);
-    
-    NSMutableArray *allTimes = [[NSMutableArray alloc] init];
-    
-    int time4Pic = 0;
-    
-    for (int i=1; i<picsCnt; i++){
-        time4Pic = i*picWidth;
-        
-        CMTime timeFrame = CMTimeMakeWithSeconds(_durationSeconds*time4Pic/_bgView.frame.size.width, 600);
-        
-        [allTimes addObject:[NSValue valueWithCMTime:timeFrame]];
-    }
-    
-    NSArray *times = allTimes;
-    
-    __block int i = 1;
-    
-    [self.imageGenerator generateCGImagesAsynchronouslyForTimes:times
-                                              completionHandler:^(CMTime requestedTime, CGImageRef image, CMTime actualTime,
-                                                                  AVAssetImageGeneratorResult result, NSError *error) {
-                                                  
-                                                  if (result == AVAssetImageGeneratorSucceeded) {
-                                                      
-                                                      
-                                                      UIImage *videoScreen;
-                                                      if ([self isRetina]){
-                                                          videoScreen = [[UIImage alloc] initWithCGImage:image scale:2.0 orientation:UIImageOrientationUp];
-                                                      } else {
-                                                          videoScreen = [[UIImage alloc] initWithCGImage:image];
-                                                      }
-                                                      
-                                                      
-                                                      UIImageView *tmp = [[UIImageView alloc] initWithImage:videoScreen];
-                                                      
-                                                      CGRect currentFrame = tmp.frame;
-                                                      
-                                                      //int all = (i+1)*tmp.frame.size.width;
-                                                      currentFrame.origin.x = i*currentFrame.size.width;
-                                                      
-//                                                      if (all > _bgView.frame.size.width){
-//                                                          int delta = all - _bgView.frame.size.width;
-//                                                          currentFrame.size.width -= delta;
-//                                                      }
-                                                      
-                                                      tmp.frame = currentFrame;
-                                                      i++;
-                                                      
-                                                      dispatch_async(dispatch_get_main_queue(), ^{
-                                                          [_bgView addSubview:tmp];
-                                                      });
-                                                  }
-                                                  
-                                                  if (result == AVAssetImageGeneratorFailed) {
-                                                      NSLog(@"Failed with error: %@", [error localizedDescription]);
-                                                  }
-                                                  if (result == AVAssetImageGeneratorCancelled) {
-                                                      NSLog(@"Canceled");
-                                                  }
-                                              }];
-     */
 }
 
 -(UIImage *)generateThumbnailForTime:(CMTime)time

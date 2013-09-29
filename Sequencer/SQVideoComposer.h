@@ -10,9 +10,16 @@
 
 #import <AVFoundation/AVFoundation.h>
 
+@class SRClip;
+
+typedef void (^ProgressHandler)(float progress);
+
 @interface SQVideoComposer : NSObject
 
-+(void)exportClips:(NSArray *)clips toURL:(NSURL *)outputFile withPreset:(NSString *)preset withCompletionHandler:(void (^)(NSError *error))block;
+-(void)exportClips:(NSArray *)clips toURL:(NSURL *)outputFile withPreset:(NSString *)preset progress:(ProgressHandler)progress withCompletionHandler:(void (^)(NSError *error))block;
+
 +(NSArray *)compositionFromClips:(NSArray *)clips;
+
++(AVMutableComposition *)timeRange:(CMTimeRange)range ofClip:(SRClip *)clip;
 
 @end

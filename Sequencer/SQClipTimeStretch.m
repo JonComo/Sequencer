@@ -96,32 +96,13 @@
 {
     AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:clip.URL options:nil];
     
-    AVMutableComposition *mutableComposition = [AVMutableComposition composition];
-    
-    AVMutableCompositionTrack *mutableCompositionAudioTrack = [mutableComposition addMutableTrackWithMediaType:AVMediaTypeAudio preferredTrackID:kCMPersistentTrackID_Invalid];
-    
-    //Add audio
-    NSArray *audioTracks = [asset tracksWithMediaType:AVMediaTypeAudio];
-    
-    if (audioTracks.count == 0){
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if (block) block(nil);
-        });
-        return;
-    }
-    
-    AVAssetTrack *audioTrack = [audioTracks objectAtIndex:0];
-    
-    [mutableCompositionAudioTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, asset.duration) ofTrack:audioTrack atTime:kCMTimeZero error:nil];
-    
-    
     NSURL *exportURL = [[[SRClip uniqueFileURLInDirectory:DOCUMENTS] URLByDeletingPathExtension] URLByAppendingPathExtension:@"m4a"];
     
     if ([[NSFileManager defaultManager] fileExistsAtPath:[exportURL path]]){
         [[NSFileManager defaultManager] removeItemAtURL:exportURL error:nil];
     }
     
-    AVAssetExportSession *exporter = [AVAssetExportSession exportSessionWithAsset:mutableComposition presetName:AVAssetExportPresetAppleM4A];
+    AVAssetExportSession *exporter = [AVAssetExportSession exportSessionWithAsset:asset presetName:AVAssetExportPresetAppleM4A];
     
     exporter.outputFileType = AVFileTypeAppleM4A;
     exporter.outputURL = exportURL;
@@ -132,6 +113,7 @@
         {
             case AVAssetExportSessionStatusFailed:
             {
+                NSLog(@"Error exporting audio: %@", exporter.error);
                 dispatch_async(dispatch_get_main_queue(), ^{
                     if (block) block(nil);
                 });

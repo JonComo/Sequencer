@@ -11,21 +11,29 @@
 #import "SRClip.h"
 
 @implementation SQVideoComposer
-
-+ (void)exportClips:(NSArray *)clips toURL:(NSURL *)outputFile withPreset:(NSString *)preset withCompletionHandler:(void (^)(NSError *error))block
 {
+    AVAssetExportSession *exporter;
+    NSTimer *timerProgress;
+    ProgressHandler progressHandler;
+}
+
+-(void)exportClips:(NSArray *)clips toURL:(NSURL *)outputFile withPreset:(NSString *)preset progress:(ProgressHandler)progress withCompletionHandler:(void (^)(NSError *))block
+{
+    progressHandler = progress;
+    
     NSArray *assets = [SQVideoComposer compositionFromClips:clips];
     AVComposition *composition = assets[0];
     AVVideoComposition *videoComposition = assets[1];
     
-    AVAssetExportSession *exporter = [AVAssetExportSession exportSessionWithAsset:composition presetName:AVAssetExportPresetPassthrough];
+    exporter = [AVAssetExportSession exportSessionWithAsset:composition presetName:preset];
     
     exporter.outputFileType = AVFileTypeMPEG4;
     exporter.videoComposition = videoComposition;
     exporter.outputURL = outputFile;
     
+    timerProgress = [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(updateProgress) userInfo:nil repeats:YES];
+    
     [exporter exportAsynchronouslyWithCompletionHandler:^{
-        
         switch([exporter status])
         {
             case AVAssetExportSessionStatusFailed:
@@ -43,8 +51,20 @@
                 });
             } break;
         }
-        
     }];
+}
+
+-(void)updateProgress
+{
+    if (exporter.status != AVAssetExportSessionStatusExporting)
+    {
+        [timerProgress invalidate];
+        timerProgress = nil;
+    }else{
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (progressHandler) progressHandler(exporter.progress);
+        });
+    }
 }
 
 +(NSArray *)compositionFromClips:(NSArray *)clips
@@ -88,6 +108,8 @@
         
         CMTimeRange range = CMTimeRangeMake(startTime, asset.duration);
         
+        clip.positionInComposition = range;
+        
         [layerInstruction setTransform:videoTrack.preferredTransform atTime:startTime];
         
         if (clip.modifyLayerInstruction)
@@ -104,6 +126,43 @@
     mutableVideoComposition.instructions = instructions;
     
     return @[composition, mutableVideoComposition];
+}
+
++(AVMutableComposition *)timeRange:(CMTimeRange)range ofClip:(SRClip *)clip
+{
+    AVMutableComposition *composition = [AVMutableComposition composition];
+    
+    AVMutableCompositionTrack *videoTrack = [composition addMutableTrackWithMediaType:AVMediaTypeVideo preferredTrackID:kCMPersistentTrackID_Invalid];
+    AVMutableCompositionTrack *audioTrack = [composition addMutableTrackWithMediaType:AVMediaTypeAudio preferredTrackID:kCMPersistentTrackID_Invalid];
+    
+    AVMutableVideoComposition *mutableVideoComposition;
+
+        AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:clip.URL options:nil];
+        
+        if (!mutableVideoComposition){
+            mutableVideoComposition = [AVMutableVideoComposition videoCompositionWithPropertiesOfAsset:asset];
+        }
+        
+        NSArray *videoTracks = [asset tracksWithMediaType:AVMediaTypeVideo];
+        NSArray *audioTracks = [asset tracksWithMediaType:AVMediaTypeAudio];
+        
+        AVAssetTrack *clipVideoTrack = videoTracks.count != 0 ? videoTracks[0] : nil;
+        AVAssetTrack *clipAudioTrack = audioTracks.count != 0 ? audioTracks[0] : nil;
+        
+        if (clipVideoTrack)
+            [videoTrack insertTimeRange:range ofTrack:clipVideoTrack atTime:kCMTimeZero error:nil];
+        
+        if (clipAudioTrack)
+            [audioTrack insertTimeRange:range ofTrack:clipAudioTrack atTime:kCMTimeZero error:nil];
+        
+        AVMutableVideoCompositionInstruction *instruction = [AVMutableVideoCompositionInstruction videoCompositionInstruction];
+        AVMutableVideoCompositionLayerInstruction *layerInstruction = [AVMutableVideoCompositionLayerInstruction videoCompositionLayerInstructionWithAssetTrack:videoTrack];
+        
+        [layerInstruction setTransform:videoTrack.preferredTransform atTime:kCMTimeZero];
+    
+    mutableVideoComposition.instructions = @[instruction];
+    
+    return composition;
 }
 
 @end

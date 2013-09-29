@@ -30,6 +30,8 @@ typedef void (^ErrorHandlingBlock)(NSError *error);
 @property (strong, readonly) AVCaptureSession *captureSession;
 @property (strong, nonatomic) JCMoviePlayer *player;
 
+@property (strong, nonatomic) NSString *exportPreset;
+
 @property (nonatomic, weak) UIView *viewPreview;
 @property (nonatomic, weak) SQTimeline *timeline;
 @property (nonatomic, strong) AVComposition *composition;
@@ -61,7 +63,7 @@ typedef void (^ErrorHandlingBlock)(NSError *error);
 
 - (void)reset;
 
-- (void)finalizeClips:(NSArray *)clipsCombining toFile:(NSURL *)finalVideoLocationURL withCompletionHandler:(ErrorHandlingBlock)completionHandler;
+- (void)finalizeClips:(NSArray *)clipsCombining toFile:(NSURL *)finalVideoLocationURL withPreset:(NSString *)preset progress:(void (^)(float progress))progress withCompletionHandler:(ErrorHandlingBlock)completionHandler;
 
 //Camera control
 -(void)setFocusPoint:(CGPoint)point;
@@ -72,7 +74,7 @@ typedef void (^ErrorHandlingBlock)(NSError *error);
 
 -(void)deleteSelectedClips;
 -(void)duplicateSelectedClips;
--(void)consolidateSelectedClipsCompletion:(void(^)(SRClip *consolidated))consolidateHandler;
+-(void)consolidateSelectedClipsProgress:(void (^)(float))progress completion:(void (^)(SRClip *))consolidateHandler;
 
 -(void)removeClip:(SRClip *)clip;
 -(void)addClipFromURL:(NSURL *)url;

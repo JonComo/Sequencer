@@ -255,7 +255,14 @@
         [sequence flipCamera];
     }];
     
-    dropDownCam.actions = [@[setFocusAction, setExposureAction, flipCamera, session1080, session720, session480] mutableCopy];
+    dropDownCam.actions = [@[setFocusAction, setExposureAction, flipCamera] mutableCopy];
+    
+    if ([[AVAssetExportSession allExportPresets] containsObject:AVAssetExportPreset640x480])
+        [dropDownCam.actions insertObject:session480 atIndex:0];
+    if ([[AVAssetExportSession allExportPresets] containsObject:AVAssetExportPreset1280x720])
+        [dropDownCam.actions insertObject:session720 atIndex:0];
+    if ([[AVAssetExportSession allExportPresets] containsObject:AVAssetExportPreset1920x1080])
+        [dropDownCam.actions insertObject:session1080 atIndex:0];
 }
 
 #pragma SequenceDelegate
@@ -306,12 +313,15 @@
 
 - (void)save
 {
-    [self presentHUD:YES withTitle:@"RENDERING"];
+    [self showHUDWithTitle:@"RENDERING" hideAfterDelay:NO];
     
     NSURL *outputURL = [SRClip uniqueFileURLInDirectory:DOCUMENTS];
     
-    [sequence finalizeClips:sequence.clips toFile:outputURL withCompletionHandler:^(NSError *error) {
-        [self presentHUD:NO withTitle:nil];
+    [sequence finalizeClips:sequence.clips toFile:outputURL withPreset:sequence.exportPreset progress:^(float progress) {
+        [self showProgress:progress];
+    } withCompletionHandler:^(NSError *error)
+    {
+        [self hideHUD];
         
         if (error) return;
         
@@ -328,10 +338,10 @@
     if (!lastSelected) return;
     
     AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:lastSelected.URL options:nil];
-    [self presentHUD:YES withTitle:[NSString stringWithFormat:@"RETIMING %.2f X %.1f", CMTimeGetSeconds(asset.duration), amout]];
+    [self showHUDWithTitle:[NSString stringWithFormat:@"RETIMING %.2f X %.1f", CMTimeGetSeconds(asset.duration), amout] hideAfterDelay:NO];
     
     [SQClipTimeStretch stretchClip:lastSelected byAmount:amout rePitch:rePitch completion:^(SRClip *stretchedClip) {
-        [self presentHUD:NO withTitle:nil];
+        [self hideHUD];
         [sequence addClip:stretchedClip];
     }];
 }
@@ -380,18 +390,28 @@
 
 - (void)join
 {
-    SRClip *selectedClip = [sequence.timeline lastSelectedClip];
-    
-    if (!selectedClip) return;
-    
-    [self presentHUD:YES withTitle:@"CONSOLIDATING"];
-    
-    [sequence consolidateSelectedClipsCompletion:^(SRClip *consolidated) {
+    if ([sequence.timeline selectedClips].count < 2)
+    {
+        MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+        [hud setMode:MBProgressHUDModeText];
+        hud.labelText = @"SELECT 2 OR MORE CLIPS";
         
-        [self presentHUD:NO withTitle:nil];
+        [hud hide:YES afterDelay:1];
+        return;
+    }
+    
+    [self showHUDWithTitle:@"JOINING" hideAfterDelay:NO];
+    
+    [sequence consolidateSelectedClipsProgress:^(float progress) {
+        [self showProgress:progress];
+    } completion:^(SRClip *consolidated) {
+        [self hideHUD];
         
         [consolidated generateThumbnailsCompletion:^(NSError *error) {
-            if (error) return;
+            if (error){
+                [self showHUDWithTitle:@"ERROR" hideAfterDelay:YES];
+                return;
+            }
             
             [sequence addClip:consolidated];
         }];
@@ -404,18 +424,30 @@
         [layerInstruction setTransform:transform atTime:range.start];
     }];
     
-    [self exportClip:clip];
+    [self exportClip:clip completion:^{
+        [clip setModifyLayerInstruction:nil];
+    }];
 }
 
--(void)exportClip:(SRClip *)clip
+-(void)exportClip:(SRClip *)clip completion:(void(^)(void))block
 {
-    [self presentHUD:YES withTitle:@"EXPORTING"];
+    [self showHUDWithTitle:@"EXPORTING" hideAfterDelay:NO];
     
     NSURL *exportURL = [SRClip uniqueFileURLInDirectory:DOCUMENTS];
     
-    [sequence finalizeClips:@[clip] toFile:exportURL withCompletionHandler:^(NSError *error) {
-        [self presentHUD:NO withTitle:nil];
-        if (error) return;
+    [sequence finalizeClips:@[clip] toFile:exportURL withPreset:sequence.exportPreset progress:^(float progress) {
+        [self showProgress:progress];
+    } withCompletionHandler:^(NSError *error)
+    {
+        [self hideHUD];
+        
+        if (block) block();
+        
+        if (error)
+        {
+            [self showHUDWithTitle:@"ERROR" hideAfterDelay:YES];
+            return;
+        }
         
         SRClip *exported = [[SRClip alloc] initWithURL:exportURL];
         
@@ -425,14 +457,29 @@
     }];
 }
 
--(void)presentHUD:(BOOL)show withTitle:(NSString *)title
+-(void)showHUDWithTitle:(NSString *)title hideAfterDelay:(BOOL)hide
 {
-    if (!show){
-        [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
-    }else{
-        MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-        hud.labelText = title;
-    }
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    hud.mode = MBProgressHUDModeIndeterminate;
+    hud.labelText = title;
+    
+    if (hide)
+        [hud hide:YES afterDelay:1];
+}
+
+-(void)hideHUD
+{
+    [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+}
+
+-(void)showProgress:(float)progress
+{
+    MBProgressHUD *hud = [MBProgressHUD HUDForView:self.view];
+    
+    if (hud.mode != MBProgressHUDModeDeterminate)
+        hud.mode = MBProgressHUDModeDeterminate;
+    
+    hud.progress = progress;
 }
 
 - (void)video:(NSString *)videoPath didFinishSavingWithError:(NSError *)error contextInfo:(void *) contextInfo
@@ -440,7 +487,7 @@
     dispatch_async(dispatch_get_main_queue(), ^{
         MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
         [hud setMode:MBProgressHUDModeText];
-        hud.labelText = @"SAVED TO PHOTO LIBRARY";
+        hud.labelText = !error ? @"SAVED TO PHOTO LIBRARY" : @"ERROR SAVING";
         
         [hud hide:YES afterDelay:2];
     });
@@ -459,7 +506,7 @@
 {
     SRClip *clip = [sequence.clips objectAtIndex:indexPath.row];
     
-    return [clip timelineSize];
+    return clip.timelineSize;
 }
 
 @end

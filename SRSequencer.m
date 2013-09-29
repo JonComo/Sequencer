@@ -58,7 +58,6 @@
     BOOL hadSetExposurePoint;
     
     CGSize videoSize;
-    NSString *exportPreset;
     
     float zoomScale;
     CGRect viewPreviewOriginalRect;
@@ -143,15 +142,15 @@
     if ([preset isEqualToString:AVCaptureSessionPreset1920x1080])
     {
         videoSize = CGSizeMake(1920, 1080);
-        exportPreset = AVAssetExportPreset1920x1080;
+        _exportPreset = AVAssetExportPreset1920x1080;
     }else if ([preset isEqualToString:AVCaptureSessionPreset1280x720])
     {
         videoSize = CGSizeMake(1280, 720);
-        exportPreset = AVAssetExportPreset1280x720;
-    }else if ([preset isEqualToString:AVCaptureSessionPreset640x480])
+        _exportPreset = AVAssetExportPreset1280x720;
+    }else
     {
         videoSize = CGSizeMake(640, 480);
-        exportPreset = AVAssetExportPreset640x480;
+        _exportPreset = AVAssetExportPreset640x480;
     }
     
     [self setupPreviewLayer];
@@ -254,11 +253,11 @@
 {
     _viewPreview = viewPreview;
     
-    UIPinchGestureRecognizer *zoom = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(pinched:)];
+    UIPinchGestureRecognizer *zoom = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(zoomed:)];
     [viewPreview addGestureRecognizer:zoom];
 }
 
--(void)pinched:(UIPinchGestureRecognizer *)pinch
+-(void)zoomed:(UIPinchGestureRecognizer *)pinch
 {
     switch (pinch.state) {
         case UIGestureRecognizerStateBegan:
@@ -276,11 +275,15 @@
                 UIView *superview = self.viewPreview.superview;
                 
                 self.viewPreview.frame = CGRectMake(0, 0, superview.bounds.size.width, superview.bounds.size.height);
+                
                 captureVideoPreviewLayer.frame = CGRectMake(0, 0, superview.bounds.size.width, superview.bounds.size.height);
+                self.player.frame = CGRectMake(0, 0, self.viewPreview.bounds.size.width, self.viewPreview.bounds.size.height);
             }else{
                 self.isZoomed = NO;
                 self.viewPreview.frame = viewPreviewOriginalRect;
+                
                 captureVideoPreviewLayer.frame = CGRectMake(0, 0, self.viewPreview.bounds.size.width, self.viewPreview.bounds.size.height);
+                self.player.frame = CGRectMake(0, 0, self.viewPreview.bounds.size.width, self.viewPreview.bounds.size.height);
             }
             
             if ([self.delegate respondsToSelector:@selector(sequencer:isZoomedIn:)])
@@ -411,9 +414,11 @@
     if (!self.player)
     {
         self.player = [JCMoviePlayer new];
-        self.player.frame = CGRectMake(0, 0, self.viewPreview.bounds.size.width, self.viewPreview.bounds.size.height);
         self.player.delegate = self;
+        [self.player setUserInteractionEnabled:NO];
     }
+    
+    self.player.frame = CGRectMake(0, 0, self.viewPreview.bounds.size.width, self.viewPreview.bounds.size.height);
     
     if (!self.player.superview)
     {
@@ -424,6 +429,11 @@
         
         [self.viewPreview addSubview:self.player];
         
+        SRClip *lastSelected = [self lastSelectedClip];
+        if (lastSelected){
+            self.player.range = CMTimeRangeMake(lastSelected.positionInComposition.start, CMTimeSubtract(self.player.range.duration, lastSelected.positionInComposition.start));
+        }
+        
         [self.player play];
     }else{
         [self stopPreview];
@@ -433,6 +443,8 @@
 -(void)stopPreview
 {
     NSLog(@"Stopped");
+    
+    [self.timeline finishedPlaying];
     
     [self.player stop];
     [self.player removeFromSuperview];
@@ -478,6 +490,7 @@
     dispatch_async(dispatch_get_main_queue(), ^{
         [clipRecording generateThumbnailsCompletion:^(NSError *error) {
             if (!error){
+                [clipRecording refreshProperties];
                 [self addClip:clipRecording];
             }
             
@@ -572,7 +585,7 @@
     return stitcher;
 }
 
-- (void)finalizeClips:(NSArray *)clipsCombining toFile:(NSURL *)finalVideoLocationURL withCompletionHandler:(ErrorHandlingBlock)completionHandler
+- (void)finalizeClips:(NSArray *)clipsCombining toFile:(NSURL *)finalVideoLocationURL withPreset:(NSString *)preset progress:(void (^)(float progress))progress withCompletionHandler:(ErrorHandlingBlock)completionHandler
 {
     //[self reset];
     
@@ -592,8 +605,7 @@
         return;
     }
     
-    
-    [SQVideoComposer exportClips:clipsCombining toURL:finalVideoLocationURL withPreset:exportPreset withCompletionHandler:completionHandler];
+    [[SQVideoComposer new] exportClips:clipsCombining toURL:finalVideoLocationURL withPreset:preset progress:progress withCompletionHandler:completionHandler];
 }
 
 #pragma mark - Observer start and stop
@@ -807,6 +819,7 @@
 - (void)collectionView:(UICollectionView *)collectionView itemAtIndexPath:(NSIndexPath *)fromIndexPath didMoveToIndexPath:(NSIndexPath *)toIndexPath
 {
     SRClip *clip = [self.clips objectAtIndex:fromIndexPath.item];
+    
     [self.clips removeObjectAtIndex:fromIndexPath.item];
     [self.clips insertObject:clip atIndex:toIndexPath.item];
 }
@@ -840,12 +853,14 @@
 {
     if (!clip) return;
     
-    NSUInteger index = [self indexToInsert];
-    NSLog(@"Index: %i", index);
-    [self.clips insertObject:clip atIndex:index];
+    [self.clips addObject:clip];
+    
+    [self.timeline deselectAll];
+    
+    clip.isSelected = YES;
     
     [self.timeline reloadData];
-    [self.timeline scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:MAX(0,self.clips.count-1) inSection:0] atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally animated:YES];
+    [self.timeline scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:MAX(0, self.clips.count-1) inSection:0] atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally animated:YES];
 }
 
 -(NSUInteger)indexToInsert
@@ -883,23 +898,17 @@
     
     for (SRClip *clip in selected){
         SRClip *newClip = [clip duplicate];
-        [self addClip:newClip];
+        [newClip generateThumbnailsCompletion:^(NSError *error) {
+            [self addClip:newClip];
+        }];
     }
 }
 
--(void)consolidateSelectedClipsCompletion:(void (^)(SRClip *))consolidateHandler
+-(void)consolidateSelectedClipsProgress:(void (^)(float))progress completion:(void (^)(SRClip *))consolidateHandler
 {
-    NSMutableArray *clipsToCombine = [NSMutableArray array];
-    
-    for (SRClip *clip in self.clips)
-    {
-        if (clip.isSelected)
-            [clipsToCombine addObject:clip];
-    }
-    
     NSURL *exportURL = [SRClip uniqueFileURLInDirectory:DOCUMENTS];
     
-    [self finalizeClips:clipsToCombine toFile:exportURL withCompletionHandler:^(NSError *error) {
+    [self finalizeClips:[self.timeline selectedClips] toFile:exportURL withPreset:self.exportPreset progress:progress withCompletionHandler:^(NSError *error) {
         if (!error)
         {
             SRClip *newClip = [[SRClip alloc] initWithURL:exportURL];

@@ -30,6 +30,21 @@
     [self clearFilesAtPath:DOCUMENTS];
 }
 
+-(UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
+
+-(BOOL)shouldAutorotate
+{
+    return YES;
+}
+
+-(NSUInteger)supportedInterfaceOrientations
+{
+    return UIInterfaceOrientationMaskLandscapeRight;
+}
+
 -(void)clearFilesAtPath:(NSString *)path
 {
     NSArray *files = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:path error:nil];
@@ -44,11 +59,6 @@
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
-}
-
--(UIStatusBarStyle)preferredStatusBarStyle
-{
-    return UIStatusBarStyleLightContent;
 }
 
 @end

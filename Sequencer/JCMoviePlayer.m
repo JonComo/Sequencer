@@ -10,8 +10,6 @@
 
 @interface JCMoviePlayer ()
 {
-    BOOL playing;
-    
     AVPlayerLayer *layer;
     AVPlayerItem *playerItem;
     
@@ -74,12 +72,10 @@
 
 -(void)play
 {
-    playing = YES;
+    self.isPlaying = YES;
     
-    [self.player seekToTime:self.range.start];
     [self.player play];
-    
-    endTime = CMTimeAdd(self.range.start, self.range.duration);
+    [self.player seekToTime:self.range.start];
     
     [timerPlaying invalidate];
     timerPlaying = nil;
@@ -92,7 +88,7 @@
 
 -(void)pause
 {
-    playing = NO;
+    self.isPlaying = NO;
     
     [self.player pause];
     
@@ -102,13 +98,20 @@
 
 -(void)stop
 {
-    playing = NO;
+    self.isPlaying = NO;
     
     [self.player pause];
     [self.player seekToTime:self.range.start];
     
     [timerPlaying invalidate];
     timerPlaying = nil;
+}
+
+-(void)setRange:(CMTimeRange)range
+{
+    _range = range;
+    
+    endTime = CMTimeAdd(range.start, range.duration);
 }
 
 -(void)playProgress
@@ -128,9 +131,9 @@
     [timerPlaying invalidate];
     timerPlaying = nil;
     
-    if (playing)
+    if (self.isPlaying)
     {
-        playing = NO;
+        self.isPlaying = NO;
         
         if ([self.delegate respondsToSelector:@selector(moviePlayer:playbackStateChanged:)])
             [self.delegate moviePlayer:self playbackStateChanged:JCMoviePlayerStateFinished];

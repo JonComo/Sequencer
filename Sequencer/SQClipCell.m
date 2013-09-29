@@ -22,28 +22,51 @@
 {
     _clip = clip;
     
+    [self clearSubviews];
     [self layoutThumbs];
+    [self showLength];
     
-    if (clip.isSelected)
-    {
+    self.layer.borderWidth = 2;
+    
+    if (clip.isSelected){
         self.layer.borderColor = [UIColor whiteColor].CGColor;
-        self.layer.borderWidth = 2;
     }else{
-        self.layer.borderWidth = 0;
+        self.layer.borderColor = [UIColor colorWithWhite:0.05 alpha:1].CGColor;
     }
+}
+
+-(void)clearSubviews
+{
+    for (UIView *subview in self.subviews)
+        [subview removeFromSuperview];
+}
+
+-(void)showLength
+{
+    NSString *length = [NSString stringWithFormat:@"%.2f", CMTimeGetSeconds(self.clip.asset.duration)];
+    
+    UIFont *font = [UIFont boldSystemFontOfSize:8];
+    CGSize labelSize = [length sizeWithAttributes:@{NSFontAttributeName: font}];
+    
+    labelSize = CGSizeMake(labelSize.width + 4, labelSize.height + 4); //padding
+    
+    UILabel *labelLength = [[UILabel alloc] initWithFrame:CGRectMake(self.clip.timelineSize.width - labelSize.width - 2, self.clip.timelineSize.height - labelSize.height - 2, labelSize.width, labelSize.height)];
+    labelLength.font = font;
+    labelLength.text = length;
+    labelLength.textAlignment = NSTextAlignmentCenter;
+    [labelLength setMinimumScaleFactor:0.2];
+    
+    [labelLength setBackgroundColor:[UIColor colorWithWhite:0 alpha:0.8]];
+    [labelLength setTextColor:[UIColor whiteColor]];
+    
+    [self addSubview:labelLength];
 }
 
 -(void)layoutThumbs
 {
-    for (UIView *subview in self.subviews)
-    {
-        if ([subview isKindOfClass:[UIImageView class]])
-            [subview removeFromSuperview];
-    }
-    
     float x = 0;
     
-    CGSize size = [self.clip timelineSize];
+    CGSize size = self.clip.timelineSize;
     CGSize thumbnailSize = CGSizeMake(size.height, size.height);
     
     for (UIImage *thumb in self.clip.thumbnails)

@@ -16,10 +16,15 @@
     if (self = [super init]) {
         //init
         _URL = URL;
-        //_asset = [AVURLAsset URLAssetWithURL:URL options:nil];
     }
     
     return self;
+}
+
+-(void)refreshProperties
+{
+    self.asset = [[AVURLAsset alloc] initWithURL:_URL options:nil];
+    self.timelineSize = [self calculateTimelineSize];
 }
 
 -(AVAssetTrack *)trackWithMediaType:(NSString *)type
@@ -67,8 +72,6 @@
     if (!error)
         newClip = [[SRClip alloc] initWithURL:newURL];
     
-    newClip.thumbnails = [self.thumbnails mutableCopy];
-    
     return newClip;
 }
 
@@ -85,22 +88,24 @@
     NSError *error;
     
     [[NSFileManager defaultManager] replaceItemAtURL:self.URL withItemAtURL:newURL backupItemName:@"backup" options:NSFileManagerItemReplacementUsingNewMetadataOnly resultingItemURL:&newURL error:&error];
-        
+    
+    if (!error)
+        [self refreshProperties];
+    
     return error;
 }
 
--(CGSize)timelineSize
+-(CGSize)calculateTimelineSize
 {
     CGSize defaultSize = CGSizeMake(60, 60);
     
-    AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:self.URL options:nil];
-    
-    return CGSizeMake(defaultSize.width + CMTimeGetSeconds(asset.duration) * (defaultSize.width/2), defaultSize.height);
+    return CGSizeMake(defaultSize.width + CMTimeGetSeconds(self.asset.duration) * (defaultSize.width/2), defaultSize.height);
 }
 
 -(void)generateThumbnailsCompletion:(void (^)(NSError *))block
 {
-    [self generateThumbnailsForSize:[self timelineSize] completion:block];
+    [self refreshProperties];
+    [self generateThumbnailsForSize:self.timelineSize completion:block];
 }
 
 -(void)generateThumbnailsForSize:(CGSize)size completion:(void(^)(NSError *error))block
@@ -133,7 +138,7 @@
     for (int i = 0; i<numberToGenerate; i++)
     {
         int timeForThumb = i * picWidth;
-        CMTime timeFrame = CMTimeMakeWithSeconds(durationSeconds * timeForThumb / size.width, 600);
+        CMTime timeFrame = CMTimeMakeWithSeconds(durationSeconds * timeForThumb / size.width, 30);
         
         [times addObject:[NSValue valueWithCMTime:timeFrame]];
     }
@@ -157,7 +162,9 @@
          }
          
          if (result == AVAssetImageGeneratorFailed) {
-             if (block) block(error);
+             dispatch_async(dispatch_get_main_queue(), ^{
+                 if (block) block(error);
+             });
          }
          if (result == AVAssetImageGeneratorCancelled) {
              if (block) block([NSError errorWithDomain:@"Canceled" code:0 userInfo:nil]);
@@ -167,7 +174,8 @@
 
 -(BOOL)isPlayingAtTime:(CMTime)time
 {
-    if (CMTimeCompare(time, self.positionInComposition.start) == 1 && CMTimeCompare(time, CMTimeAdd(self.positionInComposition.start, self.positionInComposition.duration)) == -1)
+    int timeIsGreater = CMTimeCompare(time, self.positionInComposition.start);
+    if ((timeIsGreater == 1 || timeIsGreater == 0) && CMTimeCompare(time, CMTimeAdd(self.positionInComposition.start, self.positionInComposition.duration)) == -1)
     {
         return YES;
     }

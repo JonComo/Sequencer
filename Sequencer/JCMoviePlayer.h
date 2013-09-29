@@ -30,6 +30,8 @@ typedef enum
 
 @property (nonatomic, weak) id <JCMoviePlayerDelegate> delegate;
 
+@property BOOL isPlaying;
+
 @property (nonatomic, strong) AVPlayer *player;
 
 @property (nonatomic, assign) CMTimeRange range;

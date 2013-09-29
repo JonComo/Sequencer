@@ -12,9 +12,11 @@
 
 #import "SAVideoRangeSlider.h"
 
+#import "SQVideoComposer.h"
+
 #import "JCMoviePlayer.h"
 
-@interface SQTrimViewController () <SAVideoRangeSliderDelegate>
+@interface SQTrimViewController () <SAVideoRangeSliderDelegate, JCMoviePlayerDelegate>
 {
     SAVideoRangeSlider *videoRangeSlider;
     __weak IBOutlet JCMoviePlayer *moviePlayer;
@@ -29,6 +31,7 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
     
+    moviePlayer.delegate = self;
 }
 
 -(void)viewDidAppear:(BOOL)animated
@@ -51,15 +54,20 @@
 
 -(NSUInteger)supportedInterfaceOrientations
 {
-    return UIInterfaceOrientationLandscapeRight;
+    return UIInterfaceOrientationMaskLandscapeRight;
+}
+
+-(BOOL)shouldAutorotate
+{
+    return YES;
 }
 
 -(void)refreshUI
 {
+    [self addRange];
+    
     AVPlayerItem *item = [AVPlayerItem playerItemWithURL:self.clip.URL];
     [moviePlayer setupWithPlayerItem:item];
-    
-    [self addRange];
 }
 
 -(void)addRange
@@ -75,11 +83,22 @@
     [self.view addSubview:videoRangeSlider];
 }
 
+- (IBAction)preview:(id)sender {
+    if (moviePlayer.isPlaying)
+    {
+        [moviePlayer stop];
+    }else{
+        moviePlayer.range = videoRangeSlider.range;
+        [moviePlayer play];
+    }
+}
+
+
 - (IBAction)trim:(id)sender
 {
     NSURL *outputURL = [SRClip uniqueFileURLInDirectory:DOCUMENTS];
     [videoRangeSlider exportVideoToURL:outputURL completion:^(BOOL success) {
-        NSError *error = [self.clip replaceWithFileAtURL:outputURL];
+        [self.clip replaceWithFileAtURL:outputURL];
         [self refreshUI];
     }];
 }
@@ -88,14 +107,16 @@
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
--(void)videoRange:(SAVideoRangeSlider *)videoRange didGestureStateEndedLeftPosition:(CGFloat)leftPosition rightPosition:(CGFloat)rightPosition
-{
-    moviePlayer.range = CMTimeRangeMake(CMTimeMake(leftPosition * 1000, 1000), CMTimeMake((rightPosition - leftPosition) * 1000, 1000));
-}
-
 -(void)videoRange:(SAVideoRangeSlider *)videoRange didPanToTime:(CMTime)time
 {
     [moviePlayer.player seekToTime:time toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero];
+}
+
+-(void)moviePlayer:(JCMoviePlayer *)player playbackStateChanged:(JCMoviePlayerState)state
+{
+    if (state == JCMoviePlayerStateFinished){
+        [player stop];
+    }
 }
 
 @end

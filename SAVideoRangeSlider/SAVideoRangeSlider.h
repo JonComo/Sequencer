@@ -42,6 +42,9 @@
 
 @property (nonatomic) CGFloat leftPosition;
 @property (nonatomic) CGFloat rightPosition;
+
+@property CMTimeRange range;
+
 @property (nonatomic, strong) UILabel *bubleText;
 @property (nonatomic, strong) UIView *topBorder;
 @property (nonatomic, strong) UIView *bottomBorder;
