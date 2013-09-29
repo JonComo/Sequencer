@@ -25,6 +25,8 @@
 
 #import "SAVideoRangeSlider.h"
 
+#import "SRClip.h"
+
 @interface SAVideoRangeSlider ()
 
 @property (nonatomic, strong) AVAssetImageGenerator *imageGenerator;
@@ -44,32 +46,34 @@
 #define SLIDER_BORDERS_SIZE 2.0f
 #define BG_VIEW_BORDERS_SIZE 0.0f
 
-- (id)initWithFrame:(CGRect)frame videoUrl:(NSURL *)videoUrl
+- (id)initWithFrame:(CGRect)frame clip:(SRClip *)clip
 {
-    self = [super initWithFrame:frame];
-    if (self) {
+    if (self = [super initWithFrame:frame]) {
+        //init
         
         _frame_width = frame.size.width;
+        _clip = clip;
+        _videoUrl = clip.URL;
+        
+        AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:clip.URL options:nil];
+        
+        _durationSeconds = CMTimeGetSeconds(asset.duration);
         
         int thumbWidth = ceil(frame.size.width*0.05);
         
-        _bgView = [[UIControl alloc] initWithFrame:CGRectMake(thumbWidth-BG_VIEW_BORDERS_SIZE, 0, frame.size.width-(thumbWidth*2)+BG_VIEW_BORDERS_SIZE*2, frame.size.height)];
+        _bgView = [[UIView alloc] initWithFrame:CGRectMake(thumbWidth-BG_VIEW_BORDERS_SIZE, 0, frame.size.width-(thumbWidth*2)+BG_VIEW_BORDERS_SIZE*2, frame.size.height)];
         _bgView.layer.borderColor = [UIColor blackColor].CGColor;
         _bgView.layer.borderWidth = BG_VIEW_BORDERS_SIZE;
         _bgView.clipsToBounds = YES;
         [self addSubview:_bgView];
         
-        _videoUrl = videoUrl;
-        
         _topBorder = [[UIView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, SLIDER_BORDERS_SIZE)];
         _topBorder.backgroundColor = [UIColor whiteColor];
         [self addSubview:_topBorder];
         
-        
         _bottomBorder = [[UIView alloc] initWithFrame:CGRectMake(0, frame.size.height-SLIDER_BORDERS_SIZE, frame.size.width, SLIDER_BORDERS_SIZE)];
         _bottomBorder.backgroundColor = [UIColor whiteColor];
         [self addSubview:_bottomBorder];
-        
         
         _leftThumb = [[SASliderLeft alloc] initWithFrame:CGRectMake(0, 0, thumbWidth, frame.size.height)];
         _leftThumb.contentMode = UIViewContentModeLeft;
@@ -121,7 +125,7 @@
         
         [_popoverBubble addSubview:_bubleText];
         
-        [self getMovieFrame];
+        [self generateThumbnails];
     }
     
     return self;
@@ -152,7 +156,6 @@
     _rightPosition = _frame_width*minGap/_durationSeconds;
     _minGap = minGap;
 }
-
 
 - (void)delegateNotification
 {
@@ -301,8 +304,24 @@
 
 #pragma mark - Video
 
--(void)getMovieFrame
+-(void)generateThumbnails
 {
+    __block float xOffset = 0;
+    [self.clip generateThumbnailsForSize:CGSizeMake(self.frame.size.width, self.frame.size.height) completion:^(NSError *error) {
+        //lay them out
+        for (UIView *view in self.bgView.subviews)
+            [view removeFromSuperview];
+        
+        for (UIImage *thumb in self.clip.thumbnails)
+        {
+            UIImageView *imageView = [[UIImageView alloc] initWithImage:thumb];
+            imageView.frame = CGRectMake(xOffset, 0, self.frame.size.height, self.frame.size.height);
+            [self.bgView addSubview:imageView];
+            
+            xOffset += self.frame.size.height;
+        }
+    }];
+    /*
     AVAsset *myAsset;
     
     if (!self.imageGenerator)
@@ -392,6 +411,7 @@
                                                       NSLog(@"Canceled");
                                                   }
                                               }];
+     */
 }
 
 -(UIImage *)generateThumbnailForTime:(CMTime)time

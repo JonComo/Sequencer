@@ -10,10 +10,14 @@
 
 @interface JCMoviePlayer ()
 {
+    BOOL playing;
+    
     AVPlayerLayer *layer;
     AVPlayerItem *playerItem;
     
     NSTimer *timerPlaying;
+    
+    CMTime endTime;
 }
 
 @end
@@ -22,6 +26,7 @@
 
 -(void)dealloc
 {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
     NSLog(@"dealloc player");
 }
 
@@ -31,8 +36,11 @@
      
     //refresh items
     playerItem = nil;
+    
     [layer removeFromSuperlayer];
+    layer.player = nil;
     layer = nil;
+    
     self.player = nil;
 }
 
@@ -66,19 +74,26 @@
 
 -(void)play
 {
-    if ([self.delegate respondsToSelector:@selector(moviePlayer:playbackStateChanged:)])
-        [self.delegate moviePlayer:self playbackStateChanged:JCMoviePlayerStateStarted];
+    playing = YES;
     
     [self.player seekToTime:self.range.start];
     [self.player play];
     
+    endTime = CMTimeAdd(self.range.start, self.range.duration);
+    
     [timerPlaying invalidate];
     timerPlaying = nil;
-    timerPlaying = [NSTimer scheduledTimerWithTimeInterval:0.01 target:self selector:@selector(playProgress) userInfo:nil repeats:YES];
+    
+    timerPlaying = [NSTimer scheduledTimerWithTimeInterval:0.05 target:self selector:@selector(playProgress) userInfo:nil repeats:YES];
+    
+    if ([self.delegate respondsToSelector:@selector(moviePlayer:playbackStateChanged:)])
+        [self.delegate moviePlayer:self playbackStateChanged:JCMoviePlayerStateStarted];
 }
 
 -(void)pause
 {
+    playing = NO;
+    
     [self.player pause];
     
     [timerPlaying invalidate];
@@ -87,8 +102,10 @@
 
 -(void)stop
 {
+    playing = NO;
+    
     [self.player pause];
-    [self.player seekToTime:kCMTimeZero];
+    [self.player seekToTime:self.range.start];
     
     [timerPlaying invalidate];
     timerPlaying = nil;
@@ -96,8 +113,6 @@
 
 -(void)playProgress
 {
-    CMTime endTime = CMTimeAdd(self.range.start, self.range.duration);
-    
     if (CMTimeCompare(self.player.currentTime,  endTime) == 1)
     {
         //stop it
@@ -110,14 +125,16 @@
 
 -(void)playFinished
 {
-    [self stop];
-    [self reset];
+    [timerPlaying invalidate];
+    timerPlaying = nil;
     
-    if ([self.delegate respondsToSelector:@selector(moviePlayer:playingAtTime:)])
-        [self.delegate moviePlayer:self playingAtTime:kCMTimeIndefinite];
-    
-    if ([self.delegate respondsToSelector:@selector(moviePlayer:playbackStateChanged:)])
-        [self.delegate moviePlayer:self playbackStateChanged:JCMoviePlayerStateFinished];
+    if (playing)
+    {
+        playing = NO;
+        
+        if ([self.delegate respondsToSelector:@selector(moviePlayer:playbackStateChanged:)])
+            [self.delegate moviePlayer:self playbackStateChanged:JCMoviePlayerStateFinished];
+    }
 }
 
 @end

@@ -24,12 +24,6 @@
     memset(&channelLayout, 0, sizeof(AudioChannelLayout));
     channelLayout.mChannelLayoutTag = kAudioChannelLayoutTag_Stereo;
     
-    if ([asset tracksWithMediaType:AVMediaTypeAudio].count == 0)
-    {
-        if (block) block(nil);
-        return;
-    }
-    
     AVAssetTrack *track = [[asset tracksWithMediaType:AVMediaTypeAudio] objectAtIndex:0];
     
     AVAssetReaderTrackOutput *readerOutput = [[AVAssetReaderTrackOutput alloc] initWithTrack:track outputSettings:compress ? nil : [NSDictionary dictionaryWithObjectsAndKeys:
@@ -104,10 +98,13 @@
                     case AVAssetReaderStatusReading:
                         break;
                     case AVAssetReaderStatusFailed:
+                    {
                         [writer cancelWriting];
                         
-                        if (block) block(nil);
-                        
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                            if (block) block(nil);
+                        });
+                    }
                         break;
                     case AVAssetReaderStatusCompleted:
                         NSLog(@"Writer completed");

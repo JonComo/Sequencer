@@ -48,7 +48,9 @@
 
 - (void)addClip:(SRClip *)clip withTransform:(CGAffineTransform (^)(AVAssetTrack *))transformToApply withErrorHandler:(void (^)(NSError *))errorHandler
 {
-    NSArray *videoTracks = [clip.asset tracksWithMediaType:AVMediaTypeVideo];
+    AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:clip.URL options:nil];
+    
+    NSArray *videoTracks = [asset tracksWithMediaType:AVMediaTypeVideo];
     
     if (videoTracks.count == 0) return;
     
@@ -85,26 +87,26 @@
         startTime = CMTimeAdd(startTime, previousInstruction.timeRange.duration);
     }];
     
-    CMTimeRange range = CMTimeRangeMake(startTime, clip.asset.duration);
+    CMTimeRange range = CMTimeRangeMake(startTime, asset.duration);
     instruction.timeRange = range;
     
     [instructions addObject:instruction];
     
     NSError *error;
-    [compositionVideoTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, clip.asset.duration) ofTrack:videoTrack atTime:kCMTimeZero error:&error];
+    [compositionVideoTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, asset.duration) ofTrack:videoTrack atTime:kCMTimeZero error:&error];
     
     if(error){
         errorHandler(error);
         return;
     }
     
-    NSArray *audioTracks = [clip.asset tracksWithMediaType:AVMediaTypeAudio];
+    NSArray *audioTracks = [asset tracksWithMediaType:AVMediaTypeAudio];
     
     if (audioTracks.count == 0) return;
     
     AVAssetTrack *audioTrack = [audioTracks objectAtIndex:0];
     
-    [compositionAudioTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, clip.asset.duration) ofTrack:audioTrack atTime:kCMTimeZero error:&error];
+    [compositionAudioTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, asset.duration) ofTrack:audioTrack atTime:kCMTimeZero error:&error];
     
     if(error){
         errorHandler(error);

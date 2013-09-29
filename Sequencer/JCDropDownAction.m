@@ -20,7 +20,7 @@
 
 +(JCDropDownAction *)dropDownActionWithName:(NSString *)actionName action:(ActionBlock)actionBlock
 {
-    CGSize size = [actionName sizeWithFont:[JCDropDownAction defaultFont]];
+    CGSize size = [actionName sizeWithAttributes:@{NSFontAttributeName : [JCDropDownAction defaultFont]}];
     
     if (size.width < 130)
         size.width = 130;

@@ -12,9 +12,9 @@
 
 @implementation SQVideoComposer
 
-- (void)exportClips:(NSArray *)clips toURL:(NSURL *)outputFile withPreset:(NSString *)preset withCompletionHandler:(void (^)(NSError *error))block
++ (void)exportClips:(NSArray *)clips toURL:(NSURL *)outputFile withPreset:(NSString *)preset withCompletionHandler:(void (^)(NSError *error))block
 {
-    NSArray *assets = [self compositionFromClips:clips];
+    NSArray *assets = [SQVideoComposer compositionFromClips:clips];
     AVComposition *composition = assets[0];
     AVVideoComposition *videoComposition = assets[1];
     
@@ -29,101 +29,81 @@
         switch([exporter status])
         {
             case AVAssetExportSessionStatusFailed:
-            {
-                block(exporter.error);
-            } break;
             case AVAssetExportSessionStatusCancelled:
             case AVAssetExportSessionStatusCompleted:
             {
-                block(nil);
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    block(nil);
+                });
             } break;
             default:
             {
-                block([NSError errorWithDomain:@"Unknown export error" code:100 userInfo:nil]);
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    block([NSError errorWithDomain:@"Unknown export error" code:100 userInfo:nil]);
+                });
             } break;
         }
         
     }];
 }
 
-- (NSArray *)compositionFromClips:(NSArray *)clips
++(NSArray *)compositionFromClips:(NSArray *)clips
 {
     AVMutableComposition *composition = [AVMutableComposition composition];
     
-    AVMutableCompositionTrack *compositionVideoTrack = [composition addMutableTrackWithMediaType:AVMediaTypeVideo preferredTrackID:kCMPersistentTrackID_Invalid];
+    AVMutableCompositionTrack *videoTrack = [composition addMutableTrackWithMediaType:AVMediaTypeVideo preferredTrackID:kCMPersistentTrackID_Invalid];
+    AVMutableCompositionTrack *audioTrack = [composition addMutableTrackWithMediaType:AVMediaTypeAudio preferredTrackID:kCMPersistentTrackID_Invalid];
     
-    AVMutableVideoComposition *videoComposition = [AVMutableVideoComposition videoComposition];
+    AVMutableVideoComposition *mutableVideoComposition;
+    NSMutableArray *instructions = [NSMutableArray array];
     
-    videoComposition.frameDuration = CMTimeMake(1,30);
+    CMTime startTime = kCMTimeZero;
+    CGSize exportSize = CGSizeMake(0, 0); //find largest video track
     
-    videoComposition.renderScale = 1.0;
-    
-    AVMutableVideoCompositionInstruction *instruction = [AVMutableVideoCompositionInstruction videoCompositionInstruction];
-    
-    AVMutableVideoCompositionLayerInstruction *layerInstruction = [AVMutableVideoCompositionLayerInstruction videoCompositionLayerInstructionWithAssetTrack:compositionVideoTrack];
-    
-    // Get only paths the user selected
-    NSMutableArray *array = [NSMutableArray array];
-    for(SRClip *clip in clips)
+    for (SRClip *clip in clips)
     {
-        [array addObject:clip.URL];
-    }
-    
-    NSArray *videoPathArray = array;
-    
-    float time = 0;
-    
-    for (int i = 0; i<videoPathArray.count; i++) {
+        AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:clip.URL options:nil];
         
-        NSURL *sourceURL = videoPathArray[i];
-        
-        AVURLAsset *sourceAsset = [AVURLAsset URLAssetWithURL:sourceURL options:@{AVURLAssetPreferPreciseDurationAndTimingKey: @(YES)}];
-        
-        NSError *error = nil;
-        
-        BOOL ok = NO;
-        AVAssetTrack *sourceVideoTrack = [[sourceAsset tracksWithMediaType:AVMediaTypeVideo] objectAtIndex:0];
-        
-        CGSize temp = CGSizeApplyAffineTransform(sourceVideoTrack.naturalSize, sourceVideoTrack.preferredTransform);
-        CGSize size = CGSizeMake(fabsf(temp.width), fabsf(temp.height));
-        CGAffineTransform transform = sourceVideoTrack.preferredTransform;
-        
-        videoComposition.renderSize = sourceVideoTrack.naturalSize;
-        if (size.width > size.height) {
-            [layerInstruction setTransform:transform atTime:CMTimeMakeWithSeconds(time, 30)];
-        } else {
-            float s = size.width/size.height;
-            
-            CGAffineTransform new = CGAffineTransformConcat(transform, CGAffineTransformMakeScale(s,s));
-            
-            float x = (size.height - size.width*s)/2;
-            
-            CGAffineTransform newer = CGAffineTransformConcat(new, CGAffineTransformMakeTranslation(x, 0));
-            [layerInstruction setTransform:newer atTime:CMTimeMakeWithSeconds(time, 30)];
+        if (!mutableVideoComposition){
+            mutableVideoComposition = [AVMutableVideoComposition videoCompositionWithPropertiesOfAsset:asset];
         }
         
-        AVMutableCompositionTrack *compositionVideoTrack = [AVMutableCompositionTrack new];
+        NSArray *videoTracks = [asset tracksWithMediaType:AVMediaTypeVideo];
+        NSArray *audioTracks = [asset tracksWithMediaType:AVMediaTypeAudio];
         
-        ok = [compositionVideoTrack insertTimeRange:sourceVideoTrack.timeRange ofTrack:sourceVideoTrack atTime:[composition duration] error:&error];
+        AVAssetTrack *clipVideoTrack = videoTracks.count != 0 ? videoTracks[0] : nil;
+        AVAssetTrack *clipAudioTrack = audioTracks.count != 0 ? audioTracks[0] : nil;
         
+        if (clipVideoTrack)
+            [videoTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, asset.duration) ofTrack:clipVideoTrack atTime:startTime error:nil];
         
-        if (!ok) {
-            // Deal with the error.
-            NSLog(@"something went wrong");
-        }
+        if (clipAudioTrack)
+            [audioTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, asset.duration) ofTrack:clipAudioTrack atTime:startTime error:nil];
         
+        if (videoTrack.naturalSize.width > exportSize.width) exportSize.width = videoTrack.naturalSize.width;
+        if (videoTrack.naturalSize.height > exportSize.height) exportSize.height = videoTrack.naturalSize.height;
         
-        NSLog(@"\n source asset duration is %f \n source vid track timerange is %f %f \n composition duration is %f \n composition vid track time range is %f %f",CMTimeGetSeconds([sourceAsset duration]), CMTimeGetSeconds(sourceVideoTrack.timeRange.start),CMTimeGetSeconds(sourceVideoTrack.timeRange.duration),CMTimeGetSeconds([composition duration]), CMTimeGetSeconds(compositionVideoTrack.timeRange.start),CMTimeGetSeconds(compositionVideoTrack.timeRange.duration));
+        AVMutableVideoCompositionInstruction *instruction = [AVMutableVideoCompositionInstruction videoCompositionInstruction];
+        AVMutableVideoCompositionLayerInstruction *layerInstruction = [AVMutableVideoCompositionLayerInstruction videoCompositionLayerInstructionWithAssetTrack:videoTrack];
         
-        time += CMTimeGetSeconds(sourceVideoTrack.timeRange.duration);
+        CMTimeRange range = CMTimeRangeMake(startTime, asset.duration);
+        
+        [layerInstruction setTransform:videoTrack.preferredTransform atTime:startTime];
+        
+        if (clip.modifyLayerInstruction)
+            clip.modifyLayerInstruction(layerInstruction, range);
+        
+        instruction.layerInstructions = @[layerInstruction];
+        instruction.timeRange = range;
+        
+        [instructions addObject:instruction];
+        
+        startTime = CMTimeAdd(startTime, asset.duration);
     }
     
-    instruction.layerInstructions = [NSArray arrayWithObject:layerInstruction];
-    instruction.timeRange = compositionVideoTrack.timeRange;
+    mutableVideoComposition.instructions = instructions;
     
-    videoComposition.instructions = [NSArray arrayWithObject:instruction];
-    
-    return @[composition, videoComposition];
+    return @[composition, mutableVideoComposition];
 }
 
 @end

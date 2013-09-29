@@ -57,7 +57,7 @@
     [videoRangeSlider removeFromSuperview];
     videoRangeSlider = nil;
     
-    videoRangeSlider = [[SAVideoRangeSlider alloc] initWithFrame:CGRectMake(20, 230, self.view.frame.size.height-40, 60) videoUrl:self.clip.URL];
+    videoRangeSlider = [[SAVideoRangeSlider alloc] initWithFrame:CGRectMake(20, 250, self.view.frame.size.height-40, 60) clip:self.clip];
     
     [videoRangeSlider setPopoverBubbleSize:100 height:50];
     videoRangeSlider.delegate = self;
@@ -69,11 +69,8 @@
 {
     NSURL *outputURL = [SRClip uniqueFileURLInDirectory:DOCUMENTS];
     [videoRangeSlider exportVideoToURL:outputURL completion:^(BOOL success) {
-        [self.clip replaceWithFileAtURL:outputURL];
-        
-        [self.clip generateThumbnailsCompletion:^(NSError *error) {
-            [self refreshUI];
-        }];
+        NSError *error = [self.clip replaceWithFileAtURL:outputURL];
+        [self refreshUI];
     }];
 }
 

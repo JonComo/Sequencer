@@ -196,7 +196,9 @@
 
 -(AVComposition *)composition
 {
-    _composition = [self stitcherFromClips:self.clips].composition;
+    //_composition = [self stitcherFromClips:self.clips].composition;
+    
+    _composition = [SQVideoComposer compositionFromClips:self.clips][0];
     
     return _composition;
 }
@@ -404,18 +406,23 @@
 
 -(void)preview
 {
+    if (self.clips.count == 0) return;
+    
     if (!self.player)
+    {
+        self.player = [JCMoviePlayer new];
+        self.player.frame = CGRectMake(0, 0, self.viewPreview.bounds.size.width, self.viewPreview.bounds.size.height);
+        self.player.delegate = self;
+    }
+    
+    if (!self.player.superview)
     {
         [self.captureSession stopRunning];
         
-        self.player = [JCMoviePlayer new];
-        self.player.frame = CGRectMake(0, 0, self.viewPreview.bounds.size.width, self.viewPreview.bounds.size.height);
-        [self.viewPreview addSubview:self.player];
-        
         AVPlayerItem *item = [AVPlayerItem playerItemWithAsset:self.composition];
-        
         [self.player setupWithPlayerItem:item];
-        self.player.delegate = self;
+        
+        [self.viewPreview addSubview:self.player];
         
         [self.player play];
     }else{
@@ -425,10 +432,11 @@
 
 -(void)stopPreview
 {
-    [self.player removeFromSuperview];
+    NSLog(@"Stopped");
+    
     [self.player stop];
-    self.player = nil;
-        
+    [self.player removeFromSuperview];
+    
     [self.captureSession startRunning];
 }
 
@@ -509,8 +517,9 @@
     
     for (SRClip *clip in clipsCombining)
     {
-        clip.positionInComposition = CMTimeRangeMake(startTime, clip.asset.duration);
-        startTime = CMTimeAdd(startTime, clip.asset.duration);
+        AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:clip.URL options:nil];
+        clip.positionInComposition = CMTimeRangeMake(startTime, asset.duration);
+        startTime = CMTimeAdd(startTime, asset.duration);
     }
     
     [clipsCombining enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
@@ -544,7 +553,9 @@
              }
              */
             
-            return clip.asset.preferredTransform;
+            AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:clip.URL options:nil];
+            
+            return asset.preferredTransform;
             
         } withErrorHandler:^(NSError *error) {
             
@@ -565,8 +576,7 @@
 {
     //[self reset];
     
-    if (clipsCombining.count == 0)
-    {
+    if (clipsCombining.count == 0){
         completionHandler([NSError errorWithDomain:@"No clips to export" code:104 userInfo:nil]);
         return;
     }
@@ -583,19 +593,7 @@
     }
     
     
-    AVAssetStitcher *stitcher = [self stitcherFromClips:clipsCombining];
-    
-    [stitcher exportTo:finalVideoLocationURL withPreset:exportPreset withCompletionHandler:^(NSError *error) {
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if(error){
-                completionHandler(error);
-            }else{
-                completionHandler(nil);
-            }
-        });
-        
-    }];
+    [SQVideoComposer exportClips:clipsCombining toURL:finalVideoLocationURL withPreset:exportPreset withCompletionHandler:completionHandler];
 }
 
 #pragma mark - Observer start and stop
@@ -828,19 +826,6 @@
     return selectedClip;
 }
 
--(NSArray *)selectedClips
-{
-    NSMutableArray *clips = [NSMutableArray array];
-    
-    for (SRClip *clip in self.clips)
-    {
-        if (clip.isSelected)
-            [clips addObject:clip];
-    }
-    
-    return clips;
-}
-
 -(void)addClipFromURL:(NSURL *)url
 {
     SRClip *newClip = [[SRClip alloc] initWithURL:url];
@@ -853,6 +838,8 @@
 
 -(void)addClip:(SRClip *)clip
 {
+    if (!clip) return;
+    
     NSUInteger index = [self indexToInsert];
     NSLog(@"Index: %i", index);
     [self.clips insertObject:clip atIndex:index];
@@ -882,7 +869,7 @@
 
 -(void)deleteSelectedClips
 {
-    NSArray *selected = [self selectedClips];
+    NSArray *selected = [self.timeline selectedClips];
     
     for (SRClip *clip in selected)
         [self removeClip:clip];
@@ -892,7 +879,7 @@
 
 -(void)duplicateSelectedClips
 {
-    NSArray *selected = [self selectedClips];
+    NSArray *selected = [self.timeline selectedClips];
     
     for (SRClip *clip in selected){
         SRClip *newClip = [clip duplicate];

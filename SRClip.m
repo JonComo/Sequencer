@@ -16,10 +16,24 @@
     if (self = [super init]) {
         //init
         _URL = URL;
-        _asset = [AVURLAsset URLAssetWithURL:URL options:nil];
+        //_asset = [AVURLAsset URLAssetWithURL:URL options:nil];
     }
     
     return self;
+}
+
+-(AVAssetTrack *)trackWithMediaType:(NSString *)type
+{
+    AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:self.URL options:nil];
+    
+    NSArray *tracks = [asset tracksWithMediaType:type];
+    
+    AVAssetTrack *track;
+    
+    if (tracks.count > 0)
+        track = tracks[0];
+    
+    return track;
 }
 
 -(void)dealloc
@@ -71,7 +85,7 @@
     NSError *error;
     
     [[NSFileManager defaultManager] replaceItemAtURL:self.URL withItemAtURL:newURL backupItemName:@"backup" options:NSFileManagerItemReplacementUsingNewMetadataOnly resultingItemURL:&newURL error:&error];
-    
+        
     return error;
 }
 
@@ -79,19 +93,26 @@
 {
     CGSize defaultSize = CGSizeMake(60, 60);
     
-    return CGSizeMake(defaultSize.width + CMTimeGetSeconds(self.asset.duration) * (defaultSize.width/2), defaultSize.height);
+    AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:self.URL options:nil];
+    
+    return CGSizeMake(defaultSize.width + CMTimeGetSeconds(asset.duration) * (defaultSize.width/2), defaultSize.height);
 }
 
--(void)generateThumbnailsCompletion:(void(^)(NSError *error))block
+-(void)generateThumbnailsCompletion:(void (^)(NSError *))block
+{
+    [self generateThumbnailsForSize:[self timelineSize] completion:block];
+}
+
+-(void)generateThumbnailsForSize:(CGSize)size completion:(void(^)(NSError *error))block
 {
     if (!self.thumbnails)
         self.thumbnails = [NSMutableArray array];
     
     [self.thumbnails removeAllObjects];
     
-    CGSize size = [self timelineSize];
+    AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:self.URL options:nil];
     
-    AVAssetImageGenerator *imageGenerator = [AVAssetImageGenerator assetImageGeneratorWithAsset:self.asset];
+    AVAssetImageGenerator *imageGenerator = [AVAssetImageGenerator assetImageGeneratorWithAsset:asset];
     imageGenerator.appliesPreferredTrackTransform = YES;
     imageGenerator.requestedTimeToleranceAfter = kCMTimeZero;
     imageGenerator.requestedTimeToleranceBefore = kCMTimeZero;
@@ -100,7 +121,7 @@
     imageGenerator.maximumSize = CGSizeMake(picWidth, picWidth);
     
     //Generate rest of the images
-    float durationSeconds = CMTimeGetSeconds(self.asset.duration);
+    float durationSeconds = CMTimeGetSeconds(asset.duration);
     
     int numberToGenerate = ceil(size.width / picWidth);
     numberToGenerate -= 2; //account for the start and end thumb
@@ -117,7 +138,7 @@
         [times addObject:[NSValue valueWithCMTime:timeFrame]];
     }
     
-    [times addObject:[NSValue valueWithCMTime:self.asset.duration]]; //last image
+    [times addObject:[NSValue valueWithCMTime:asset.duration]]; //last image
     
     [imageGenerator generateCGImagesAsynchronouslyForTimes:times completionHandler:^(CMTime requestedTime, CGImageRef image, CMTime actualTime, AVAssetImageGeneratorResult result, NSError *error)
      {
@@ -152,6 +173,11 @@
     }
     
     return NO;
+}
+
+-(void)modifyLayerInstruction:(AVMutableVideoCompositionLayerInstruction *)layerInstruction inRange:(CMTimeRange)range
+{
+    [layerInstruction setOpacityRampFromStartOpacity:0 toEndOpacity:1 timeRange:range];
 }
 
 @end

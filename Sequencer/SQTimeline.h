@@ -11,10 +11,14 @@
 #import <AVFoundation/AVFoundation.h>
 
 @class SRSequencer;
+@class SRClip;
 
 @interface SQTimeline : UICollectionView
 
 @property (nonatomic, weak) SRSequencer *sequence;
+
+-(SRClip *)lastSelectedClip;
+-(NSArray *)selectedClips;
 
 -(void)playAtTime:(CMTime)time;
 

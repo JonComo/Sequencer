@@ -36,6 +36,9 @@
     __weak IBOutlet JCDropDown *dropDownClip;
     __weak IBOutlet JCDropDown *dropDownCam;
     __weak IBOutlet JCDropDown *dropDownTime;
+    __weak IBOutlet JCDropDown *dropDownFile;
+    __weak IBOutlet JCDropDown *dropDownScale;
+    
     
     __weak IBOutlet UIView *viewPreview;
     __weak IBOutlet SQTimeline *timeline;
@@ -107,6 +110,18 @@
 {
     viewPreview.layer.borderColor = [UIColor redColor].CGColor;
     
+    //File actions
+    
+    JCDropDownAction *close = [JCDropDownAction dropDownActionWithName:@"CLOSE" action:^{
+        [self close];
+    }];
+    
+    JCDropDownAction *save = [JCDropDownAction dropDownActionWithName:@"SAVE" action:^{
+        [self save];
+    }];
+    
+    dropDownFile.actions = [@[close, save] mutableCopy];
+    
     //Clip actions
     
     JCDropDownAction *duplicate = [JCDropDownAction dropDownActionWithName:@"DUPLICATE" action:^{
@@ -125,11 +140,63 @@
         [self join];
     }];
     
-    JCDropDownAction *import = [JCDropDownAction dropDownActionWithName:@"IMPORT" action:^{
-        [self import];
+//    JCDropDownAction *import = [JCDropDownAction dropDownActionWithName:@"IMPORT" action:^{
+//        [self import];
+//    }];
+    
+    dropDownClip.actions = [@[/*import,*/ trim, join, delete, duplicate] mutableCopy];
+    
+    //Scale actions
+    
+    JCDropDownAction *flipH = [JCDropDownAction dropDownActionWithName:@"FLIP H" action:^{
+        SRClip *selected = [sequence.timeline lastSelectedClip];
+        if (!selected) return;
+        
+        AVAssetTrack *videoTrack = [selected trackWithMediaType:AVMediaTypeVideo];
+        
+        CGAffineTransform transform = CGAffineTransformMakeScale(-1, 1);
+        transform = CGAffineTransformConcat(transform, CGAffineTransformMakeTranslation(videoTrack.naturalSize.width, 0));
+        
+        [self applyTransform:transform toClip:selected];
     }];
     
-    dropDownClip.actions = [@[import, trim, join, delete, duplicate] mutableCopy];
+    JCDropDownAction *flipV = [JCDropDownAction dropDownActionWithName:@"FLIP V" action:^{
+        SRClip *selected = [sequence.timeline lastSelectedClip];
+        if (!selected) return;
+        
+        AVAssetTrack *videoTrack = [selected trackWithMediaType:AVMediaTypeVideo];
+        
+        CGAffineTransform transform = CGAffineTransformMakeScale(1, -1);
+        transform = CGAffineTransformConcat(transform, CGAffineTransformMakeTranslation(0, videoTrack.naturalSize.height));
+        
+        [self applyTransform:transform toClip:selected];
+    }];
+    
+    JCDropDownAction *scaleDown = [JCDropDownAction dropDownActionWithName:@"SCALE / 2" action:^{
+        SRClip *selected = [sequence.timeline lastSelectedClip];
+        if (!selected) return;
+        
+        AVAssetTrack *videoTrack = [selected trackWithMediaType:AVMediaTypeVideo];
+        
+        CGAffineTransform transform = CGAffineTransformMakeScale(0.5, 0.5);
+        transform = CGAffineTransformConcat(transform, CGAffineTransformMakeTranslation(videoTrack.naturalSize.width/4, videoTrack.naturalSize.height/4));
+        
+        [self applyTransform:transform toClip:selected];
+    }];
+    
+    JCDropDownAction *scaleUp = [JCDropDownAction dropDownActionWithName:@"SCALE X 2" action:^{
+        SRClip *selected = [sequence.timeline lastSelectedClip];
+        if (!selected) return;
+        
+        AVAssetTrack *videoTrack = [selected trackWithMediaType:AVMediaTypeVideo];
+        
+        CGAffineTransform transform = CGAffineTransformMakeScale(2, 2);
+        transform = CGAffineTransformConcat(transform, CGAffineTransformMakeTranslation(-videoTrack.naturalSize.width/2, -videoTrack.naturalSize.height/2));
+        
+        [self applyTransform:transform toClip:selected];
+    }];
+    
+    dropDownScale.actions = [@[flipH, flipV, scaleDown, scaleUp] mutableCopy];
     
     //Time actions
     
@@ -207,7 +274,7 @@
     }
 }
 
-- (IBAction)cancel:(id)sender
+- (void)close
 {
     [self dismissViewControllerAnimated:YES completion:nil];
 }
@@ -227,15 +294,14 @@
     [sequence preview];
 }
 
-- (IBAction)done:(id)sender
+- (void)save
 {
-    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    hud.labelText = @"RENDERING";
+    [self presentHUD:YES withTitle:@"RENDERING"];
     
     NSURL *outputURL = [SRClip uniqueFileURLInDirectory:DOCUMENTS];
     
     [sequence finalizeClips:sequence.clips toFile:outputURL withCompletionHandler:^(NSError *error) {
-        [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+        [self presentHUD:NO withTitle:nil];
         
         if (error) return;
         
@@ -247,23 +313,15 @@
 
 - (void)retime:(float)amout
 {
-    SRClip *lastSelected;
-    
-    for (SRClip *clip in sequence.clips)
-    {
-        if (clip.isSelected)
-        {
-            lastSelected = clip;
-        }
-    }
+    SRClip *lastSelected = [sequence.timeline lastSelectedClip];
     
     if (!lastSelected) return;
     
-    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    hud.labelText = [NSString stringWithFormat:@"RETIMING %.2f X %.1f", CMTimeGetSeconds(lastSelected.asset.duration), amout];
+    AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:lastSelected.URL options:nil];
+    [self presentHUD:YES withTitle:[NSString stringWithFormat:@"RETIMING %.2f X %.1f", CMTimeGetSeconds(asset.duration), amout]];
     
     [SQClipTimeStretch stretchClip:lastSelected byAmount:amout rePitch:rePitch completion:^(SRClip *stretchedClip) {
-        [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+        [self presentHUD:NO withTitle:nil];
         [sequence addClip:stretchedClip];
     }];
 }
@@ -321,20 +379,56 @@
     
     if (!selectedClip) return;
     
-    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    hud.labelText = @"CONSOLIDATING";
+    [self presentHUD:YES withTitle:@"CONSOLIDATING"];
     
     [sequence consolidateSelectedClipsCompletion:^(SRClip *consolidated) {
         
-        [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+        [self presentHUD:NO withTitle:nil];
         
         [consolidated generateThumbnailsCompletion:^(NSError *error) {
-            if (!error){
-                [sequence addClip:consolidated];
-                [timeline reloadData];
-            }
+            if (error) return;
+            
+            [sequence addClip:consolidated];
+            [timeline reloadData];
         }];
     }];
+}
+
+-(void)applyTransform:(CGAffineTransform)transform toClip:(SRClip *)clip
+{
+    [clip setModifyLayerInstruction:^(AVMutableVideoCompositionLayerInstruction *layerInstruction, CMTimeRange range) {
+        [layerInstruction setTransform:transform atTime:range.start];
+    }];
+    
+    [self exportClip:clip];
+}
+
+-(void)exportClip:(SRClip *)clip
+{
+    [self presentHUD:YES withTitle:@"EXPORTING"];
+    
+    NSURL *exportURL = [SRClip uniqueFileURLInDirectory:DOCUMENTS];
+    
+    [sequence finalizeClips:@[clip] toFile:exportURL withCompletionHandler:^(NSError *error) {
+        [self presentHUD:NO withTitle:nil];
+        if (error) return;
+        
+        SRClip *exported = [[SRClip alloc] initWithURL:exportURL];
+        
+        [exported generateThumbnailsCompletion:^(NSError *error) {
+            [sequence addClip:exported];
+        }];
+    }];
+}
+
+-(void)presentHUD:(BOOL)show withTitle:(NSString *)title
+{
+    if (!show){
+        [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+    }else{
+        MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+        hud.labelText = title;
+    }
 }
 
 - (void)video:(NSString *)videoPath didFinishSavingWithError:(NSError *)error contextInfo:(void *) contextInfo

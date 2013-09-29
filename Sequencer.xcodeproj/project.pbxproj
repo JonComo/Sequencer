@@ -324,10 +324,10 @@
 				865865A617CDCC2C00B5D7BD /* SRSequencer.m */,
 				865865A917CDCC3A00B5D7BD /* AVAssetStitcher.h */,
 				865865AA17CDCC3A00B5D7BD /* AVAssetStitcher.m */,
-				864AFD2517DFA7FD00A1286D /* SQClipTimeStretch.h */,
-				864AFD2617DFA7FD00A1286D /* SQClipTimeStretch.m */,
 				8696EDEC17E680730075DCE7 /* SQVideoComposer.h */,
 				8696EDED17E680730075DCE7 /* SQVideoComposer.m */,
+				864AFD2517DFA7FD00A1286D /* SQClipTimeStretch.h */,
+				864AFD2617DFA7FD00A1286D /* SQClipTimeStretch.m */,
 			);
 			name = Model;
 			sourceTree = "<group>";

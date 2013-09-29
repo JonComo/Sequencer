@@ -175,32 +175,29 @@
                                     <outlet property="delegate" destination="2" id="Kuh-bw-pi1"/>
                                 </connections>
                             </collectionView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="T0o-xx-NSm">
-                                <rect key="frame" x="439" y="20" width="129" height="30"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="T0o-xx-NSm" customClass="JCDropDown">
+                                <rect key="frame" x="0.0" y="50" width="129" height="30"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="30" id="mjI-5E-Mij"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                <state key="normal" title="CLOSE">
+                                <state key="normal" title="FILE">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <state key="highlighted">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
-                                <connections>
-                                    <action selector="cancel:" destination="2" eventType="touchUpInside" id="AXP-Oo-nFk"/>
-                                </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WBY-cW-9c7">
-                                <rect key="frame" x="439" y="96" width="129" height="29"/>
+                                <rect key="frame" x="439" y="203" width="129" height="30"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="29" id="juS-OI-fim"/>
+                                    <constraint firstAttribute="height" constant="30" id="qwx-qo-QJG"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                <state key="normal" title="PLAY">
+                                <state key="normal" title="PREVIEW">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
@@ -211,26 +208,8 @@
                                     <action selector="preview:" destination="2" eventType="touchUpInside" id="sFy-wI-bJf"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="z8E-b6-ISN">
-                                <rect key="frame" x="439" y="58" width="129" height="30"/>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="30" id="0tP-kX-KZT"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                <state key="normal" title="SAVE">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <state key="highlighted">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="done:" destination="2" eventType="touchUpInside" id="765-Sd-DDk"/>
-                                </connections>
-                            </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="i7z-77-cIC" customClass="JCDropDown">
-                                <rect key="frame" x="0.0" y="122" width="129" height="30"/>
+                                <rect key="frame" x="0.0" y="88" width="129" height="30"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="30" id="NBJ-ci-igR"/>
@@ -258,12 +237,9 @@
                                 <state key="highlighted">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
-                                <connections>
-                                    <action selector="duplicateSelected:" destination="2" eventType="touchUpInside" id="pPb-5w-CRE"/>
-                                </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mz1-82-1mI" customClass="JCDropDown">
-                                <rect key="frame" x="0.0" y="160" width="129" height="30"/>
+                                <rect key="frame" x="0.0" y="126" width="129" height="30"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="30" id="sjc-1Q-PvD"/>
@@ -286,7 +262,7 @@
                                 </constraints>
                             </view>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SFH-k5-zhc">
-                                <rect key="frame" x="439" y="140" width="129" height="40"/>
+                                <rect key="frame" x="439" y="132" width="129" height="40"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                 <state key="normal" title="RECORD">
@@ -300,35 +276,50 @@
                                     <action selector="record:" destination="2" eventType="touchUpInside" id="Dqh-9G-FsQ"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="t8D-PP-DES" customClass="JCDropDown">
+                                <rect key="frame" x="0.0" y="164" width="129" height="40"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="40" id="iFi-0r-s34"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                <state key="normal" title="SCALE">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <state key="highlighted">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
                             <constraint firstItem="eK7-Tm-qol" firstAttribute="leading" secondItem="3" secondAttribute="leading" id="6YO-8H-xrJ"/>
-                            <constraint firstItem="cwj-aE-RFv" firstAttribute="bottom" secondItem="SFH-k5-zhc" secondAttribute="bottom" constant="58" id="6aH-Rv-xJD"/>
-                            <constraint firstItem="z8E-b6-ISN" firstAttribute="trailing" secondItem="3" secondAttribute="trailing" id="8Y5-Ay-KfV"/>
-                            <constraint firstItem="WBY-cW-9c7" firstAttribute="top" secondItem="z8E-b6-ISN" secondAttribute="bottom" constant="8" symbolic="YES" id="9SL-2h-GuZ"/>
-                            <constraint firstItem="T0o-xx-NSm" firstAttribute="top" secondItem="3" secondAttribute="top" constant="20" id="B5X-Vc-k4z"/>
+                            <constraint firstItem="cwj-aE-RFv" firstAttribute="bottom" secondItem="SFH-k5-zhc" secondAttribute="bottom" constant="66" id="6aH-Rv-xJD"/>
+                            <constraint firstItem="T0o-xx-NSm" firstAttribute="top" secondItem="3" secondAttribute="top" constant="50" id="B5X-Vc-k4z"/>
+                            <constraint firstItem="t8D-PP-DES" firstAttribute="leading" secondItem="cwj-aE-RFv" secondAttribute="leading" id="Bdb-jC-lJh"/>
                             <constraint firstAttribute="centerX" secondItem="UJS-0a-nvU" secondAttribute="centerX" id="EW9-1b-cyQ"/>
-                            <constraint firstItem="z8E-b6-ISN" firstAttribute="leading" secondItem="UJS-0a-nvU" secondAttribute="trailing" constant="8" symbolic="YES" id="FEB-Jk-frZ"/>
+                            <constraint firstItem="UJS-0a-nvU" firstAttribute="leading" secondItem="t8D-PP-DES" secondAttribute="trailing" constant="8" symbolic="YES" id="Fpy-Yd-jvi"/>
                             <constraint firstItem="mz1-82-1mI" firstAttribute="leading" secondItem="3" secondAttribute="leading" id="Hc8-VF-vCt"/>
+                            <constraint firstItem="UJS-0a-nvU" firstAttribute="leading" secondItem="T0o-xx-NSm" secondAttribute="trailing" constant="8" id="HfB-Wz-blz"/>
                             <constraint firstItem="UJS-0a-nvU" firstAttribute="leading" secondItem="mz1-82-1mI" secondAttribute="trailing" constant="8" symbolic="YES" id="IiK-bY-eLB"/>
-                            <constraint firstItem="cwj-aE-RFv" firstAttribute="top" secondItem="mz1-82-1mI" secondAttribute="bottom" constant="8" symbolic="YES" id="M2g-e5-4zF"/>
+                            <constraint firstItem="cwj-aE-RFv" firstAttribute="top" secondItem="mz1-82-1mI" secondAttribute="bottom" constant="42" id="M2g-e5-4zF"/>
                             <constraint firstItem="cwj-aE-RFv" firstAttribute="leading" secondItem="3" secondAttribute="leading" id="N5a-zK-Rhy"/>
-                            <constraint firstItem="T0o-xx-NSm" firstAttribute="leading" secondItem="UJS-0a-nvU" secondAttribute="trailing" constant="8" symbolic="YES" id="NJj-5n-ryZ"/>
                             <constraint firstItem="UJS-0a-nvU" firstAttribute="leading" secondItem="cwj-aE-RFv" secondAttribute="trailing" constant="8" symbolic="YES" id="NQ9-X2-wbV"/>
                             <constraint firstItem="UJS-0a-nvU" firstAttribute="top" secondItem="3" secondAttribute="top" constant="20" id="Y2o-uH-QIq"/>
                             <constraint firstItem="mz1-82-1mI" firstAttribute="top" secondItem="i7z-77-cIC" secondAttribute="bottom" constant="8" symbolic="YES" id="YJY-ls-eQ4"/>
-                            <constraint firstItem="i7z-77-cIC" firstAttribute="top" secondItem="3" secondAttribute="top" constant="122" id="al4-BC-Rod"/>
+                            <constraint firstItem="i7z-77-cIC" firstAttribute="top" secondItem="3" secondAttribute="top" constant="88" id="al4-BC-Rod"/>
+                            <constraint firstItem="t8D-PP-DES" firstAttribute="top" secondItem="mz1-82-1mI" secondAttribute="bottom" constant="8" symbolic="YES" id="bLx-gw-c9U"/>
                             <constraint firstAttribute="bottom" secondItem="eK7-Tm-qol" secondAttribute="bottom" id="crI-mu-GTx"/>
                             <constraint firstItem="WBY-cW-9c7" firstAttribute="leading" secondItem="UJS-0a-nvU" secondAttribute="trailing" constant="8" symbolic="YES" id="d1v-Ij-flg"/>
                             <constraint firstItem="SFH-k5-zhc" firstAttribute="trailing" secondItem="3" secondAttribute="trailing" id="dkm-Br-qW7"/>
                             <constraint firstItem="i7z-77-cIC" firstAttribute="leading" secondItem="3" secondAttribute="leading" id="eri-6z-1Qa"/>
                             <constraint firstItem="UJS-0a-nvU" firstAttribute="leading" secondItem="i7z-77-cIC" secondAttribute="trailing" constant="8" symbolic="YES" id="ft0-vY-rOe"/>
-                            <constraint firstItem="z8E-b6-ISN" firstAttribute="top" secondItem="3" secondAttribute="top" constant="58" id="hta-5e-Q6c"/>
                             <constraint firstItem="eK7-Tm-qol" firstAttribute="trailing" secondItem="3" secondAttribute="trailing" id="i5J-Rc-ku5"/>
                             <constraint firstItem="SFH-k5-zhc" firstAttribute="leading" secondItem="UJS-0a-nvU" secondAttribute="trailing" constant="8" symbolic="YES" id="ijn-s1-Qg2"/>
-                            <constraint firstItem="cwj-aE-RFv" firstAttribute="top" secondItem="SFH-k5-zhc" secondAttribute="top" constant="58" id="lTi-rf-UgZ"/>
-                            <constraint firstItem="T0o-xx-NSm" firstAttribute="trailing" secondItem="3" secondAttribute="trailing" id="mZW-K5-hba"/>
+                            <constraint firstItem="eK7-Tm-qol" firstAttribute="top" secondItem="WBY-cW-9c7" secondAttribute="bottom" constant="7" id="kWM-lm-it3"/>
+                            <constraint firstItem="cwj-aE-RFv" firstAttribute="top" secondItem="SFH-k5-zhc" secondAttribute="top" constant="66" id="lTi-rf-UgZ"/>
+                            <constraint firstItem="T0o-xx-NSm" firstAttribute="leading" secondItem="3" secondAttribute="leading" id="nJp-cl-7g8"/>
                             <constraint firstItem="WBY-cW-9c7" firstAttribute="trailing" secondItem="3" secondAttribute="trailing" id="v2T-cq-QDs"/>
                         </constraints>
                         <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
@@ -337,6 +328,8 @@
                     <connections>
                         <outlet property="dropDownCam" destination="i7z-77-cIC" id="Thz-Rj-kcc"/>
                         <outlet property="dropDownClip" destination="cwj-aE-RFv" id="X1u-vt-uRY"/>
+                        <outlet property="dropDownFile" destination="T0o-xx-NSm" id="BX9-Bp-brz"/>
+                        <outlet property="dropDownScale" destination="t8D-PP-DES" id="N79-iT-gvX"/>
                         <outlet property="dropDownTime" destination="mz1-82-1mI" id="zXc-2i-Ilx"/>
                         <outlet property="timeline" destination="eK7-Tm-qol" id="Oz4-rk-dyO"/>
                         <outlet property="viewPreview" destination="UJS-0a-nvU" id="aKm-cx-GNh"/>

@@ -32,10 +32,14 @@
 #import "SAResizibleBubble.h"
 
 @protocol SAVideoRangeSliderDelegate;
+@class SRClip;
 
 @interface SAVideoRangeSlider : UIView
 
 @property (nonatomic, weak) id <SAVideoRangeSliderDelegate> delegate;
+
+@property (nonatomic, strong) SRClip *clip;
+
 @property (nonatomic) CGFloat leftPosition;
 @property (nonatomic) CGFloat rightPosition;
 @property (nonatomic, strong) UILabel *bubleText;
@@ -44,13 +48,12 @@
 @property (nonatomic, assign) NSInteger maxGap;
 @property (nonatomic, assign) NSInteger minGap;
 
-- (id)initWithFrame:(CGRect)frame videoUrl:(NSURL *)videoUrl;
+- (id)initWithFrame:(CGRect)frame clip:(SRClip *)clip;
 - (void)setPopoverBubbleSize: (CGFloat) width height:(CGFloat)height;
 
 -(void)exportVideoToURL:(NSURL *)URL completion:(void(^)(BOOL success))block;
 
 @end
-
 
 @protocol SAVideoRangeSliderDelegate <NSObject>
 

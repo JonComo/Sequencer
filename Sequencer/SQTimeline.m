@@ -10,6 +10,8 @@
 
 #import "SQClipCell.h"
 
+#import "SRClip.h"
+
 #import "SRSequencer.h"
 
 #import "LXReorderableCollectionViewFlowLayout.h"
@@ -36,8 +38,8 @@
 {
     [super reloadData];
     
-    CGSize size = self.frame.size;
-    self.contentInset = UIEdgeInsetsMake(0, size.width/3, 0, size.width/3);
+    //CGSize size = self.frame.size;
+    //self.contentInset = UIEdgeInsetsMake(0, size.width/3, 0, size.width/3);
 }
 
 -(void)setupLayout
@@ -66,6 +68,30 @@
             [self scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:index inSection:0] atScrollPosition:UICollectionViewScrollPositionRight animated:YES];
         }
     }
+}
+
+-(SRClip *)lastSelectedClip
+{
+    SRClip *selectedClip;
+    
+    for (SRClip *clip in self.sequence.clips){
+        if (clip.isSelected) selectedClip = clip;
+    }
+    
+    return selectedClip;
+}
+
+-(NSArray *)selectedClips
+{
+    NSMutableArray *clips = [NSMutableArray array];
+    
+    for (SRClip *clip in self.sequence.clips)
+    {
+        if (clip.isSelected)
+            [clips addObject:clip];
+    }
+    
+    return clips;
 }
 
 @end

@@ -12,7 +12,7 @@
 
 @interface SQVideoComposer : NSObject
 
-- (void)exportClips:(NSArray *)clips toURL:(NSURL *)outputFile withPreset:(NSString *)preset withCompletionHandler:(void (^)(NSError *error))block;
-- (NSArray *)compositionFromClips:(NSArray *)clips;
++(void)exportClips:(NSArray *)clips toURL:(NSURL *)outputFile withPreset:(NSString *)preset withCompletionHandler:(void (^)(NSError *error))block;
++(NSArray *)compositionFromClips:(NSArray *)clips;
 
 @end

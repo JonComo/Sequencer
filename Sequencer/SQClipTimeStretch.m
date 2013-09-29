@@ -45,21 +45,16 @@
     AVAssetTrack *videoAssetTrack = [[asset tracksWithMediaType:AVMediaTypeVideo] objectAtIndex:0];
     
     [mutableCompositionVideoTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero,videoAssetTrack.timeRange.duration) ofTrack:videoAssetTrack atTime:kCMTimeZero error:nil];
+
+    [mutableComposition scaleTimeRange:mutableCompositionVideoTrack.timeRange toDuration:assetAudio.duration];
     
     //Add audio
     AVAssetTrack *audioTrack = [[assetAudio tracksWithMediaType:AVMediaTypeAudio] objectAtIndex:0];
     [mutableCompositionAudioTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, assetAudio.duration) ofTrack:audioTrack atTime:kCMTimeZero error:nil];
     
-    //double wholeDuration = CMTimeGetSeconds([asset duration]);
-    double doubleDuration = CMTimeGetSeconds([asset duration]) * multiple;
-    
-    [mutableComposition scaleTimeRange:mutableCompositionVideoTrack.timeRange toDuration:CMTimeMakeWithSeconds(doubleDuration, 600.0)];
-    
     NSURL *exportURL = [SRClip uniqueFileURLInDirectory:DOCUMENTS];
     
-    AVAssetExportSession *exporter = [AVAssetExportSession exportSessionWithAsset:mutableComposition presetName:AVAssetExportPreset640x480];
-    
-    NSParameterAssert(exporter != nil);
+    AVAssetExportSession *exporter = [AVAssetExportSession exportSessionWithAsset:mutableComposition presetName:AVAssetExportPresetPassthrough];
     
     exporter.outputFileType = AVFileTypeMPEG4;
     exporter.outputURL = exportURL;
@@ -75,11 +70,12 @@
             case AVAssetExportSessionStatusCancelled:
             case AVAssetExportSessionStatusCompleted:
             {
-                
                 SRClip *stretched = [[SRClip alloc] initWithURL:exportURL];
                 
                 [stretched generateThumbnailsCompletion:^(NSError *error) {
-                    if (block) block(stretched);
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        if (block) block(stretched);
+                    });
                 }];
                 
             } break;
@@ -94,29 +90,25 @@
 
 +(void)extractAudioFromClip:(SRClip *)clip completion:(void(^)(NSURL *extractedAudioURL))block
 {
-    AVURLAsset *asset = [AVURLAsset assetWithURL:clip.URL];
+    AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:clip.URL options:nil];
     
     AVMutableComposition *mutableComposition = [AVMutableComposition composition];
     
-    //AVMutableCompositionTrack *mutableCompositionVideoTrack = [mutableComposition addMutableTrackWithMediaType:AVMediaTypeVideo preferredTrackID:kCMPersistentTrackID_Invalid];
     AVMutableCompositionTrack *mutableCompositionAudioTrack = [mutableComposition addMutableTrackWithMediaType:AVMediaTypeAudio preferredTrackID:kCMPersistentTrackID_Invalid];
     
-    //Add video
-    //AVAssetTrack *videoAssetTrack = [[asset tracksWithMediaType:AVMediaTypeVideo] objectAtIndex:0];
-    
-    //[mutableCompositionVideoTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero,videoAssetTrack.timeRange.duration) ofTrack:videoAssetTrack atTime:kCMTimeZero error:nil];
-    
     //Add audio
-    AVAssetTrack *audioTrack = [[asset tracksWithMediaType:AVMediaTypeAudio] objectAtIndex:0];
+    NSArray *audioTracks = [asset tracksWithMediaType:AVMediaTypeAudio];
+    
+    if (audioTracks.count == 0){
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (block) block(nil);
+        });
+        return;
+    }
+    
+    AVAssetTrack *audioTrack = [audioTracks objectAtIndex:0];
     
     [mutableCompositionAudioTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, asset.duration) ofTrack:audioTrack atTime:kCMTimeZero error:nil];
-    
-    //double wholeDuration = CMTimeGetSeconds([asset duration]);
-    //double doubleDuration = CMTimeGetSeconds([asset duration]) * multiple;
-    
-    //[mutableComposition scaleTimeRange:mutableCompositionVideoTrack.timeRange toDuration:CMTimeMakeWithSeconds(doubleDuration, 600.0)];
-    
-    //Audio
     
     
     NSURL *exportURL = [[[SRClip uniqueFileURLInDirectory:DOCUMENTS] URLByDeletingPathExtension] URLByAppendingPathExtension:@"m4a"];
@@ -127,8 +119,6 @@
     
     AVAssetExportSession *exporter = [AVAssetExportSession exportSessionWithAsset:mutableComposition presetName:AVAssetExportPresetAppleM4A];
     
-    NSParameterAssert(exporter != nil);
-    
     exporter.outputFileType = AVFileTypeAppleM4A;
     exporter.outputURL = exportURL;
     
@@ -138,16 +128,22 @@
         {
             case AVAssetExportSessionStatusFailed:
             {
-                if (block) block(nil);
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    if (block) block(nil);
+                });
             } break;
             case AVAssetExportSessionStatusCancelled:
             case AVAssetExportSessionStatusCompleted:
             {
-                if (block) block(exportURL);
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    if (block) block(exportURL);
+                });
             } break;
             default:
             {
-                if (block) block(nil);
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    if (block) block(nil);
+                });
             } break;
         }
         
