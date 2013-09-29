@@ -29,7 +29,7 @@
 #define TIPRecord @"TAP TO SET FOCUS"
 #define TIPRecordStop @"TAP TO SET EXPOSURE"
 
-@interface SQRecordViewController () <SRSequencerDelegate, UICollectionViewDelegateFlowLayout>
+@interface SQRecordViewController () <SRSequencerDelegate>
 {
     SRSequencer *sequence;
     
@@ -68,6 +68,8 @@
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    
+    [timeline setContentInset:UIEdgeInsetsMake(0, self.view.frame.size.width /2, 0, self.view.frame.size.width /2)];
     
     [timeline reloadData];
 }
@@ -308,7 +310,14 @@
 
 - (IBAction)preview:(id)sender
 {
-    [sequence preview];
+    if (sequence.player.superview)
+    {
+        [sequence hidePreview];
+        [sequence stop];
+    }else{
+        [sequence showPreview];
+        [sequence play];
+    }
 }
 
 - (void)save
@@ -491,22 +500,6 @@
         
         [hud hide:YES afterDelay:2];
     });
-}
-
--(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
-{
-    SRClip *clip = [sequence.clips objectAtIndex:indexPath.row];
-    
-    clip.isSelected = !clip.isSelected;
-    
-    [timeline reloadData];
-}
-
--(CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
-{
-    SRClip *clip = [sequence.clips objectAtIndex:indexPath.row];
-    
-    return clip.timelineSize;
 }
 
 @end

@@ -14,12 +14,20 @@
 
 #import "SRSequencer.h"
 
+#import "JCMath.h"
+
 #import "LXReorderableCollectionViewFlowLayout.h"
+
+@interface SQTimeline () <UIScrollViewDelegate, UICollectionViewDelegateFlowLayout>
+
+@end
 
 @implementation SQTimeline
 {
     BOOL hasSetupLayout;
     SRClip *clipCurrentlyPlaying;
+    
+    BOOL isSeeking;
     
     UIView *playhead;
 }
@@ -29,6 +37,7 @@
     _sequence = sequence;
     
     self.dataSource = _sequence;
+    self.delegate = self;
     
     if (!hasSetupLayout)
         [self setupLayout];
@@ -116,6 +125,101 @@
     }
     
     [self reloadData];
+}
+
+//flow layout
+
+-(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    SRClip *clip = [self.sequence.clips objectAtIndex:indexPath.row];
+    
+    clip.isSelected = !clip.isSelected;
+    
+    [self reloadData];
+}
+
+-(CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    SRClip *clip = [self.sequence.clips objectAtIndex:indexPath.row];
+    
+    return clip.timelineSize;
+}
+
+-(void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
+{
+    isSeeking = YES;
+    
+    [self.sequence showPreview];
+}
+
+-(void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    if (!isSeeking) return;
+    
+    float center = self.bounds.size.width/2;
+    
+    NSArray *cells = [self visibleCells];
+    
+    SQClipCell *closestCell;
+    float dist = FLT_MAX;
+    
+    for (SQClipCell *cell in cells)
+    {
+        float cellX = cell.frame.origin.x + cell.frame.size.width - scrollView.contentOffset.x;
+        
+        NSLog(@"cellX: %f center:%f", cellX, center);
+        
+        float testDist = ABS(cellX - center);
+        if (testDist < dist)
+        {
+            closestCell = cell;
+            dist = testDist;
+        }
+    }
+    
+    [self.sequence.player seekToTime:closestCell.clip.positionInComposition.start];
+    
+    /*
+    float scrollX = scrollView.contentOffset.x;
+    
+    float offsetX = scrollX + scrollView.contentInset.left;
+    
+    if (offsetX < 0) offsetX = 0;
+    if (offsetX > scrollView.contentSize.width) offsetX = scrollView.contentSize.width;
+    
+    float difference = scrollView.contentSize.width - offsetX;
+    
+    float ratio = difference / scrollView.contentSize.width;
+    
+    ratio = [JCMath mapValue:ratio range:CGPointMake(0, 1) range:CGPointMake(0, 1)];
+    
+    NSLog(@"ratio = %f duration: %f", ratio, CMTimeGetSeconds(self.sequence.duration));
+    
+    [self.sequence.player seekToTime:CMTimeMultiplyByFloat64(self.sequence.duration, ratio)];
+     */
+}
+
+-(void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
+{
+    if (isSeeking){
+        isSeeking = NO;
+        [self stopSeeking];
+    }
+}
+
+-(void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
+{
+    if (!decelerate && isSeeking)
+    {
+        isSeeking = NO;
+        [self stopSeeking];
+    }
+}
+
+-(void)stopSeeking
+{
+    isSeeking = NO;
+    [self.sequence hidePreview];
 }
 
 @end

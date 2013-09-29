@@ -4,7 +4,6 @@
 
 #import "SRSequencer.h"
 
-#import "AVAssetStitcher.h"
 #import <MobileCoreServices/UTCoreTypes.h>
 
 #import "SQClipCell.h"
@@ -195,9 +194,10 @@
 
 -(AVComposition *)composition
 {
-    //_composition = [self stitcherFromClips:self.clips].composition;
+    NSDictionary *info = [SQVideoComposer compositionFromClips:self.clips];
     
-    _composition = [SQVideoComposer compositionFromClips:self.clips][0];
+    _composition = info[SQVideoComposerComposition];
+    _duration = [info[SQVideoComposerDuration] CMTimeValue];
     
     return _composition;
 }
@@ -407,7 +407,7 @@
     [movieFileOutput startRecordingToOutputFileURL:outputFileURL recordingDelegate:self];
 }
 
--(void)preview
+-(void)showPreview
 {
     if (self.clips.count == 0) return;
     
@@ -422,39 +422,48 @@
     
     if (!self.player.superview)
     {
-        [self.captureSession stopRunning];
+        //[self.captureSession stopRunning];
         
         AVPlayerItem *item = [AVPlayerItem playerItemWithAsset:self.composition];
         [self.player setupWithPlayerItem:item];
         
         [self.viewPreview addSubview:self.player];
         
+        /*
         SRClip *lastSelected = [self lastSelectedClip];
         if (lastSelected){
             self.player.range = CMTimeRangeMake(lastSelected.positionInComposition.start, CMTimeSubtract(self.player.range.duration, lastSelected.positionInComposition.start));
         }
         
         [self.player play];
-    }else{
-        [self stopPreview];
+         */
     }
 }
 
--(void)stopPreview
+-(void)hidePreview
 {
-    NSLog(@"Stopped");
+    [self.player removeFromSuperview];
+}
+
+-(void)play
+{
+    [self.player play];
+}
+
+-(void)stop
+{
+    NSLog(@"stopping");
     
     [self.timeline finishedPlaying];
     
-    [self.player stop];
-    [self.player removeFromSuperview];
+    [self.player pause];
     
     [self.captureSession startRunning];
 }
 
 -(void)moviePlayer:(JCMoviePlayer *)player playbackStateChanged:(JCMoviePlayerState)state
 {
-    if (state == JCMoviePlayerStateFinished) [self stopPreview];
+    if (state == JCMoviePlayerStateFinished) [self stop];
 }
 
 -(void)moviePlayer:(JCMoviePlayer *)player playingAtTime:(CMTime)currentTime
@@ -518,71 +527,6 @@
     }
     
     [self.timeline reloadData];
-}
-
--(AVAssetStitcher *)stitcherFromClips:(NSArray *)clipsCombining
-{
-    AVAssetStitcher *stitcher = [[AVAssetStitcher alloc] initWithOutputSize:videoSize];
-    
-    __block NSError *stitcherError;
-    
-    CMTime startTime = kCMTimeZero;
-    
-    for (SRClip *clip in clipsCombining)
-    {
-        AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:clip.URL options:nil];
-        clip.positionInComposition = CMTimeRangeMake(startTime, asset.duration);
-        startTime = CMTimeAdd(startTime, asset.duration);
-    }
-    
-    [clipsCombining enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        
-        SRClip *clip = (SRClip *)obj;
-         
-        [stitcher addClip:clip withTransform:^CGAffineTransform(AVAssetTrack *videoTrack) {
-            
-            //
-            // The following transform is applied to each video track. It changes the size of the
-            // video so it fits within the output size and stays at the correct aspect ratio.
-            //
-            
-            //return CGAffineTransformIdentity;
-            /*
-             CGFloat ratioW = videoSize.width / videoTrack.naturalSize.width;
-             CGFloat ratioH = videoSize.height / videoTrack.naturalSize.height;
-             if(ratioW < ratioH)
-             {
-             // When the ratios are larger than one, we must flip the translation.
-             float neg = (ratioH > 1.0) ? 1.0 : -1.0;
-             CGFloat diffH = videoTrack.naturalSize.height - (videoTrack.naturalSize.height * ratioH);
-             return CGAffineTransformConcat( CGAffineTransformMakeTranslation(0, neg*diffH/2.0), CGAffineTransformMakeScale(ratioH, ratioH) );
-             }
-             else
-             {
-             // When the ratios are larger than one, we must flip the translation.
-             float neg = (ratioW > 1.0) ? 1.0 : -1.0;
-             CGFloat diffW = videoTrack.naturalSize.width - (videoTrack.naturalSize.width * ratioW);
-             return CGAffineTransformConcat( CGAffineTransformMakeTranslation(neg*diffW/2.0, 0), CGAffineTransformMakeScale(ratioW, ratioW) );
-             }
-             */
-            
-            AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:clip.URL options:nil];
-            
-            return asset.preferredTransform;
-            
-        } withErrorHandler:^(NSError *error) {
-            
-            stitcherError = error;
-            
-        }];
-        
-    }];
-    
-    if(stitcherError){
-        return nil;
-    }
-    
-    return stitcher;
 }
 
 - (void)finalizeClips:(NSArray *)clipsCombining toFile:(NSURL *)finalVideoLocationURL withPreset:(NSString *)preset progress:(void (^)(float progress))progress withCompletionHandler:(ErrorHandlingBlock)completionHandler

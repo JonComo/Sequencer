@@ -36,6 +36,8 @@ typedef void (^ErrorHandlingBlock)(NSError *error);
 @property (nonatomic, weak) SQTimeline *timeline;
 @property (nonatomic, strong) AVComposition *composition;
 
+@property (nonatomic, assign) CMTime duration;
+
 @property (nonatomic, strong) NSMutableArray *clips;
 
 @property (assign, readonly) BOOL isPaused;
@@ -59,7 +61,11 @@ typedef void (^ErrorHandlingBlock)(NSError *error);
 - (void)pauseRecording;
 - (void)flipCamera;
 
-- (void)preview;
+- (void)showPreview;
+- (void)hidePreview;
+
+- (void)play;
+- (void)stop;
 
 - (void)reset;
 

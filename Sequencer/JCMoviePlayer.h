@@ -41,5 +41,6 @@ typedef enum
 -(void)play;
 -(void)pause;
 -(void)stop;
+-(void)seekToTime:(CMTime)time;
 
 @end

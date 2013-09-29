@@ -67,7 +67,7 @@
     }
 }
 
-+(NSArray *)compositionFromClips:(NSArray *)clips
++(NSDictionary *)compositionFromClips:(NSArray *)clips
 {
     AVMutableComposition *composition = [AVMutableComposition composition];
     
@@ -125,7 +125,7 @@
     
     mutableVideoComposition.instructions = instructions;
     
-    return @[composition, mutableVideoComposition];
+    return @{SQVideoComposerComposition : composition, SQVideoComposerVideoComposition : mutableVideoComposition, SQVideoComposerDuration : [NSValue valueWithCMTime:startTime]};
 }
 
 +(AVMutableComposition *)timeRange:(CMTimeRange)range ofClip:(SRClip *)clip

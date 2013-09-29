@@ -98,13 +98,15 @@
 
 -(void)stop
 {
-    self.isPlaying = NO;
-    
-    [self.player pause];
+    [self pause];
     [self.player seekToTime:self.range.start];
+}
+
+-(void)seekToTime:(CMTime)time
+{
+    if (CMTIME_IS_INVALID(time)) return;
     
-    [timerPlaying invalidate];
-    timerPlaying = nil;
+    [self.player seekToTime:time toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero];
 }
 
 -(void)setRange:(CMTimeRange)range
