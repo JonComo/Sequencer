@@ -82,6 +82,7 @@
     
     [reader startReading];
     dispatch_queue_t mediaInputQueue = dispatch_queue_create("mediaInputQueue", NULL);
+    
     [writerInput requestMediaDataWhenReadyOnQueue:mediaInputQueue usingBlock:^{
         NSLog(@"Asset Writer ready : %d", writerInput.readyForMoreMediaData);
         while (writerInput.readyForMoreMediaData) {
@@ -101,9 +102,7 @@
                     {
                         [writer cancelWriting];
                         
-                        dispatch_async(dispatch_get_main_queue(), ^{
-                            if (block) block(nil);
-                        });
+                        if (block) block(nil);
                     }
                         break;
                     case AVAssetReaderStatusCompleted:
@@ -114,6 +113,7 @@
                         dispatch_async(dispatch_get_main_queue(), ^{
                             if (block) block(outputURL);
                         });
+                        
                         break;
                 }
                 break;

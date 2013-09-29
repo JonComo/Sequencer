@@ -18,7 +18,7 @@
     AVComposition *composition = assets[0];
     AVVideoComposition *videoComposition = assets[1];
     
-    AVAssetExportSession *exporter = [AVAssetExportSession exportSessionWithAsset:composition presetName:preset];
+    AVAssetExportSession *exporter = [AVAssetExportSession exportSessionWithAsset:composition presetName:AVAssetExportPresetPassthrough];
     
     exporter.outputFileType = AVFileTypeMPEG4;
     exporter.videoComposition = videoComposition;

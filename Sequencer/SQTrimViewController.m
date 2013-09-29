@@ -44,6 +44,16 @@
     // Dispose of any resources that can be recreated.
 }
 
+-(UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
+
+-(NSUInteger)supportedInterfaceOrientations
+{
+    return UIInterfaceOrientationLandscapeRight;
+}
+
 -(void)refreshUI
 {
     AVPlayerItem *item = [AVPlayerItem playerItemWithURL:self.clip.URL];
@@ -86,11 +96,6 @@
 -(void)videoRange:(SAVideoRangeSlider *)videoRange didPanToTime:(CMTime)time
 {
     [moviePlayer.player seekToTime:time toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero];
-}
-
--(UIStatusBarStyle)preferredStatusBarStyle
-{
-    return UIStatusBarStyleLightContent;
 }
 
 @end

@@ -903,6 +903,7 @@
         if (!error)
         {
             SRClip *newClip = [[SRClip alloc] initWithURL:exportURL];
+            
             if (consolidateHandler) consolidateHandler(newClip);
         }else{
             if (consolidateHandler) consolidateHandler(nil);

@@ -54,7 +54,7 @@
     
     NSURL *exportURL = [SRClip uniqueFileURLInDirectory:DOCUMENTS];
     
-    AVAssetExportSession *exporter = [AVAssetExportSession exportSessionWithAsset:mutableComposition presetName:AVAssetExportPresetPassthrough];
+    AVAssetExportSession *exporter = [AVAssetExportSession exportSessionWithAsset:mutableComposition presetName:AVAssetExportPreset640x480];
     
     exporter.outputFileType = AVFileTypeMPEG4;
     exporter.outputURL = exportURL;
@@ -65,7 +65,9 @@
         {
             case AVAssetExportSessionStatusFailed:
             {
-                if (block) block(nil);
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    if (block) block(nil);
+                });
             } break;
             case AVAssetExportSessionStatusCancelled:
             case AVAssetExportSessionStatusCompleted:
@@ -81,7 +83,9 @@
             } break;
             default:
             {
-                if (block) block(nil);
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    if (block) block(nil);
+                });
             } break;
         }
         

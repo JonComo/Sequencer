@@ -96,14 +96,24 @@
     // Dispose of any resources that can be recreated.
 }
 
--(void)dealloc
+-(UIStatusBarStyle)preferredStatusBarStyle
 {
-    NSLog(@"Recorder Removed");
+    return UIStatusBarStyleLightContent;
 }
 
 -(NSUInteger)supportedInterfaceOrientations
 {
-    return UIInterfaceOrientationMaskLandscape;
+    return UIInterfaceOrientationMaskLandscapeRight;
+}
+
+-(BOOL)shouldAutorotate
+{
+    return YES;
+}
+
+-(void)dealloc
+{
+    NSLog(@"Recorder Removed");
 }
 
 -(void)initInterface
@@ -140,11 +150,11 @@
         [self join];
     }];
     
-//    JCDropDownAction *import = [JCDropDownAction dropDownActionWithName:@"IMPORT" action:^{
-//        [self import];
-//    }];
+    JCDropDownAction *import = [JCDropDownAction dropDownActionWithName:@"IMPORT" action:^{
+        [self import];
+    }];
     
-    dropDownClip.actions = [@[/*import,*/ trim, join, delete, duplicate] mutableCopy];
+    dropDownClip.actions = [@[import, trim, join, delete, duplicate] mutableCopy];
     
     //Scale actions
     
@@ -328,7 +338,6 @@
 
 - (void)import
 {
-    
     [sequence.captureSession stopRunning];
     
     [[JCActionSheetManager sharedManager] setDelegate:self];
@@ -371,11 +380,7 @@
 
 - (void)join
 {
-    SRClip *selectedClip;
-    
-    for (SRClip *clip in sequence.clips){
-        if (clip.isSelected) selectedClip = clip;
-    }
+    SRClip *selectedClip = [sequence.timeline lastSelectedClip];
     
     if (!selectedClip) return;
     
@@ -389,7 +394,6 @@
             if (error) return;
             
             [sequence addClip:consolidated];
-            [timeline reloadData];
         }];
     }];
 }
@@ -456,11 +460,6 @@
     SRClip *clip = [sequence.clips objectAtIndex:indexPath.row];
     
     return [clip timelineSize];
-}
-
--(UIStatusBarStyle)preferredStatusBarStyle
-{
-    return UIStatusBarStyleLightContent;
 }
 
 @end
