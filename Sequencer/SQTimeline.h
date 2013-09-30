@@ -17,11 +17,13 @@
 
 @property (nonatomic, weak) SRSequencer *sequence;
 
+@property CMTime currentTime;
+
 -(void)deselectAll;
 -(SRClip *)lastSelectedClip;
 -(NSArray *)selectedClips;
 
 -(void)playAtTime:(CMTime)time;
--(void)finishedPlaying;
+-(void)scrollToClip:(SRClip *)clip;
 
 @end

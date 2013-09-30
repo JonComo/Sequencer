@@ -31,7 +31,7 @@
     if (clip.isSelected){
         self.layer.borderColor = [UIColor whiteColor].CGColor;
     }else{
-        self.layer.borderColor = [UIColor colorWithWhite:0.05 alpha:1].CGColor;
+        self.layer.borderColor = [UIColor colorWithWhite:0.15 alpha:1].CGColor;
     }
 }
 

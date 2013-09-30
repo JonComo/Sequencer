@@ -25,11 +25,17 @@
 @implementation SQTimeline
 {
     BOOL hasSetupLayout;
-    SRClip *clipCurrentlyPlaying;
     
     BOOL isSeeking;
     
     UIView *playhead;
+}
+
+-(void)reloadData
+{
+    [super reloadData];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:SRSequenceRefreshPreview object:nil];
 }
 
 -(void)setSequence:(SRSequencer *)sequence
@@ -38,6 +44,16 @@
     
     self.dataSource = _sequence;
     self.delegate = self;
+    
+    _currentTime = kCMTimeZero;
+    
+    if (!playhead){
+        float center = self.bounds.size.width/2;
+        playhead = [[UIView alloc] initWithFrame:CGRectMake(self.frame.origin.x + center, self.frame.origin.y, 4, self.bounds.size.height)];
+        [playhead setUserInteractionEnabled:NO];
+        [self.superview addSubview:playhead];
+        playhead.backgroundColor = [UIColor redColor];
+    }
     
     if (!hasSetupLayout)
         [self setupLayout];
@@ -59,39 +75,43 @@
 
 -(void)playAtTime:(CMTime)time
 {
-    if (!playhead)
-    {
-        playhead = [[UIView alloc] initWithFrame:CGRectZero];
-        [playhead setBackgroundColor:[UIColor clearColor]];
-        playhead.layer.borderColor = [UIColor redColor].CGColor;
-        playhead.layer.borderWidth = 2;
-        [playhead setUserInteractionEnabled:NO];
-    }
+//    float currentTime = CMTimeGetSeconds(time);
+//    
+//    float ratio = currentTime / CMTimeGetSeconds(self.sequence.duration);
+//    
+//    float playPosition = self.contentSize.width * ratio;
+//    
+//    [self scrollRectToVisible:CGRectMake(playPosition, 0, 2, self.bounds.size.height) animated:NO];
+    
+    self.currentTime = time;
     
     for (SRClip *clip in self.sequence.clips){
         BOOL isPlaying = [clip isPlayingAtTime:time];
         
-        if (isPlaying && clipCurrentlyPlaying != clip){
-            clipCurrentlyPlaying = clip;
-            
+        if (isPlaying){
             NSIndexPath *indexPath = [NSIndexPath indexPathForItem:[self.sequence.clips indexOfObject:clip] inSection:0];
-            [self scrollToItemAtIndexPath:indexPath atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally animated:NO];
+            SQClipCell *cell = (SQClipCell *)[self cellForItemAtIndexPath:indexPath];
+            
+            //calculate percent of cell played
+            CMTimeRange difference = CMTimeRangeFromTimeToTime(clip.positionInComposition.start, time);
+            
+            float ratio = CMTimeGetSeconds(difference.duration) / CMTimeGetSeconds(clip.positionInComposition.duration);
+            
+            [self scrollRectToVisible:CGRectMake(cell.frame.origin.x + cell.bounds.size.width * ratio, 0, 2, 2) animated:NO];
         }
-        
-
-        NSIndexPath *indexPath = [NSIndexPath indexPathForItem:[self.sequence.clips indexOfObject:clipCurrentlyPlaying] inSection:0];
-        SQClipCell *cell = (SQClipCell *)[self cellForItemAtIndexPath:indexPath];
-        
-        if (!playhead.superview)
-            [self addSubview:playhead];
-        
-        playhead.frame = cell.frame;
     }
 }
 
--(void)finishedPlaying
+-(void)scrollToClip:(SRClip *)clip
 {
-    [playhead removeFromSuperview];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSUInteger index = [self.sequence.clips indexOfObject:clip];
+        
+        NSIndexPath *path = [NSIndexPath indexPathForItem:index inSection:0];
+        SQClipCell *addedCell = (SQClipCell *)[self cellForItemAtIndexPath:path];
+        
+        [self scrollRectToVisible:CGRectMake(addedCell.frame.origin.x + addedCell.bounds.size.width, 0, 2, 2) animated:NO];
+    });
 }
 
 -(SRClip *)lastSelectedClip
@@ -123,8 +143,6 @@
     for (SRClip *clip in self.sequence.clips){
         clip.isSelected = NO;
     }
-    
-    [self reloadData];
 }
 
 //flow layout
@@ -135,7 +153,7 @@
     
     clip.isSelected = !clip.isSelected;
     
-    [self reloadData];
+    [super reloadData];
 }
 
 -(CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
@@ -154,9 +172,8 @@
 
 -(void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
-    if (!isSeeking) return;
-    
     float center = self.bounds.size.width/2;
+    float playheadPosition = center + scrollView.contentOffset.x;
     
     NSArray *cells = [self visibleCells];
     
@@ -165,11 +182,10 @@
     
     for (SQClipCell *cell in cells)
     {
-        float cellX = cell.frame.origin.x + cell.frame.size.width - scrollView.contentOffset.x;
+        float cellX = cell.frame.origin.x + cell.frame.size.width/2;
         
-        NSLog(@"cellX: %f center:%f", cellX, center);
+        float testDist = ABS(cellX - playheadPosition);
         
-        float testDist = ABS(cellX - center);
         if (testDist < dist)
         {
             closestCell = cell;
@@ -177,26 +193,22 @@
         }
     }
     
-    [self.sequence.player seekToTime:closestCell.clip.positionInComposition.start];
+    //find ratio of scrolled past cell
+    float ratio = (playheadPosition - closestCell.frame.origin.x) / closestCell.bounds.size.width;
     
-    /*
-    float scrollX = scrollView.contentOffset.x;
+    if (ratio < 0) ratio = 0;
+    if (ratio > 1) ratio = 1;
     
-    float offsetX = scrollX + scrollView.contentInset.left;
+    CMTime additionalTime = CMTimeMultiplyByFloat64(closestCell.clip.positionInComposition.duration, ratio);
     
-    if (offsetX < 0) offsetX = 0;
-    if (offsetX > scrollView.contentSize.width) offsetX = scrollView.contentSize.width;
+    CMTime seekTime = CMTimeAdd(closestCell.clip.positionInComposition.start, additionalTime);
     
-    float difference = scrollView.contentSize.width - offsetX;
+    self.currentTime = seekTime;
     
-    float ratio = difference / scrollView.contentSize.width;
+    NSLog(@"Scrolled to time: %f", CMTimeGetSeconds(self.currentTime));
     
-    ratio = [JCMath mapValue:ratio range:CGPointMake(0, 1) range:CGPointMake(0, 1)];
-    
-    NSLog(@"ratio = %f duration: %f", ratio, CMTimeGetSeconds(self.sequence.duration));
-    
-    [self.sequence.player seekToTime:CMTimeMultiplyByFloat64(self.sequence.duration, ratio)];
-     */
+    if (isSeeking)
+        [self.sequence.player seekToTime:seekTime];
 }
 
 -(void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView

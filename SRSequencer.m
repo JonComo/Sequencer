@@ -56,8 +56,6 @@
     BOOL hadSetFocusPoint;
     BOOL hadSetExposurePoint;
     
-    CGSize videoSize;
-    
     float zoomScale;
     CGRect viewPreviewOriginalRect;
 }
@@ -140,15 +138,15 @@
     
     if ([preset isEqualToString:AVCaptureSessionPreset1920x1080])
     {
-        videoSize = CGSizeMake(1920, 1080);
+        _videoSize = CGSizeMake(1920, 1080);
         _exportPreset = AVAssetExportPreset1920x1080;
     }else if ([preset isEqualToString:AVCaptureSessionPreset1280x720])
     {
-        videoSize = CGSizeMake(1280, 720);
+        _videoSize = CGSizeMake(1280, 720);
         _exportPreset = AVAssetExportPreset1280x720;
     }else
     {
-        videoSize = CGSizeMake(640, 480);
+        _videoSize = CGSizeMake(640, 480);
         _exportPreset = AVAssetExportPreset640x480;
     }
     
@@ -407,12 +405,13 @@
     [movieFileOutput startRecordingToOutputFileURL:outputFileURL recordingDelegate:self];
 }
 
--(void)showPreview
+-(void)refreshPreview
 {
     if (self.clips.count == 0) return;
     
-    if (!self.player)
-    {
+    NSLog(@"Refreshing preview");
+    
+    if (!self.player){
         self.player = [JCMoviePlayer new];
         self.player.delegate = self;
         [self.player setUserInteractionEnabled:NO];
@@ -420,23 +419,14 @@
     
     self.player.frame = CGRectMake(0, 0, self.viewPreview.bounds.size.width, self.viewPreview.bounds.size.height);
     
-    if (!self.player.superview)
-    {
-        //[self.captureSession stopRunning];
-        
-        AVPlayerItem *item = [AVPlayerItem playerItemWithAsset:self.composition];
-        [self.player setupWithPlayerItem:item];
-        
+    AVPlayerItem *item = [AVPlayerItem playerItemWithAsset:self.composition];
+    [self.player setupWithPlayerItem:item];
+}
+
+-(void)showPreview
+{
+    if (!self.player.superview){
         [self.viewPreview addSubview:self.player];
-        
-        /*
-        SRClip *lastSelected = [self lastSelectedClip];
-        if (lastSelected){
-            self.player.range = CMTimeRangeMake(lastSelected.positionInComposition.start, CMTimeSubtract(self.player.range.duration, lastSelected.positionInComposition.start));
-        }
-        
-        [self.player play];
-         */
     }
 }
 
@@ -447,23 +437,23 @@
 
 -(void)play
 {
+    self.player.range = CMTimeRangeMake(self.timeline.currentTime, kCMTimeIndefinite);
     [self.player play];
 }
 
 -(void)stop
 {
-    NSLog(@"stopping");
-    
-    [self.timeline finishedPlaying];
-    
     [self.player pause];
-    
     [self.captureSession startRunning];
 }
 
 -(void)moviePlayer:(JCMoviePlayer *)player playbackStateChanged:(JCMoviePlayerState)state
 {
-    if (state == JCMoviePlayerStateFinished) [self stop];
+    if (state == JCMoviePlayerStateFinished)
+    {
+        [self stop];
+        [self hidePreview];
+    }
 }
 
 -(void)moviePlayer:(JCMoviePlayer *)player playingAtTime:(CMTime)currentTime
@@ -561,6 +551,10 @@
     //
     // Reconnect to a device that was previously being used
     //
+    
+    [notificationCenter addObserverForName:SRSequenceRefreshPreview object:nil queue:nil usingBlock:^(NSNotification *note) {
+        [self refreshPreview];
+    }];
     
     deviceConnectedObserver = [notificationCenter addObserverForName:AVCaptureDeviceWasConnectedNotification object:nil queue:nil usingBlock:^(NSNotification *notification) {
         
@@ -804,7 +798,7 @@
     clip.isSelected = YES;
     
     [self.timeline reloadData];
-    [self.timeline scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:MAX(0, self.clips.count-1) inSection:0] atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally animated:YES];
+    [self.timeline scrollToClip:clip];
 }
 
 -(NSUInteger)indexToInsert

@@ -21,9 +21,9 @@
 {
     progressHandler = progress;
     
-    NSArray *assets = [SQVideoComposer compositionFromClips:clips];
-    AVComposition *composition = assets[0];
-    AVVideoComposition *videoComposition = assets[1];
+    NSDictionary *assets = [SQVideoComposer compositionFromClips:clips];
+    AVComposition *composition = assets[SQVideoComposerComposition];
+    AVVideoComposition *videoComposition = assets[SQVideoComposerVideoComposition];
     
     exporter = [AVAssetExportSession exportSessionWithAsset:composition presetName:preset];
     
@@ -124,6 +124,8 @@
     }
     
     mutableVideoComposition.instructions = instructions;
+    
+    if (!composition || !mutableVideoComposition) return nil;
     
     return @{SQVideoComposerComposition : composition, SQVideoComposerVideoComposition : mutableVideoComposition, SQVideoComposerDuration : [NSValue valueWithCMTime:startTime]};
 }

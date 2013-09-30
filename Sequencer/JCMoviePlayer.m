@@ -74,8 +74,8 @@
 {
     self.isPlaying = YES;
     
+    [self seekToTime:self.range.start];
     [self.player play];
-    [self.player seekToTime:self.range.start];
     
     [timerPlaying invalidate];
     timerPlaying = nil;

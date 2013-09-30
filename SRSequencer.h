@@ -10,6 +10,8 @@
 
 #import "SRClip.h"
 
+#define SRSequenceRefreshPreview @"sequenceRefreshPreview"
+
 @class SRSequencer;
 @class SQTimeline;
 
@@ -37,6 +39,7 @@ typedef void (^ErrorHandlingBlock)(NSError *error);
 @property (nonatomic, strong) AVComposition *composition;
 
 @property (nonatomic, assign) CMTime duration;
+@property (nonatomic, assign) CGSize videoSize;
 
 @property (nonatomic, strong) NSMutableArray *clips;
 
