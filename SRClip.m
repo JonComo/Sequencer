@@ -108,15 +108,15 @@
 -(void)generateThumbnailsCompletion:(void (^)(NSError *))block
 {
     [self refreshProperties];
-    [self generateThumbnailsForSize:self.timelineSize completion:block];
+    [self generateThumbnailsForSize:self.timelineSize completion:^(NSError *error, NSArray *thumbnails) {
+        self.thumbnails = thumbnails;
+        if (block) block(error);
+    }];
 }
 
--(void)generateThumbnailsForSize:(CGSize)size completion:(void(^)(NSError *error))block
+-(void)generateThumbnailsForSize:(CGSize)size completion:(void(^)(NSError *error, NSArray *thumbnails))block;
 {
-    if (!self.thumbnails)
-        self.thumbnails = [NSMutableArray array];
-    
-    [self.thumbnails removeAllObjects];
+    NSMutableArray *thumbnails = [NSMutableArray array];
     
     AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:self.URL options:nil];
     
@@ -129,7 +129,7 @@
     imageGenerator.maximumSize = CGSizeMake(picWidth, picWidth);
     
     //Generate rest of the images
-    float durationSeconds = CMTimeGetSeconds(asset.duration);
+    CMTime duration = asset.duration;
     
     int numberToGenerate = ceil(size.width / picWidth);
     numberToGenerate -= 2; //account for the start and end thumb
@@ -138,11 +138,16 @@
     
     [times addObject:[NSValue valueWithCMTime:kCMTimeZero]]; //first image
     
+    float offsetX = 0;
+    
     for (int i = 0; i<numberToGenerate; i++)
     {
-        int timeForThumb = i * picWidth;
-        CMTime timeFrame = CMTimeMakeWithSeconds(durationSeconds * timeForThumb / size.width, 30);
         
+        offsetX += picWidth;
+        
+        float ratio = offsetX / size.width;
+        
+        CMTime timeFrame = CMTimeMultiplyByFloat64(duration, ratio);
         [times addObject:[NSValue valueWithCMTime:timeFrame]];
     }
     
@@ -155,31 +160,32 @@
              UIImage *thumb = [[UIImage alloc] initWithCGImage:image];
              
              dispatch_async(dispatch_get_main_queue(), ^{
-                 [self.thumbnails addObject:thumb];
+                 [thumbnails addObject:thumb];
                  
-                 if (self.thumbnails.count == times.count)
-                     if (block) block(nil);
+                 if (thumbnails.count == times.count)
+                     if (block) block(nil, thumbnails);
              });
          }
          
          if (result == AVAssetImageGeneratorFailed) {
              dispatch_async(dispatch_get_main_queue(), ^{
-                 if (block) block(error);
+                 if (block) block(error, nil);
              });
          }
          if (result == AVAssetImageGeneratorCancelled) {
-             if (block) block([NSError errorWithDomain:@"Canceled" code:0 userInfo:nil]);
+             if (block) block([NSError errorWithDomain:@"Canceled" code:0 userInfo:nil], nil);
          }
      }];
 }
 
 -(BOOL)isPlayingAtTime:(CMTime)time
 {
-    int timeIsGreater = CMTimeCompare(time, self.positionInComposition.start);
-    if ((timeIsGreater == 1 || timeIsGreater == 0) && CMTimeCompare(time, CMTimeAdd(self.positionInComposition.start, self.positionInComposition.duration)) == -1)
-    {
-        return YES;
-    }
+    BOOL withinTime = CMTimeRangeContainsTime(self.positionInComposition, time);
+    
+    if (withinTime) return withinTime;
+    
+    //check if ends equal
+    if (CMTimeCompare(time, CMTimeAdd(self.positionInComposition.start, self.positionInComposition.duration)) == 0) return YES;
     
     return NO;
 }

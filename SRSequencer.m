@@ -403,10 +403,6 @@
 
 -(void)refreshPreview
 {
-    if (self.clips.count == 0) return;
-    
-    NSLog(@"Refreshing preview");
-    
     if (!self.player){
         self.player = [JCMoviePlayer new];
         self.player.delegate = self;
@@ -415,12 +411,18 @@
     
     self.player.frame = zoomFrame;
     
-    AVPlayerItem *item = [AVPlayerItem playerItemWithAsset:self.composition];
+    AVComposition *composition = self.composition;
+    
+    if (!composition) return;
+    
+    AVPlayerItem *item = [AVPlayerItem playerItemWithAsset:composition];
     [self.player setupWithPlayerItem:item];
 }
 
 -(void)showPreview
 {
+    if (self.clips.count == 0) return;
+    
     captureVideoPreviewLayer.borderWidth = 0;
     
     self.player.frame = zoomFrame;
@@ -440,6 +442,13 @@
 -(void)play
 {
     self.player.range = CMTimeRangeMake(self.timeline.currentTime, kCMTimeIndefinite);
+    
+    int currentTimeAndDuration = CMTimeCompare(self.timeline.currentTime, self.duration);
+    
+    if (currentTimeAndDuration == 0 || currentTimeAndDuration == 1){
+        self.player.range = CMTimeRangeMake(kCMTimeZero, kCMTimeIndefinite);
+    }
+    
     [self.player play];
 }
 
@@ -460,7 +469,7 @@
 
 -(void)moviePlayer:(JCMoviePlayer *)player playingAtTime:(CMTime)currentTime
 {
-    [self.timeline playAtTime:currentTime];
+    [self.timeline scrollToTime:currentTime animated:NO];
 }
 
 #pragma mark - AVCaptureFileOutputRecordingDelegate implementation

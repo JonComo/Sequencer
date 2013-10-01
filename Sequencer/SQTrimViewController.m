@@ -32,6 +32,7 @@
 	// Do any additional setup after loading the view.
     
     moviePlayer.delegate = self;
+    [moviePlayer setUserInteractionEnabled:NO];
 }
 
 -(void)viewDidAppear:(BOOL)animated
@@ -75,17 +76,16 @@
     [videoRangeSlider removeFromSuperview];
     videoRangeSlider = nil;
     
-    videoRangeSlider = [[SAVideoRangeSlider alloc] initWithFrame:CGRectMake(20, 250, self.view.frame.size.height-40, 60) clip:self.clip];
+    videoRangeSlider = [[SAVideoRangeSlider alloc] initWithFrame:CGRectMake(10, 260, self.view.frame.size.height-30, 50) clip:self.clip];
     
-    [videoRangeSlider setPopoverBubbleSize:100 height:50];
+    [videoRangeSlider setPopoverBubbleSize:80 height:40];
     videoRangeSlider.delegate = self;
     
     [self.view addSubview:videoRangeSlider];
 }
 
 - (IBAction)preview:(id)sender {
-    if (moviePlayer.isPlaying)
-    {
+    if (moviePlayer.isPlaying){
         [moviePlayer stop];
     }else{
         moviePlayer.range = videoRangeSlider.range;
@@ -99,7 +99,9 @@
     NSURL *outputURL = [SRClip uniqueFileURLInDirectory:DOCUMENTS];
     [videoRangeSlider exportVideoToURL:outputURL completion:^(BOOL success) {
         [self.clip replaceWithFileAtURL:outputURL];
-        [self refreshUI];
+        [self.clip generateThumbnailsCompletion:^(NSError *error) {
+            [self refreshUI];
+        }];
     }];
 }
 
@@ -109,7 +111,7 @@
 
 -(void)videoRange:(SAVideoRangeSlider *)videoRange didPanToTime:(CMTime)time
 {
-    [moviePlayer.player seekToTime:time toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero];
+    [moviePlayer seekToTime:time];
 }
 
 -(void)moviePlayer:(JCMoviePlayer *)player playbackStateChanged:(JCMoviePlayerState)state

@@ -29,10 +29,10 @@
 
 @interface SAVideoRangeSlider ()
 
-@property (nonatomic, strong) AVAssetImageGenerator *imageGenerator;
 @property (nonatomic, strong) UIView *bgView;
 @property (nonatomic, strong) UIView *centerView;
 @property (nonatomic, strong) NSURL *videoUrl;
+
 @property (nonatomic, strong) SASliderLeft *leftThumb;
 @property (nonatomic, strong) SASliderRight *rightThumb;
 @property (nonatomic) CGFloat frame_width;
@@ -58,7 +58,8 @@
         AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:clip.URL options:nil];
         
         _durationSeconds = CMTimeGetSeconds(asset.duration);
-        [self updateRange];
+        
+        _range = CMTimeRangeMake(kCMTimeZero, asset.duration);
         
         int thumbWidth = ceil(frame.size.width*0.05);
         
@@ -169,7 +170,7 @@
 
 -(void)updateRange
 {
-    self.range = CMTimeRangeMake(CMTimeMake(self.leftPosition * 1000, 1000), CMTimeMake((self.rightPosition - self.leftPosition) * 1000, 1000));
+    _range = CMTimeRangeMake(CMTimeMake(self.leftPosition * 1000, 1000), CMTimeMake((self.rightPosition - self.leftPosition) * 1000, 1000));
 }
 
 #pragma mark - Gestures
@@ -315,12 +316,13 @@
 -(void)generateThumbnails
 {
     __block float xOffset = 0;
-    [self.clip generateThumbnailsForSize:CGSizeMake(self.frame.size.width, self.frame.size.height) completion:^(NSError *error) {
+    [self.clip generateThumbnailsForSize:CGSizeMake(self.frame.size.width, self.frame.size.height) completion:^(NSError *error, NSArray *thumbnails) {
+        
         //lay them out
         for (UIView *view in self.bgView.subviews)
             [view removeFromSuperview];
         
-        for (UIImage *thumb in self.clip.thumbnails)
+        for (UIImage *thumb in thumbnails)
         {
             UIImageView *imageView = [[UIImageView alloc] initWithImage:thumb];
             imageView.contentMode = UIViewContentModeScaleAspectFit;
@@ -330,29 +332,6 @@
             xOffset += self.frame.size.height;
         }
     }];
-}
-
--(UIImage *)generateThumbnailForTime:(CMTime)time
-{
-    UIImage *videoScreen;
-    
-    // First image
-    NSError *error;
-    CMTime actualTime;
-    
-    CGImageRef imageRef = [self.imageGenerator copyCGImageAtTime:time actualTime:&actualTime error:&error];
-    
-    if (imageRef != NULL) {
-        if ([self isRetina]){
-            videoScreen = [[UIImage alloc] initWithCGImage:imageRef scale:2.0 orientation:UIImageOrientationUp];
-        } else {
-            videoScreen = [[UIImage alloc] initWithCGImage:imageRef];
-        }
-        
-        CGImageRelease(imageRef);
-    }
-    
-    return videoScreen;
 }
 
 #pragma mark - Properties
@@ -422,12 +401,20 @@
         
         switch ([exportSession status]) {
             case AVAssetExportSessionStatusFailed:
+            {
                 NSLog(@"Export failed: %@", [[exportSession error] localizedDescription]);
-                if (block) block(NO);
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    if (block) block(YES);
+                });
+            }
                 break;
             case AVAssetExportSessionStatusCancelled:
+            {
                 NSLog(@"Export canceled");
-                if (block) block(NO);
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    if (block) block(NO);
+                });
+            }
                 break;
             default:
                 NSLog(@"Export successful");

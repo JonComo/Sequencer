@@ -23,9 +23,9 @@
 -(SRClip *)lastSelectedClip;
 -(NSArray *)selectedClips;
 
--(void)playAtTime:(CMTime)time;
+-(void)scrollToTime:(CMTime)time animated:(BOOL)animated;
 -(void)scrollToClip:(SRClip *)clip;
 
--(void)setupContentInsets;
+-(void)frameUpdated;
 
 @end

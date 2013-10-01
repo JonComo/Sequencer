@@ -25,6 +25,7 @@
 @implementation SQTimeline
 {
     BOOL hasSetupLayout;
+    BOOL hasSetupFrame;
     
     UIView *playhead;
     
@@ -45,7 +46,17 @@
     [super removeFromSuperview];
 }
 
--(void)setupContentInsets
+-(void)frameUpdated
+{
+    if (hasSetupFrame) return;
+    
+    hasSetupFrame = YES;
+    
+    [self setContentInset:UIEdgeInsetsMake(0, self.superview.frame.size.width/2, 0, self.superview.frame.size.width/2)];
+    [self addPlayhead];
+}
+
+-(void)addPlayhead
 {
     playhead = nil;
     
@@ -88,53 +99,39 @@
     [self registerNib:[UINib nibWithNibName:@"clipCell" bundle:[NSBundle mainBundle]] forCellWithReuseIdentifier:@"clipCell"];
 }
 
--(void)playAtTime:(CMTime)time
+-(void)scrollToTime:(CMTime)time animated:(BOOL)animated
 {
-//    float currentTime = CMTimeGetSeconds(time);
-//    
-//    float ratio = currentTime / CMTimeGetSeconds(self.sequence.duration);
-//    
-//    float playPosition = self.contentSize.width * ratio;
-//    
-//    [self scrollRectToVisible:CGRectMake(playPosition, 0, 2, self.bounds.size.height) animated:NO];
-    
     self.currentTime = time;
     
-    for (SRClip *clip in self.sequence.clips){
-        BOOL isPlaying = [clip isPlayingAtTime:time];
-        
-        if (isPlaying){
-            NSIndexPath *indexPath = [NSIndexPath indexPathForItem:[self.sequence.clips indexOfObject:clip] inSection:0];
-            SQClipCell *cell = (SQClipCell *)[self cellForItemAtIndexPath:indexPath];
+    float xOffset = 0;
+    
+    for (SRClip *clip in self.sequence.clips)
+    {
+        if ([clip isPlayingAtTime:time]){
             
             //calculate percent of cell played
             CMTimeRange difference = CMTimeRangeFromTimeToTime(clip.positionInComposition.start, time);
-            
             float ratio = CMTimeGetSeconds(difference.duration) / CMTimeGetSeconds(clip.positionInComposition.duration);
+            [self scrollRectToVisible:CGRectMake(xOffset + clip.timelineSize.width * ratio, 0, 2, 2) animated:animated];
             
-            [self scrollRectToVisible:CGRectMake(cell.frame.origin.x + cell.bounds.size.width * ratio, 0, 2, 2) animated:NO];
+            break;
         }
+        
+        xOffset += clip.timelineSize.width + 10;
     }
 }
 
 -(void)scrollToClip:(SRClip *)clip
 {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        NSUInteger index = [self.sequence.clips indexOfObject:clip];
-        
-        NSIndexPath *path = [NSIndexPath indexPathForItem:index inSection:0];
-        SQClipCell *addedCell = (SQClipCell *)[self cellForItemAtIndexPath:path];
-        
-        [self scrollRectToVisible:CGRectMake(addedCell.frame.origin.x + addedCell.bounds.size.width, 0, 2, 2) animated:YES];
-    });
+    [self scrollToTime:CMTimeAdd(clip.positionInComposition.start, clip.positionInComposition.duration) animated:YES];
 }
 
 -(SRClip *)lastSelectedClip
 {
     SRClip *selectedClip;
     
-    for (SRClip *clip in self.sequence.clips){
-        if (clip.isSelected) selectedClip = clip;
+    for (SQClipCell *cell in [self visibleCells]){
+        if (cell.clip.isSelected) selectedClip = cell.clip;
     }
     
     return selectedClip;
@@ -144,10 +141,9 @@
 {
     NSMutableArray *clips = [NSMutableArray array];
     
-    for (SRClip *clip in self.sequence.clips)
-    {
-        if (clip.isSelected)
-            [clips addObject:clip];
+    for (SQClipCell *cell in [self visibleCells]){
+        if (cell.clip.isSelected)
+            [clips addObject:cell.clip];
     }
     
     return clips;
@@ -195,8 +191,7 @@
     SQClipCell *closestCell;
     float dist = FLT_MAX;
     
-    for (SQClipCell *cell in cells)
-    {
+    for (SQClipCell *cell in cells){
         float cellX = cell.frame.origin.x + cell.frame.size.width/2;
         
         float testDist = ABS(cellX - playheadPosition);
@@ -244,7 +239,9 @@
 -(void)stopSeeking
 {
     isSeeking = NO;
-    [self.sequence hidePreview];
+    
+    if (!self.sequence.player.isPlaying)
+        [self.sequence hidePreview];
 }
 
 @end

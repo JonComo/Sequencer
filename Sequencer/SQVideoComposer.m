@@ -70,6 +70,8 @@
 
 +(NSDictionary *)compositionFromClips:(NSArray *)clips
 {
+    if (clips.count == 0) return nil;
+    
     AVMutableComposition *composition = [AVMutableComposition composition];
     
     AVMutableCompositionTrack *videoTrack = [composition addMutableTrackWithMediaType:AVMediaTypeVideo preferredTrackID:kCMPersistentTrackID_Invalid];

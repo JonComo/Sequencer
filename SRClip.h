@@ -19,7 +19,7 @@ typedef void (^LayerInstructionModifier)(AVMutableVideoCompositionLayerInstructi
 @interface SRClip : NSObject
 
 @property (nonatomic, strong) UIImage *thumbnail;
-@property (nonatomic, strong) NSMutableArray *thumbnails;
+@property (nonatomic, strong) NSArray *thumbnails;
 @property (nonatomic, strong) NSURL *URL;
 @property (nonatomic, strong) AVURLAsset *asset;
 
@@ -35,7 +35,7 @@ typedef void (^LayerInstructionModifier)(AVMutableVideoCompositionLayerInstructi
 -(void)refreshProperties;
 
 -(void)generateThumbnailsCompletion:(void(^)(NSError *error))block;
--(void)generateThumbnailsForSize:(CGSize)size completion:(void(^)(NSError *error))block;
+-(void)generateThumbnailsForSize:(CGSize)size completion:(void(^)(NSError *error, NSArray *thumbnails))block;
 
 -(void)setModifyLayerInstruction:(LayerInstructionModifier)modifyLayerInstruction;
 

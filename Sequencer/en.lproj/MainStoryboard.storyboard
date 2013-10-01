@@ -77,11 +77,8 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Niq-BV-d8g">
-                                <rect key="frame" x="439" y="183" width="129" height="30"/>
+                                <rect key="frame" x="508" y="183" width="60" height="30"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="30" id="LcD-Rf-OAf"/>
-                                </constraints>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                 <state key="normal" title="TRIM">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -95,10 +92,10 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aAQ-nK-nc2">
-                                <rect key="frame" x="439" y="20" width="129" height="30"/>
+                                <rect key="frame" x="508" y="20" width="60" height="30"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="30" id="Mqq-Ln-lfH"/>
+                                    <constraint firstAttribute="width" constant="60" id="hyi-5f-hTa"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                 <state key="normal" title="DONE">
@@ -113,20 +110,14 @@
                                 </connections>
                             </button>
                             <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5HJ-3a-FPU" customClass="JCMoviePlayer">
-                                <rect key="frame" x="137" y="20" width="294" height="240"/>
+                                <rect key="frame" x="0.0" y="20" width="500" height="240"/>
                                 <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="294" id="LR9-ch-lBj"/>
-                                </constraints>
                             </view>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="EW9-8I-yIW">
-                                <rect key="frame" x="439" y="145" width="129" height="30"/>
+                                <rect key="frame" x="508" y="145" width="60" height="30"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="30" id="Vq5-8F-9G4"/>
-                                </constraints>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                <state key="normal" title="PREVIEW">
+                                <state key="normal" title="PLAY">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
@@ -140,18 +131,18 @@
                         </subviews>
                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
-                            <constraint firstAttribute="bottom" secondItem="5HJ-3a-FPU" secondAttribute="bottom" constant="60" id="1fe-bm-zrJ"/>
-                            <constraint firstItem="Niq-BV-d8g" firstAttribute="trailing" secondItem="61S-RC-Uwx" secondAttribute="trailing" id="1nn-k6-StP"/>
-                            <constraint firstItem="aAQ-nK-nc2" firstAttribute="top" secondItem="61S-RC-Uwx" secondAttribute="top" constant="20" id="AFe-ti-AFB"/>
-                            <constraint firstItem="EW9-8I-yIW" firstAttribute="leading" secondItem="5HJ-3a-FPU" secondAttribute="trailing" constant="8" symbolic="YES" id="Ifm-my-G4P"/>
-                            <constraint firstItem="aAQ-nK-nc2" firstAttribute="trailing" secondItem="61S-RC-Uwx" secondAttribute="trailing" id="Ofg-Nx-Jep"/>
-                            <constraint firstItem="5HJ-3a-FPU" firstAttribute="top" secondItem="61S-RC-Uwx" secondAttribute="top" constant="20" id="RoK-UR-5o0"/>
-                            <constraint firstAttribute="bottom" secondItem="Niq-BV-d8g" secondAttribute="bottom" constant="107" id="UL1-Pu-4js"/>
-                            <constraint firstItem="Niq-BV-d8g" firstAttribute="top" secondItem="EW9-8I-yIW" secondAttribute="bottom" constant="8" symbolic="YES" id="WVa-XO-J9s"/>
-                            <constraint firstItem="Niq-BV-d8g" firstAttribute="leading" secondItem="5HJ-3a-FPU" secondAttribute="trailing" constant="8" symbolic="YES" id="Ze9-dQ-Xb7"/>
-                            <constraint firstItem="EW9-8I-yIW" firstAttribute="trailing" secondItem="Niq-BV-d8g" secondAttribute="trailing" id="bzC-y0-E5c"/>
-                            <constraint firstItem="5HJ-3a-FPU" firstAttribute="centerX" secondItem="61S-RC-Uwx" secondAttribute="centerX" id="mvp-uP-Ncg"/>
-                            <constraint firstItem="aAQ-nK-nc2" firstAttribute="leading" secondItem="5HJ-3a-FPU" secondAttribute="trailing" constant="8" symbolic="YES" id="ozF-XH-ipg"/>
+                            <constraint firstAttribute="trailing" secondItem="aAQ-nK-nc2" secondAttribute="trailing" id="5hM-hi-Fyn"/>
+                            <constraint firstItem="EW9-8I-yIW" firstAttribute="centerY" secondItem="61S-RC-Uwx" secondAttribute="centerY" id="8mi-fL-wdg"/>
+                            <constraint firstItem="0Xz-ez-1jk" firstAttribute="top" secondItem="5HJ-3a-FPU" secondAttribute="bottom" constant="60" id="C77-5b-gTV"/>
+                            <constraint firstItem="EW9-8I-yIW" firstAttribute="trailing" secondItem="Niq-BV-d8g" secondAttribute="trailing" id="C8b-2t-zJz"/>
+                            <constraint firstItem="5HJ-3a-FPU" firstAttribute="top" secondItem="61S-RC-Uwx" secondAttribute="top" constant="20" symbolic="YES" id="DxT-5j-qnF"/>
+                            <constraint firstItem="Niq-BV-d8g" firstAttribute="leading" secondItem="5HJ-3a-FPU" secondAttribute="trailing" constant="8" symbolic="YES" id="JNX-CQ-xMa"/>
+                            <constraint firstItem="aAQ-nK-nc2" firstAttribute="leading" secondItem="5HJ-3a-FPU" secondAttribute="trailing" constant="8" symbolic="YES" id="Jxf-MP-r9Q"/>
+                            <constraint firstItem="EW9-8I-yIW" firstAttribute="trailing" secondItem="aAQ-nK-nc2" secondAttribute="trailing" id="ajc-FF-eEy"/>
+                            <constraint firstItem="5HJ-3a-FPU" firstAttribute="top" secondItem="aAQ-nK-nc2" secondAttribute="top" id="if3-oD-JEA"/>
+                            <constraint firstItem="Niq-BV-d8g" firstAttribute="top" secondItem="EW9-8I-yIW" secondAttribute="bottom" constant="8" symbolic="YES" id="jq7-UK-dCk"/>
+                            <constraint firstItem="5HJ-3a-FPU" firstAttribute="leading" secondItem="61S-RC-Uwx" secondAttribute="leading" id="pip-4h-aML"/>
+                            <constraint firstItem="EW9-8I-yIW" firstAttribute="leading" secondItem="5HJ-3a-FPU" secondAttribute="trailing" constant="8" symbolic="YES" id="zVC-dg-bB0"/>
                         </constraints>
                         <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                     </view>

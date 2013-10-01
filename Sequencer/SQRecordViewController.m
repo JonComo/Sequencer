@@ -68,11 +68,7 @@
 
 -(void)viewWillAppear:(BOOL)animated
 {
-    [super viewWillAppear:animated];
-    
-    [timeline setContentInset:UIEdgeInsetsMake(0, self.view.frame.size.width /2, 0, self.view.frame.size.width /2)];
-    
-    [timeline reloadData];
+    [timeline frameUpdated];
 }
 
 -(void)viewDidAppear:(BOOL)animated
@@ -85,7 +81,8 @@
     if (sequence.captureSession.isInterrupted || !sequence.captureSession.isRunning)
         [sequence.captureSession startRunning];
     
-    [timeline setupContentInsets];
+    
+    [timeline reloadData];
 }
 
 -(void)viewWillDisappear:(BOOL)animated
@@ -398,13 +395,11 @@
 
 - (IBAction)preview:(id)sender
 {
-    if (sequence.player.superview)
-    {
-        [sequence refreshPreview];
+    if (sequence.player.superview){
         [sequence hidePreview];
         [sequence stop];
     }else{
-        
+        [sequence refreshPreview];
         [sequence showPreview];
         [sequence play];
     }
