@@ -21,7 +21,6 @@ typedef void (^ErrorHandlingBlock)(NSError *error);
 
 @optional
 -(void)sequencer:(SRSequencer *)sequencer isRecording:(BOOL)recording;
--(void)sequencer:(SRSequencer *)sequencer isZoomedIn:(BOOL)isZoomed;
 
 @end
 
@@ -45,7 +44,6 @@ typedef void (^ErrorHandlingBlock)(NSError *error);
 
 @property (assign, readonly) BOOL isPaused;
 @property BOOL isRecording;
-@property BOOL isZoomed;
 
 @property (copy, readwrite) ErrorHandlingBlock asyncErrorHandler;
 
@@ -64,6 +62,7 @@ typedef void (^ErrorHandlingBlock)(NSError *error);
 - (void)pauseRecording;
 - (void)flipCamera;
 
+-(void)refreshPreview;
 - (void)showPreview;
 - (void)hidePreview;
 

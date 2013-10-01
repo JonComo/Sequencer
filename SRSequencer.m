@@ -12,6 +12,8 @@
 
 #import "SQTimeline.h"
 
+#import "JCMath.h"
+
 #import "Macros.h"
 
 // Set the recording preset to use
@@ -57,7 +59,7 @@
     BOOL hadSetExposurePoint;
     
     float zoomScale;
-    CGRect viewPreviewOriginalRect;
+    CGRect zoomFrame;
 }
 
 - (id)initWithDelegate:(id<SRSequencerDelegate>)managerDelegate
@@ -70,6 +72,8 @@
         
         _isPaused = NO;
         inFlightWrites = 0;
+        
+        zoomScale = 0;
         
         movieFileOutput = [[AVCaptureMovieFileOutput alloc] init];
         
@@ -149,6 +153,8 @@
         _videoSize = CGSizeMake(640, 480);
         _exportPreset = AVAssetExportPreset640x480;
     }
+    
+    [self calculateZoomFrame];
     
     [self setupPreviewLayer];
 }
@@ -233,7 +239,10 @@
     captureVideoPreviewLayer = [AVCaptureVideoPreviewLayer layerWithSession:self.captureSession];
     
     self.viewPreview.layer.masksToBounds = NO;
-    captureVideoPreviewLayer.frame = self.viewPreview.bounds;
+    captureVideoPreviewLayer.frame = zoomFrame;
+    
+    captureVideoPreviewLayer.borderColor = [UIColor whiteColor].CGColor;
+    captureVideoPreviewLayer.borderWidth = 2;
     
     captureVideoPreviewLayer.videoGravity = AVLayerVideoGravityResizeAspect;
     
@@ -251,9 +260,6 @@
 {
     _viewPreview = viewPreview;
     
-    viewPreview.layer.borderColor = [UIColor whiteColor].CGColor;
-    viewPreview.layer.borderWidth = 2;
-    
     UIPinchGestureRecognizer *zoom = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(zoomed:)];
     [viewPreview addGestureRecognizer:zoom];
 }
@@ -261,38 +267,32 @@
 -(void)zoomed:(UIPinchGestureRecognizer *)pinch
 {
     switch (pinch.state) {
-        case UIGestureRecognizerStateBegan:
-            //set init scale
-            zoomScale = pinch.scale;
-            break;
-        case UIGestureRecognizerStateEnded:
+        case UIGestureRecognizerStateChanged:
         {
             //determin if pinched up or down.
-            if (pinch.scale > zoomScale)
-            {
-                self.isZoomed = YES;
-                viewPreviewOriginalRect = self.viewPreview.frame;
-                
-                UIView *superview = self.viewPreview.superview;
-                
-                self.viewPreview.frame = CGRectMake(0, 0, superview.bounds.size.width, superview.bounds.size.height);
-                
-                captureVideoPreviewLayer.frame = CGRectMake(0, 0, superview.bounds.size.width, superview.bounds.size.height);
-                self.player.frame = CGRectMake(0, 0, self.viewPreview.bounds.size.width, self.viewPreview.bounds.size.height);
-            }else{
-                self.isZoomed = NO;
-                self.viewPreview.frame = viewPreviewOriginalRect;
-                
-                captureVideoPreviewLayer.frame = CGRectMake(0, 0, self.viewPreview.bounds.size.width, self.viewPreview.bounds.size.height);
-                self.player.frame = CGRectMake(0, 0, self.viewPreview.bounds.size.width, self.viewPreview.bounds.size.height);
-            }
+            zoomScale = pinch.velocity > 0 ? 1 : 0;
+
+            [self calculateZoomFrame];
             
-            if ([self.delegate respondsToSelector:@selector(sequencer:isZoomedIn:)])
-                [self.delegate sequencer:self isZoomedIn:self.isZoomed];
+            captureVideoPreviewLayer.frame = zoomFrame;
+            self.player.frame = zoomFrame;
         }
         default:
             break;
     }
+}
+
+-(void)calculateZoomFrame
+{
+    if (zoomScale > 1) zoomScale = 1;
+    if (zoomScale < 0.74) zoomScale = 0.74;
+    
+    CGSize newSize = CGSizeMake(self.viewPreview.bounds.size.width * zoomScale, self.viewPreview.bounds.size.height * zoomScale);
+    
+    float offsetX = (1 - zoomScale) * self.viewPreview.bounds.size.width/2;
+    float offsetY = (1 - zoomScale) * 80;
+    
+    zoomFrame = CGRectMake(offsetX, offsetY, newSize.width, newSize.height);
 }
 
 -(void)flipCamera
@@ -329,16 +329,6 @@
         {
             [_captureSession addInput:newVideoInput];
             videoInput = newVideoInput;
-            
-            if(currentCameraPosition == AVCaptureDevicePositionBack)
-            {
-                
-                //[[captureVideoPreviewLayer connection] setVideoOrientation:AVCaptureVideoOrientationLandscapeRight];
-            }else{
-                
-                
-                //[[captureVideoPreviewLayer connection] setVideoOrientation:AVCaptureVideoOrientationLandscapeLeft];
-            }
         }
         else
         {
@@ -370,6 +360,9 @@
     
     self.isRecording = NO;
     [movieFileOutput stopRecording];
+    
+    captureVideoPreviewLayer.borderWidth = 2;
+    captureVideoPreviewLayer.borderColor = [UIColor whiteColor].CGColor;
     
     if([self.delegate respondsToSelector:@selector(sequencer:isRecording:)])
         [self.delegate sequencer:self isRecording:NO];
@@ -420,7 +413,7 @@
         [self.player setUserInteractionEnabled:NO];
     }
     
-    self.player.frame = CGRectMake(0, 0, self.viewPreview.bounds.size.width, self.viewPreview.bounds.size.height);
+    self.player.frame = zoomFrame;
     
     AVPlayerItem *item = [AVPlayerItem playerItemWithAsset:self.composition];
     [self.player setupWithPlayerItem:item];
@@ -428,6 +421,10 @@
 
 -(void)showPreview
 {
+    captureVideoPreviewLayer.borderWidth = 0;
+    
+    self.player.frame = zoomFrame;
+    
     if (!self.player.superview){
         [self.viewPreview addSubview:self.player];
     }
@@ -435,6 +432,8 @@
 
 -(void)hidePreview
 {
+    captureVideoPreviewLayer.borderWidth = 2;
+    
     [self.player removeFromSuperview];
 }
 
@@ -474,6 +473,9 @@
     
     if([self.delegate respondsToSelector:@selector(sequencer:isRecording:)])
         [self.delegate sequencer:self isRecording:YES];
+    
+    captureVideoPreviewLayer.borderWidth = 2;
+    captureVideoPreviewLayer.borderColor = [UIColor redColor].CGColor;
 }
 
 - (void)captureOutput:(AVCaptureFileOutput *)captureOutput didFinishRecordingToOutputFileAtURL:(NSURL *)fileURL fromConnections:(NSArray *)connections error:(NSError *)error
@@ -528,9 +530,6 @@
     
     if (clipsCombining.count == 0)
         error = [NSError errorWithDomain:@"No clips to export" code:104 userInfo:nil];
-    
-    if([finalVideoLocationURL checkResourceIsReachableAndReturnError:&error])
-        error = [NSError errorWithDomain:@"Output file already exists." code:104 userInfo:nil];
     
     if(inFlightWrites != 0)
         error = [NSError errorWithDomain:@"Can't finalize recording unless all sub-recorings are finished." code:106 userInfo:nil];
@@ -796,8 +795,7 @@
     
     [self.timeline deselectAll];
     
-    for (SRClip *clip in clips)
-    {
+    for (SRClip *clip in clips){
         clip.isSelected = YES;
     }
     
@@ -973,14 +971,18 @@
     [self.viewPreview addSubview:view];
     
     view.alpha = 0;
+    
     [UIView animateWithDuration:0.2 animations:^{
         view.alpha = 1;
+    }];
+}
+
+-(void)hideView:(UIView *)view
+{
+    [UIView animateWithDuration:0.3 delay:0.5 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+        view.alpha = 0;
     } completion:^(BOOL finished) {
-        [UIView animateWithDuration:0.3 delay:0.5 options:UIViewAnimationOptionCurveEaseInOut animations:^{
-            view.alpha = 0;
-        } completion:^(BOOL finished) {
-            [view removeFromSuperview];
-        }];
+        [view removeFromSuperview];
     }];
 }
 
@@ -993,11 +995,15 @@
 -(void)lockCurrentExposure
 {
     [self setExposureMode:AVCaptureExposureModeLocked];
+    
+    [self hideView:self.viewForExposurePoint];
 }
 
 -(void)lockCurrentFocus
 {
     [self setFocusMode:AVCaptureFocusModeLocked];
+    
+    [self hideView:self.viewForFocusPoint];
 }
 
 -(void)setExposureState

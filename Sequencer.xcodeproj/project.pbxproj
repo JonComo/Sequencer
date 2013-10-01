@@ -42,6 +42,7 @@
 		865865C417CDF3A000B5D7BD /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 865865C317CDF3A000B5D7BD /* MBProgressHUD.m */; };
 		865865C817CDF63F00B5D7BD /* JCActionSheetManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 865865C617CDF63F00B5D7BD /* JCActionSheetManager.m */; };
 		865865CA17CDF6DA00B5D7BD /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 865865C917CDF6DA00B5D7BD /* MobileCoreServices.framework */; };
+		8658BEB017FAA44C00E71E9B /* PerlinNoise.m in Sources */ = {isa = PBXBuildFile; fileRef = 8658BEAF17FAA44C00E71E9B /* PerlinNoise.m */; };
 		8696EDC217E671CB0075DCE7 /* JCMath.m in Sources */ = {isa = PBXBuildFile; fileRef = 8696EDC117E671CB0075DCE7 /* JCMath.m */; };
 		8696EDDE17E67A0E0075DCE7 /*  DiracAudioPlayer ReadMe.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 8696EDC517E67A0E0075DCE7 /*  DiracAudioPlayer ReadMe.rtf */; };
 		8696EDDF17E67A0E0075DCE7 /* DiracAudioPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8696EDC717E67A0E0075DCE7 /* DiracAudioPlayer.mm */; };
@@ -69,6 +70,7 @@
 		86D2338317FA4D2E00BAE5EF /* SQCameraEffectView.m in Sources */ = {isa = PBXBuildFile; fileRef = 86D2338217FA4D2E00BAE5EF /* SQCameraEffectView.m */; };
 		86D43FF717E540810092C1D0 /* JCDropDown.m in Sources */ = {isa = PBXBuildFile; fileRef = 86D43FF617E540810092C1D0 /* JCDropDown.m */; };
 		86D43FFA17E540D30092C1D0 /* JCDropDownAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 86D43FF917E540D30092C1D0 /* JCDropDownAction.m */; };
+		86F9B08F17FACA5E001E7933 /* SQAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 86F9B08E17FACA5E001E7933 /* SQAlertView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -128,6 +130,8 @@
 		865865C617CDF63F00B5D7BD /* JCActionSheetManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JCActionSheetManager.m; sourceTree = "<group>"; };
 		865865C717CDF63F00B5D7BD /* JCActionSheetManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JCActionSheetManager.h; sourceTree = "<group>"; };
 		865865C917CDF6DA00B5D7BD /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
+		8658BEAE17FAA44C00E71E9B /* PerlinNoise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PerlinNoise.h; sourceTree = "<group>"; };
+		8658BEAF17FAA44C00E71E9B /* PerlinNoise.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PerlinNoise.m; sourceTree = "<group>"; };
 		8696EDC017E671CB0075DCE7 /* JCMath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JCMath.h; sourceTree = "<group>"; };
 		8696EDC117E671CB0075DCE7 /* JCMath.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JCMath.m; sourceTree = "<group>"; };
 		8696EDC517E67A0E0075DCE7 /*  DiracAudioPlayer ReadMe.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; path = " DiracAudioPlayer ReadMe.rtf"; sourceTree = "<group>"; };
@@ -173,6 +177,8 @@
 		86D43FF617E540810092C1D0 /* JCDropDown.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JCDropDown.m; sourceTree = "<group>"; };
 		86D43FF817E540D30092C1D0 /* JCDropDownAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JCDropDownAction.h; sourceTree = "<group>"; };
 		86D43FF917E540D30092C1D0 /* JCDropDownAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JCDropDownAction.m; sourceTree = "<group>"; };
+		86F9B08D17FACA5E001E7933 /* SQAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQAlertView.h; sourceTree = "<group>"; };
+		86F9B08E17FACA5E001E7933 /* SQAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SQAlertView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -236,6 +242,8 @@
 		8658657B17CDCB6A00B5D7BD /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8658BEAE17FAA44C00E71E9B /* PerlinNoise.h */,
+				8658BEAF17FAA44C00E71E9B /* PerlinNoise.m */,
 				8696EDC017E671CB0075DCE7 /* JCMath.h */,
 				8696EDC117E671CB0075DCE7 /* JCMath.m */,
 				86A6019917E59F9C00666168 /* JCAudioConverter.h */,
@@ -259,6 +267,8 @@
 				8658657C17CDCB6A00B5D7BD /* UIKit.framework */,
 				8658657E17CDCB6A00B5D7BD /* Foundation.framework */,
 				8658658017CDCB6A00B5D7BD /* CoreGraphics.framework */,
+				86F9B08D17FACA5E001E7933 /* SQAlertView.h */,
+				86F9B08E17FACA5E001E7933 /* SQAlertView.m */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -529,6 +539,7 @@
 			files = (
 				8658658917CDCB6A00B5D7BD /* main.m in Sources */,
 				8658658D17CDCB6A00B5D7BD /* SQAppDelegate.m in Sources */,
+				8658BEB017FAA44C00E71E9B /* PerlinNoise.m in Sources */,
 				865865A217CDCB9200B5D7BD /* LXReorderableCollectionViewFlowLayout.m in Sources */,
 				865865A717CDCC2C00B5D7BD /* SRClip.m in Sources */,
 				865865A817CDCC2C00B5D7BD /* SRSequencer.m in Sources */,
@@ -553,6 +564,7 @@
 				86D43FFA17E540D30092C1D0 /* JCDropDownAction.m in Sources */,
 				86A6019517E59BA100666168 /* JCAudioRetime.mm in Sources */,
 				86A6019B17E59F9C00666168 /* JCAudioConverter.m in Sources */,
+				86F9B08F17FACA5E001E7933 /* SQAlertView.m in Sources */,
 				8696EDC217E671CB0075DCE7 /* JCMath.m in Sources */,
 				8696EDDF17E67A0E0075DCE7 /* DiracAudioPlayer.mm in Sources */,
 				8696EDE017E67A0E0075DCE7 /* DiracAudioPlayerBase.mm in Sources */,

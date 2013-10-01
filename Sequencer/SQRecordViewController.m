@@ -26,10 +26,12 @@
 
 #import "JCDropDown.h"
 
+#import "SQAlertView.h"
+
 #define TIPRecord @"TAP TO SET FOCUS"
 #define TIPRecordStop @"TAP TO SET EXPOSURE"
 
-@interface SQRecordViewController () <SRSequencerDelegate>
+@interface SQRecordViewController () <SRSequencerDelegate, UIAlertViewDelegate>
 {
     SRSequencer *sequence;
     
@@ -38,7 +40,6 @@
     __weak IBOutlet JCDropDown *dropDownTime;
     __weak IBOutlet JCDropDown *dropDownFile;
     __weak IBOutlet JCDropDown *dropDownScale;
-    
     
     __weak IBOutlet UIView *viewPreview;
     __weak IBOutlet SQTimeline *timeline;
@@ -122,9 +123,6 @@
 
 -(void)initInterface
 {
-    viewPreview.layer.borderColor = [UIColor whiteColor].CGColor;
-    viewPreview.layer.borderWidth = 2;
-    
     //File actions
     
     JCDropDownAction *import = [JCDropDownAction dropDownActionWithName:@"IMPORT" action:^{
@@ -144,6 +142,11 @@
     //Clip actions
     
     JCDropDownAction *duplicate = [JCDropDownAction dropDownActionWithName:@"DUPLICATE" action:^{
+        if ([timeline selectedClips].count == 0){
+            [self showHUDWithTitle:@"SELECT CLIPS TO DUPLICATE" hideAfterDelay:YES];
+            return;
+        }
+        
         [self showHUDWithTitle:@"DUPLICATING" hideAfterDelay:NO];
         [sequence duplicateSelectedClipsCompletion:^{
             [self hideHUD];
@@ -151,14 +154,21 @@
     }];
     
     JCDropDownAction *delete = [JCDropDownAction dropDownActionWithName:@"DELETE" action:^{
+        if ([timeline selectedClips].count == 0){
+            [self showHUDWithTitle:@"SELECT CLIPS TO DELETE" hideAfterDelay:YES];
+            return;
+        }
+        
         [sequence deleteSelectedClips];
     }];
     
     JCDropDownAction *trim = [JCDropDownAction dropDownActionWithName:@"TRIM" action:^{
+        
         [self trim];
     }];
     
     JCDropDownAction *join = [JCDropDownAction dropDownActionWithName:@"JOIN" action:^{
+        
         [self join];
     }];
     
@@ -167,8 +177,11 @@
     //Scale actions
     
     JCDropDownAction *flipH = [JCDropDownAction dropDownActionWithName:@"FLIP H" action:^{
-        SRClip *selected = [sequence.timeline lastSelectedClip];
-        if (!selected) return;
+        SRClip *selected = [timeline lastSelectedClip];
+        if (!selected){
+            [self showHUDWithTitle:@"SELECT CLIP TO TRANSFORM" hideAfterDelay:YES];
+            return;
+        }
         
         AVAssetTrack *videoTrack = [selected trackWithMediaType:AVMediaTypeVideo];
         
@@ -179,8 +192,11 @@
     }];
     
     JCDropDownAction *flipV = [JCDropDownAction dropDownActionWithName:@"FLIP V" action:^{
-        SRClip *selected = [sequence.timeline lastSelectedClip];
-        if (!selected) return;
+        SRClip *selected = [timeline lastSelectedClip];
+        if (!selected){
+            [self showHUDWithTitle:@"SELECT CLIP TO TRANSFORM" hideAfterDelay:YES];
+            return;
+        }
         
         AVAssetTrack *videoTrack = [selected trackWithMediaType:AVMediaTypeVideo];
         
@@ -191,8 +207,11 @@
     }];
     
     JCDropDownAction *scaleDown = [JCDropDownAction dropDownActionWithName:@"SCALE / 2" action:^{
-        SRClip *selected = [sequence.timeline lastSelectedClip];
-        if (!selected) return;
+        SRClip *selected = [timeline lastSelectedClip];
+        if (!selected){
+            [self showHUDWithTitle:@"SELECT CLIP TO TRANSFORM" hideAfterDelay:YES];
+            return;
+        }
         
         AVAssetTrack *videoTrack = [selected trackWithMediaType:AVMediaTypeVideo];
         
@@ -203,8 +222,11 @@
     }];
     
     JCDropDownAction *scaleUp = [JCDropDownAction dropDownActionWithName:@"SCALE X 2" action:^{
-        SRClip *selected = [sequence.timeline lastSelectedClip];
-        if (!selected) return;
+        SRClip *selected = [timeline lastSelectedClip];
+        if (!selected){
+            [self showHUDWithTitle:@"SELECT CLIP TO TRANSFORM" hideAfterDelay:YES];
+            return;
+        }
         
         AVAssetTrack *videoTrack = [selected trackWithMediaType:AVMediaTypeVideo];
         
@@ -219,11 +241,43 @@
     //Time actions
     
     JCDropDownAction *retimeSlow = [JCDropDownAction dropDownActionWithName:@"RETIME SLOW" action:^{
-        [self retime:2.0];
+        SRClip *lastSelected = [timeline lastSelectedClip];
+        if (!lastSelected){
+            [self showHUDWithTitle:@"SELECT CLIP TO RETIME" hideAfterDelay:YES];
+            return;
+        }
+        
+        [self retimeClip:lastSelected multiple:2.0];
     }];
     
     JCDropDownAction *retimeFast = [JCDropDownAction dropDownActionWithName:@"RETIME FAST" action:^{
-        [self retime:0.5];
+        SRClip *lastSelected = [timeline lastSelectedClip];
+        if (!lastSelected){
+            [self showHUDWithTitle:@"SELECT CLIP TO RETIME" hideAfterDelay:YES];
+            return;
+        }
+        
+        [self retimeClip:lastSelected multiple:0.5];
+    }];
+    
+    JCDropDownAction *retimeCustom = [JCDropDownAction dropDownActionWithName:@"SET DURATION" action:^{
+        SRClip *lastSelected = [timeline lastSelectedClip];
+        if (!lastSelected){
+            [self showHUDWithTitle:@"SELECT CLIP TO RETIME" hideAfterDelay:YES];
+            return;
+        }
+        
+        SQAlertView * alert = [[SQAlertView alloc] initWithTitle:@"NEW DURATION" message:nil delegate:self cancelButtonTitle:@"CANCEL" otherButtonTitles:@"RETIME", nil];
+        
+        alert.clip = lastSelected;
+        
+        alert.alertViewStyle = UIAlertViewStylePlainTextInput;
+        UITextField *textfield = [alert textFieldAtIndex:0];
+        textfield.placeholder = @"SECONDS";
+        textfield.keyboardAppearance = UIKeyboardAppearanceDark;
+        textfield.keyboardType = UIKeyboardTypeDecimalPad;
+        alert.tag = 0;
+        [alert show];
     }];
     
     JCDropDownAction *retimePitch = [JCDropDownAction dropDownActionWithName:@"REPITCH NO" action:nil];
@@ -234,8 +288,7 @@
         weakPitch.name = rePitch ? @"REPITCH YES" : @"REPITCH NO";
     }];
     
-    dropDownTime.actions = [@[retimePitch, retimeFast, retimeSlow] mutableCopy];
-    
+    dropDownTime.actions = [@[retimePitch, retimeFast, retimeSlow,retimeCustom] mutableCopy];
     
     //Cam actions
     
@@ -263,7 +316,10 @@
         [sequence flipCamera];
     }];
     
-    dropDownCam.actions = [@[setFocusAction, setExposureAction, flipCamera] mutableCopy];
+    dropDownCam.actions = [@[setFocusAction, setExposureAction] mutableCopy];
+    
+     if ([UIImagePickerController isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceFront])
+         [dropDownCam.actions addObject:flipCamera];
     
     if ([[AVAssetExportSession allExportPresets] containsObject:AVAssetExportPreset640x480])
         [dropDownCam.actions insertObject:session480 atIndex:0];
@@ -273,14 +329,38 @@
         [dropDownCam.actions insertObject:session1080 atIndex:0];
 }
 
+-(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (alertView.tag == 0)
+    {
+        //retime alert
+        UITextField *textfield = [alertView textFieldAtIndex:0];
+        [self showHUDWithTitle:textfield.text hideAfterDelay:YES];
+        
+        float newDuration = [textfield.text floatValue];
+        
+        SQAlertView *alert = (SQAlertView *)alertView;
+        SRClip *clip = alert.clip;
+        
+        float clipDuration = CMTimeGetSeconds(clip.positionInComposition.duration);
+        
+        float ratio = newDuration / clipDuration;
+        
+        [self retimeClip:clip multiple:ratio];
+    }
+    
+    if (alertView.tag == 1)
+    {
+        //close alert
+        if (buttonIndex == 1){
+            [self dismissViewControllerAnimated:YES completion:nil];
+        }
+    }
+}
+
 #pragma SequenceDelegate
 
 -(void)sequencer:(SRSequencer *)sequencer isRecording:(BOOL)recording
-{
-    viewPreview.layer.borderColor = recording ? [UIColor redColor].CGColor : [UIColor whiteColor].CGColor;
-}
-
--(void)sequencer:(SRSequencer *)sequencer isZoomedIn:(BOOL)isZoomed
 {
     
 }
@@ -301,7 +381,9 @@
 
 - (void)close
 {
-    [self dismissViewControllerAnimated:YES completion:nil];
+    UIAlertView *closeAlert = [[UIAlertView alloc] initWithTitle:@"CLOSE PROJECT?" message:nil delegate:self cancelButtonTitle:@"CANCEL" otherButtonTitles:@"CLOSE", nil];
+    closeAlert.tag = 1;
+    [closeAlert show];
 }
 
 - (IBAction)record:(id)sender
@@ -318,9 +400,11 @@
 {
     if (sequence.player.superview)
     {
+        [sequence refreshPreview];
         [sequence hidePreview];
         [sequence stop];
     }else{
+        
         [sequence showPreview];
         [sequence play];
     }
@@ -334,8 +418,7 @@
     
     [sequence finalizeClips:sequence.clips toFile:outputURL withPreset:sequence.exportPreset progress:^(float progress) {
         [self showProgress:progress];
-    } withCompletionHandler:^(NSError *error)
-    {
+    } withCompletionHandler:^(NSError *error) {
         [self hideHUD];
         
         if (error) return;
@@ -346,16 +429,15 @@
 
 //clip actions
 
-- (void)retime:(float)amout
+- (void)retimeClip:(SRClip *)clip multiple:(float)amount
 {
-    SRClip *lastSelected = [sequence.timeline lastSelectedClip];
-    
+    SRClip *lastSelected = [timeline lastSelectedClip];
     if (!lastSelected) return;
     
     AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:lastSelected.URL options:nil];
-    [self showHUDWithTitle:[NSString stringWithFormat:@"RETIMING %.2f X %.1f", CMTimeGetSeconds(asset.duration), amout] hideAfterDelay:NO];
+    [self showHUDWithTitle:[NSString stringWithFormat:@"RETIMING %.2f X %.1f", CMTimeGetSeconds(asset.duration), amount] hideAfterDelay:NO];
     
-    [SQClipTimeStretch stretchClip:lastSelected byAmount:amout rePitch:rePitch completion:^(SRClip *stretchedClip) {
+    [SQClipTimeStretch stretchClip:lastSelected byAmount:amount rePitch:rePitch completion:^(SRClip *stretchedClip) {
         [self hideHUD];
         [sequence addClip:stretchedClip];
     }];
@@ -376,6 +458,11 @@
 
 - (void)trim
 {
+    if ([timeline selectedClips].count == 0){
+        [self showHUDWithTitle:@"SELECT CLIPS TO TRIM" hideAfterDelay:YES];
+        return;
+    }
+    
     SQTrimViewController *trimVC = [self.storyboard instantiateViewControllerWithIdentifier:@"trimVC"];
     
     SRClip *selectedClip;
@@ -395,9 +482,8 @@
 
 - (void)join
 {
-    if ([sequence.timeline selectedClips].count < 2)
-    {
-        [self showHUDWithTitle:@"SELECT 2 OR MORE CLIPS" hideAfterDelay:YES];
+    if ([timeline selectedClips].count < 2){
+        [self showHUDWithTitle:@"SELECT 2 OR MORE CLIPS TO JOIN" hideAfterDelay:YES];
         return;
     }
     
@@ -461,7 +547,7 @@
 -(void)showHUDWithTitle:(NSString *)title hideAfterDelay:(BOOL)hide
 {
     MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    hud.mode = MBProgressHUDModeIndeterminate;
+    hud.mode = hide ? MBProgressHUDModeText : MBProgressHUDModeIndeterminate;
     hud.labelText = title;
     
     if (hide)

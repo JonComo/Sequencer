@@ -8,9 +8,14 @@
 
 #import "SQHomeViewController.h"
 
+#import "SQCameraEffectView.h"
+
 #import "Macros.h"
 
 @interface SQHomeViewController ()
+{
+    __weak IBOutlet SQCameraEffectView *cameraEffectView;
+}
 
 @end
 
@@ -22,12 +27,21 @@
 	// Do any additional setup after loading the view.
 }
 
--(void)viewDidAppear:(BOOL)animated
+-(void)viewWillAppear:(BOOL)animated
 {
-    [super viewDidAppear:animated];
+    [super viewWillAppear:animated];
     
     [self clearFilesAtPath:NSTemporaryDirectory()];
     [self clearFilesAtPath:DOCUMENTS];
+    
+    [cameraEffectView startAnimating];
+}
+
+-(void)viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:animated];
+    
+    [cameraEffectView stopAnimating];
 }
 
 -(UIStatusBarStyle)preferredStatusBarStyle

@@ -10,4 +10,7 @@
 
 @interface SQCameraEffectView : UIView
 
+-(void)startAnimating;
+-(void)stopAnimating;
+
 @end

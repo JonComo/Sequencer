@@ -53,7 +53,7 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playFinished) name:AVPlayerItemDidPlayToEndTimeNotification object:nil];
     
     layer = [AVPlayerLayer layer];
-    layer.frame = CGRectMake(0, 0, self.frame.size.width, self.frame.size.height);
+    layer.frame = CGRectMake(0, 0, self.bounds.size.width, self.bounds.size.height);
     [self.layer addSublayer:layer];
     
     layer.player = self.player;
@@ -140,6 +140,13 @@
         if ([self.delegate respondsToSelector:@selector(moviePlayer:playbackStateChanged:)])
             [self.delegate moviePlayer:self playbackStateChanged:JCMoviePlayerStateFinished];
     }
+}
+
+-(void)setFrame:(CGRect)frame
+{
+    [super setFrame:frame];
+    
+    layer.frame = CGRectMake(0, 0, self.bounds.size.width, self.bounds.size.height);
 }
 
 @end

@@ -51,7 +51,7 @@
     
     float center = self.bounds.size.width/2;
     
-    playhead = [[UIView alloc] initWithFrame:CGRectMake(self.frame.origin.x + center - 1, self.frame.origin.y, 2, self.bounds.size.height)];
+    playhead = [[UIView alloc] initWithFrame:CGRectMake(self.frame.origin.x + center - 1, self.frame.origin.y + self.bounds.size.height * 3/4, 2, self.bounds.size.height * 1/4)];
     
     [playhead setUserInteractionEnabled:NO];
     [self.superview addSubview:playhead];
@@ -75,6 +75,8 @@
 -(void)setupLayout
 {
     hasSetupLayout = YES;
+    
+    self.decelerationRate = UIScrollViewDecelerationRateFast;
     
     LXReorderableCollectionViewFlowLayout *layout = [[LXReorderableCollectionViewFlowLayout alloc] init];
     [layout setMinimumInteritemSpacing:10];
