@@ -26,9 +26,9 @@
 {
     BOOL hasSetupLayout;
     
-    BOOL isSeeking;
-    
     UIView *playhead;
+    
+    BOOL isSeeking;
 }
 
 -(void)reloadData
@@ -36,6 +36,27 @@
     [super reloadData];
     
     [[NSNotificationCenter defaultCenter] postNotificationName:SRSequenceRefreshPreview object:nil];
+}
+
+-(void)removeFromSuperview
+{
+    [playhead removeFromSuperview];
+    
+    [super removeFromSuperview];
+}
+
+-(void)setupContentInsets
+{
+    playhead = nil;
+    
+    float center = self.bounds.size.width/2;
+    
+    playhead = [[UIView alloc] initWithFrame:CGRectMake(self.frame.origin.x + center - 1, self.frame.origin.y, 2, self.bounds.size.height)];
+    
+    [playhead setUserInteractionEnabled:NO];
+    [self.superview addSubview:playhead];
+    
+    playhead.backgroundColor = [UIColor whiteColor];
 }
 
 -(void)setSequence:(SRSequencer *)sequence
@@ -46,14 +67,6 @@
     self.delegate = self;
     
     _currentTime = kCMTimeZero;
-    
-    if (!playhead){
-        float center = self.bounds.size.width/2;
-        playhead = [[UIView alloc] initWithFrame:CGRectMake(self.frame.origin.x + center, self.frame.origin.y, 4, self.bounds.size.height)];
-        [playhead setUserInteractionEnabled:NO];
-        [self.superview addSubview:playhead];
-        playhead.backgroundColor = [UIColor redColor];
-    }
     
     if (!hasSetupLayout)
         [self setupLayout];
@@ -110,7 +123,7 @@
         NSIndexPath *path = [NSIndexPath indexPathForItem:index inSection:0];
         SQClipCell *addedCell = (SQClipCell *)[self cellForItemAtIndexPath:path];
         
-        [self scrollRectToVisible:CGRectMake(addedCell.frame.origin.x + addedCell.bounds.size.width, 0, 2, 2) animated:NO];
+        [self scrollRectToVisible:CGRectMake(addedCell.frame.origin.x + addedCell.bounds.size.width, 0, 2, 2) animated:YES];
     });
 }
 
@@ -204,8 +217,6 @@
     CMTime seekTime = CMTimeAdd(closestCell.clip.positionInComposition.start, additionalTime);
     
     self.currentTime = seekTime;
-    
-    NSLog(@"Scrolled to time: %f", CMTimeGetSeconds(self.currentTime));
     
     if (isSeeking)
         [self.sequence.player seekToTime:seekTime];

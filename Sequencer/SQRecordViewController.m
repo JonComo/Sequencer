@@ -83,6 +83,8 @@
     
     if (sequence.captureSession.isInterrupted || !sequence.captureSession.isRunning)
         [sequence.captureSession startRunning];
+    
+    [timeline setupContentInsets];
 }
 
 -(void)viewWillDisappear:(BOOL)animated
@@ -120,9 +122,14 @@
 
 -(void)initInterface
 {
-    viewPreview.layer.borderColor = [UIColor redColor].CGColor;
+    viewPreview.layer.borderColor = [UIColor whiteColor].CGColor;
+    viewPreview.layer.borderWidth = 2;
     
     //File actions
+    
+    JCDropDownAction *import = [JCDropDownAction dropDownActionWithName:@"IMPORT" action:^{
+        [self import];
+    }];
     
     JCDropDownAction *close = [JCDropDownAction dropDownActionWithName:@"CLOSE" action:^{
         [self close];
@@ -132,16 +139,19 @@
         [self save];
     }];
     
-    dropDownFile.actions = [@[close, save] mutableCopy];
+    dropDownFile.actions = [@[close, save, import] mutableCopy];
     
     //Clip actions
     
     JCDropDownAction *duplicate = [JCDropDownAction dropDownActionWithName:@"DUPLICATE" action:^{
-        [self duplicateSelected];
+        [self showHUDWithTitle:@"DUPLICATING" hideAfterDelay:NO];
+        [sequence duplicateSelectedClipsCompletion:^{
+            [self hideHUD];
+        }];
     }];
     
     JCDropDownAction *delete = [JCDropDownAction dropDownActionWithName:@"DELETE" action:^{
-        [self deleteSelected];
+        [sequence deleteSelectedClips];
     }];
     
     JCDropDownAction *trim = [JCDropDownAction dropDownActionWithName:@"TRIM" action:^{
@@ -152,11 +162,7 @@
         [self join];
     }];
     
-    JCDropDownAction *import = [JCDropDownAction dropDownActionWithName:@"IMPORT" action:^{
-        [self import];
-    }];
-    
-    dropDownClip.actions = [@[import, trim, join, delete, duplicate] mutableCopy];
+    dropDownClip.actions = [@[trim, join, delete, duplicate] mutableCopy];
     
     //Scale actions
     
@@ -271,7 +277,7 @@
 
 -(void)sequencer:(SRSequencer *)sequencer isRecording:(BOOL)recording
 {
-    viewPreview.layer.borderWidth = recording ? 3 : 0;
+    viewPreview.layer.borderColor = recording ? [UIColor redColor].CGColor : [UIColor whiteColor].CGColor;
 }
 
 -(void)sequencer:(SRSequencer *)sequencer isZoomedIn:(BOOL)isZoomed
@@ -368,16 +374,6 @@
     }];
 }
 
-- (void)deleteSelected
-{
-    [sequence deleteSelectedClips];
-}
-
-- (void)duplicateSelected
-{
-    [sequence duplicateSelectedClips];
-}
-
 - (void)trim
 {
     SQTrimViewController *trimVC = [self.storyboard instantiateViewControllerWithIdentifier:@"trimVC"];
@@ -401,11 +397,7 @@
 {
     if ([sequence.timeline selectedClips].count < 2)
     {
-        MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-        [hud setMode:MBProgressHUDModeText];
-        hud.labelText = @"SELECT 2 OR MORE CLIPS";
-        
-        [hud hide:YES afterDelay:1];
+        [self showHUDWithTitle:@"SELECT 2 OR MORE CLIPS" hideAfterDelay:YES];
         return;
     }
     

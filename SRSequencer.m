@@ -251,6 +251,9 @@
 {
     _viewPreview = viewPreview;
     
+    viewPreview.layer.borderColor = [UIColor whiteColor].CGColor;
+    viewPreview.layer.borderWidth = 2;
+    
     UIPinchGestureRecognizer *zoom = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(zoomed:)];
     [viewPreview addGestureRecognizer:zoom];
 }
@@ -521,21 +524,19 @@
 
 - (void)finalizeClips:(NSArray *)clipsCombining toFile:(NSURL *)finalVideoLocationURL withPreset:(NSString *)preset progress:(void (^)(float progress))progress withCompletionHandler:(ErrorHandlingBlock)completionHandler
 {
-    //[self reset];
-    
-    if (clipsCombining.count == 0){
-        completionHandler([NSError errorWithDomain:@"No clips to export" code:104 userInfo:nil]);
-        return;
-    }
-    
     NSError *error;
-    if([finalVideoLocationURL checkResourceIsReachableAndReturnError:&error]){
-        completionHandler([NSError errorWithDomain:@"Output file already exists." code:104 userInfo:nil]);
-        return;
-    }
     
-    if(inFlightWrites != 0){
-        completionHandler([NSError errorWithDomain:@"Can't finalize recording unless all sub-recorings are finished." code:106 userInfo:nil]);
+    if (clipsCombining.count == 0)
+        error = [NSError errorWithDomain:@"No clips to export" code:104 userInfo:nil];
+    
+    if([finalVideoLocationURL checkResourceIsReachableAndReturnError:&error])
+        error = [NSError errorWithDomain:@"Output file already exists." code:104 userInfo:nil];
+    
+    if(inFlightWrites != 0)
+        error = [NSError errorWithDomain:@"Can't finalize recording unless all sub-recorings are finished." code:106 userInfo:nil];
+    
+    if (error){
+        completionHandler(error);
         return;
     }
     
@@ -787,6 +788,23 @@
     }];
 }
 
+-(void)batchAddClips:(NSArray *)clips
+{
+    if (clips.count == 0) return;
+    
+    [self.clips addObjectsFromArray:clips];
+    
+    [self.timeline deselectAll];
+    
+    for (SRClip *clip in clips)
+    {
+        clip.isSelected = YES;
+    }
+    
+    [self.timeline reloadData];
+    [self.timeline scrollToClip:[clips lastObject]];
+}
+
 -(void)addClip:(SRClip *)clip
 {
     if (!clip) return;
@@ -830,16 +848,23 @@
     [self.timeline reloadData];
 }
 
--(void)duplicateSelectedClips
+-(void)duplicateSelectedClipsCompletion:(void(^)(void))block
 {
     NSArray *selected = [self.timeline selectedClips];
+    NSMutableArray *duplicates = [NSMutableArray array];
     
-    for (SRClip *clip in selected){
-        SRClip *newClip = [clip duplicate];
-        [newClip generateThumbnailsCompletion:^(NSError *error) {
-            [self addClip:newClip];
-        }];
-    }
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+        
+        for (SRClip *clip in selected){
+            SRClip *newClip = [clip duplicate];
+            [duplicates addObject:newClip];
+        }
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self batchAddClips:duplicates];
+            if (block) block();
+        });
+    });
 }
 
 -(void)consolidateSelectedClipsProgress:(void (^)(float))progress completion:(void (^)(SRClip *))consolidateHandler
@@ -847,8 +872,7 @@
     NSURL *exportURL = [SRClip uniqueFileURLInDirectory:DOCUMENTS];
     
     [self finalizeClips:[self.timeline selectedClips] toFile:exportURL withPreset:self.exportPreset progress:progress withCompletionHandler:^(NSError *error) {
-        if (!error)
-        {
+        if (!error){
             SRClip *newClip = [[SRClip alloc] initWithURL:exportURL];
             
             if (consolidateHandler) consolidateHandler(newClip);

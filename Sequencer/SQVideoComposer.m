@@ -22,6 +22,7 @@
     progressHandler = progress;
     
     NSDictionary *assets = [SQVideoComposer compositionFromClips:clips];
+    
     AVComposition *composition = assets[SQVideoComposerComposition];
     AVVideoComposition *videoComposition = assets[SQVideoComposerVideoComposition];
     
@@ -40,6 +41,7 @@
             case AVAssetExportSessionStatusCancelled:
             case AVAssetExportSessionStatusCompleted:
             {
+                //success
                 dispatch_async(dispatch_get_main_queue(), ^{
                     block(nil);
                 });
@@ -47,7 +49,7 @@
             default:
             {
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    block([NSError errorWithDomain:@"Unknown export error" code:100 userInfo:nil]);
+                    block([NSError errorWithDomain:@"Failed to complete, user error code 100." code:100 userInfo:nil]);
                 });
             } break;
         }
@@ -56,8 +58,7 @@
 
 -(void)updateProgress
 {
-    if (exporter.status != AVAssetExportSessionStatusExporting)
-    {
+    if (exporter.status != AVAssetExportSessionStatusExporting){
         [timerProgress invalidate];
         timerProgress = nil;
     }else{

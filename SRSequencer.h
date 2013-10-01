@@ -82,7 +82,7 @@ typedef void (^ErrorHandlingBlock)(NSError *error);
 //Clip Modifications
 
 -(void)deleteSelectedClips;
--(void)duplicateSelectedClips;
+-(void)duplicateSelectedClipsCompletion:(void(^)(void))block;
 -(void)consolidateSelectedClipsProgress:(void (^)(float))progress completion:(void (^)(SRClip *))consolidateHandler;
 
 -(void)removeClip:(SRClip *)clip;

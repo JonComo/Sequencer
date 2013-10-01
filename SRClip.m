@@ -72,6 +72,9 @@
     if (!error)
         newClip = [[SRClip alloc] initWithURL:newURL];
     
+    newClip.thumbnails = self.thumbnails;
+    [newClip refreshProperties];
+    
     return newClip;
 }
 
@@ -152,12 +155,10 @@
              UIImage *thumb = [[UIImage alloc] initWithCGImage:image];
              
              dispatch_async(dispatch_get_main_queue(), ^{
-                 
                  [self.thumbnails addObject:thumb];
                  
                  if (self.thumbnails.count == times.count)
                      if (block) block(nil);
-                 
              });
          }
          

@@ -26,4 +26,6 @@
 -(void)playAtTime:(CMTime)time;
 -(void)scrollToClip:(SRClip *)clip;
 
+-(void)setupContentInsets;
+
 @end

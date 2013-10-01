@@ -64,6 +64,9 @@
 		86A6016917E59B5400666168 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86A6016817E59B5400666168 /* AudioToolbox.framework */; };
 		86A6019517E59BA100666168 /* JCAudioRetime.mm in Sources */ = {isa = PBXBuildFile; fileRef = 86A6018617E59BA100666168 /* JCAudioRetime.mm */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		86A6019B17E59F9C00666168 /* JCAudioConverter.m in Sources */ = {isa = PBXBuildFile; fileRef = 86A6019A17E59F9C00666168 /* JCAudioConverter.m */; };
+		86D2337C17FA4AE500BAE5EF /* SQClipsAnimationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 86D2337B17FA4AE500BAE5EF /* SQClipsAnimationView.m */; };
+		86D2338017FA4B7500BAE5EF /* SQClipsAnimationCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 86D2337F17FA4B7500BAE5EF /* SQClipsAnimationCell.m */; };
+		86D2338317FA4D2E00BAE5EF /* SQCameraEffectView.m in Sources */ = {isa = PBXBuildFile; fileRef = 86D2338217FA4D2E00BAE5EF /* SQCameraEffectView.m */; };
 		86D43FF717E540810092C1D0 /* JCDropDown.m in Sources */ = {isa = PBXBuildFile; fileRef = 86D43FF617E540810092C1D0 /* JCDropDown.m */; };
 		86D43FFA17E540D30092C1D0 /* JCDropDownAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 86D43FF917E540D30092C1D0 /* JCDropDownAction.m */; };
 /* End PBXBuildFile section */
@@ -160,6 +163,12 @@
 		86A6018617E59BA100666168 /* JCAudioRetime.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = JCAudioRetime.mm; sourceTree = "<group>"; };
 		86A6019917E59F9C00666168 /* JCAudioConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JCAudioConverter.h; path = Sequencer/JCAudioConverter.h; sourceTree = "<group>"; };
 		86A6019A17E59F9C00666168 /* JCAudioConverter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = JCAudioConverter.m; path = Sequencer/JCAudioConverter.m; sourceTree = "<group>"; };
+		86D2337A17FA4AE500BAE5EF /* SQClipsAnimationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQClipsAnimationView.h; sourceTree = "<group>"; };
+		86D2337B17FA4AE500BAE5EF /* SQClipsAnimationView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SQClipsAnimationView.m; sourceTree = "<group>"; };
+		86D2337E17FA4B7500BAE5EF /* SQClipsAnimationCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQClipsAnimationCell.h; sourceTree = "<group>"; };
+		86D2337F17FA4B7500BAE5EF /* SQClipsAnimationCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SQClipsAnimationCell.m; sourceTree = "<group>"; };
+		86D2338117FA4D2E00BAE5EF /* SQCameraEffectView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQCameraEffectView.h; sourceTree = "<group>"; };
+		86D2338217FA4D2E00BAE5EF /* SQCameraEffectView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SQCameraEffectView.m; sourceTree = "<group>"; };
 		86D43FF517E540810092C1D0 /* JCDropDown.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JCDropDown.h; sourceTree = "<group>"; };
 		86D43FF617E540810092C1D0 /* JCDropDown.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JCDropDown.m; sourceTree = "<group>"; };
 		86D43FF817E540D30092C1D0 /* JCDropDownAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JCDropDownAction.h; sourceTree = "<group>"; };
@@ -303,6 +312,7 @@
 				86A271C417D2D5220035A83F /* clipCell.xib */,
 				86A271C617D2D5710035A83F /* SQClipCell.h */,
 				86A271C717D2D5710035A83F /* SQClipCell.m */,
+				86D2337D17FA4AEB00BAE5EF /* Visual Effect */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -427,6 +437,19 @@
 			name = "Audio Retime";
 			sourceTree = "<group>";
 		};
+		86D2337D17FA4AEB00BAE5EF /* Visual Effect */ = {
+			isa = PBXGroup;
+			children = (
+				86D2337A17FA4AE500BAE5EF /* SQClipsAnimationView.h */,
+				86D2337B17FA4AE500BAE5EF /* SQClipsAnimationView.m */,
+				86D2337E17FA4B7500BAE5EF /* SQClipsAnimationCell.h */,
+				86D2337F17FA4B7500BAE5EF /* SQClipsAnimationCell.m */,
+				86D2338117FA4D2E00BAE5EF /* SQCameraEffectView.h */,
+				86D2338217FA4D2E00BAE5EF /* SQCameraEffectView.m */,
+			);
+			name = "Visual Effect";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -515,14 +538,17 @@
 				865865C417CDF3A000B5D7BD /* MBProgressHUD.m in Sources */,
 				865865C817CDF63F00B5D7BD /* JCActionSheetManager.m in Sources */,
 				86A271C817D2D5710035A83F /* SQClipCell.m in Sources */,
+				86D2337C17FA4AE500BAE5EF /* SQClipsAnimationView.m in Sources */,
 				864AFD2717DFA7FD00A1286D /* SQClipTimeStretch.m in Sources */,
 				8639E36D17E408AE001ED2F8 /* SQTrimViewController.m in Sources */,
 				8639E37717E40D8E001ED2F8 /* SAResizibleBubble.m in Sources */,
 				8639E37817E40D8E001ED2F8 /* SASliderLeft.m in Sources */,
 				8639E37917E40D8E001ED2F8 /* SASliderRight.m in Sources */,
 				8639E37A17E40D8E001ED2F8 /* SAVideoRangeSlider.m in Sources */,
+				86D2338317FA4D2E00BAE5EF /* SQCameraEffectView.m in Sources */,
 				86544C2317E423AA00240E28 /* JCMoviePlayer.m in Sources */,
 				863F62C517E50B7400C52AC9 /* SQTimeline.m in Sources */,
+				86D2338017FA4B7500BAE5EF /* SQClipsAnimationCell.m in Sources */,
 				86D43FF717E540810092C1D0 /* JCDropDown.m in Sources */,
 				86D43FFA17E540D30092C1D0 /* JCDropDownAction.m in Sources */,
 				86A6019517E59BA100666168 /* JCAudioRetime.mm in Sources */,
