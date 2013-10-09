@@ -148,6 +148,9 @@
         float ratio = offsetX / size.width;
         
         CMTime timeFrame = CMTimeMultiplyByFloat64(duration, ratio);
+        
+        NSLog(@"Generating thumbnails for time: %lld timescale: %d", timeFrame.value, timeFrame.timescale);
+        
         [times addObject:[NSValue valueWithCMTime:timeFrame]];
     }
     

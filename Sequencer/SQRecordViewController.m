@@ -120,22 +120,80 @@
 
 -(void)initInterface
 {
-    //File actions
-    
-    JCDropDownAction *import = [JCDropDownAction dropDownActionWithName:@"IMPORT" action:^{
-        [self import];
+    [self transformActions];
+    [self clipActions];
+    [self timeActions];
+    [self cameraActions];
+    [self fileActions];
+}
+
+-(void)transformActions
+{
+    JCDropDownAction *flipH = [JCDropDownAction dropDownActionWithName:@"FLIP H" action:^{
+        SRClip *selected = [timeline lastSelectedClip];
+        if (!selected){
+            [self showHUDWithTitle:@"SELECT CLIP TO TRANSFORM" hideAfterDelay:YES];
+            return;
+        }
+        
+        AVAssetTrack *videoTrack = [selected trackWithMediaType:AVMediaTypeVideo];
+        
+        CGAffineTransform transform = CGAffineTransformMakeScale(-1, 1);
+        transform = CGAffineTransformConcat(transform, CGAffineTransformMakeTranslation(videoTrack.naturalSize.width, 0));
+        
+        [self applyTransform:transform toClip:selected];
     }];
     
-    JCDropDownAction *close = [JCDropDownAction dropDownActionWithName:@"CLOSE" action:^{
-        [self close];
+    JCDropDownAction *flipV = [JCDropDownAction dropDownActionWithName:@"FLIP V" action:^{
+        SRClip *selected = [timeline lastSelectedClip];
+        if (!selected){
+            [self showHUDWithTitle:@"SELECT CLIP TO TRANSFORM" hideAfterDelay:YES];
+            return;
+        }
+        
+        AVAssetTrack *videoTrack = [selected trackWithMediaType:AVMediaTypeVideo];
+        
+        CGAffineTransform transform = CGAffineTransformMakeScale(1, -1);
+        transform = CGAffineTransformConcat(transform, CGAffineTransformMakeTranslation(0, videoTrack.naturalSize.height));
+        
+        [self applyTransform:transform toClip:selected];
     }];
     
-    JCDropDownAction *save = [JCDropDownAction dropDownActionWithName:@"SAVE" action:^{
-        [self save];
+    JCDropDownAction *scaleByX = [JCDropDownAction dropDownActionWithName:@"SCALE X" action:^{
+        SRClip *lastSelected = [timeline lastSelectedClip];
+        if (!lastSelected){
+            [self showHUDWithTitle:@"SELECT CLIP TO SCALE" hideAfterDelay:YES];
+            return;
+        }
+        
+        SQAlertView * alert = [[SQAlertView alloc] initWithTitle:@"SCALE BY RATIO:" message:nil delegate:self cancelButtonTitle:@"CANCEL" otherButtonTitles:@"SCALE", nil];
+        
+        alert.clip = lastSelected;
+        
+        alert.alertViewStyle = UIAlertViewStylePlainTextInput;
+        UITextField *textfield = [alert textFieldAtIndex:0];
+        textfield.placeholder = @"0.1 - 10.0";
+        textfield.keyboardAppearance = UIKeyboardAppearanceDark;
+        textfield.keyboardType = UIKeyboardTypeDecimalPad;
+        
+        alert.action = SQAlertViewActionScale;
+        
+        [alert show];
     }];
     
-    dropDownFile.actions = [@[close, save, import] mutableCopy];
+    JCDropDownAction *scaleDown = [JCDropDownAction dropDownActionWithName:@"SCALE / 2" action:^{
+        [self scaleClipByRatio:0.5];
+    }];
     
+    JCDropDownAction *scaleUp = [JCDropDownAction dropDownActionWithName:@"SCALE X 2" action:^{
+        [self scaleClipByRatio:2];
+    }];
+    
+    dropDownScale.actions = [@[flipH, flipV, scaleByX, scaleDown, scaleUp] mutableCopy];
+}
+
+-(void)clipActions
+{
     //Clip actions
     
     JCDropDownAction *duplicate = [JCDropDownAction dropDownActionWithName:@"DUPLICATE" action:^{
@@ -169,72 +227,25 @@
         [self join];
     }];
     
-    dropDownClip.actions = [@[trim, join, delete, duplicate] mutableCopy];
-    
-    //Scale actions
-    
-    JCDropDownAction *flipH = [JCDropDownAction dropDownActionWithName:@"FLIP H" action:^{
-        SRClip *selected = [timeline lastSelectedClip];
-        if (!selected){
-            [self showHUDWithTitle:@"SELECT CLIP TO TRANSFORM" hideAfterDelay:YES];
+    JCDropDownAction *compress = [JCDropDownAction dropDownActionWithName:@"COMPRESS" action:^{
+        if ([timeline selectedClips].count == 0){
+            [self showHUDWithTitle:@"SELECT CLIPS TO COMPRESS" hideAfterDelay:YES];
             return;
         }
         
-        AVAssetTrack *videoTrack = [selected trackWithMediaType:AVMediaTypeVideo];
-        
-        CGAffineTransform transform = CGAffineTransformMakeScale(-1, 1);
-        transform = CGAffineTransformConcat(transform, CGAffineTransformMakeTranslation(videoTrack.naturalSize.width, 0));
-        
-        [self applyTransform:transform toClip:selected];
+        [self exportClip:[timeline lastSelectedClip] withPreset:AVAssetExportPresetLowQuality completion:^(SRClip *exportedClip) {
+            [exportedClip generateThumbnailsCompletion:^(NSError *error) {
+                if (error) return;
+                [sequence addClip:exportedClip];
+            }];
+        }];
     }];
     
-    JCDropDownAction *flipV = [JCDropDownAction dropDownActionWithName:@"FLIP V" action:^{
-        SRClip *selected = [timeline lastSelectedClip];
-        if (!selected){
-            [self showHUDWithTitle:@"SELECT CLIP TO TRANSFORM" hideAfterDelay:YES];
-            return;
-        }
-        
-        AVAssetTrack *videoTrack = [selected trackWithMediaType:AVMediaTypeVideo];
-        
-        CGAffineTransform transform = CGAffineTransformMakeScale(1, -1);
-        transform = CGAffineTransformConcat(transform, CGAffineTransformMakeTranslation(0, videoTrack.naturalSize.height));
-        
-        [self applyTransform:transform toClip:selected];
-    }];
-    
-    JCDropDownAction *scaleDown = [JCDropDownAction dropDownActionWithName:@"SCALE / 2" action:^{
-        SRClip *selected = [timeline lastSelectedClip];
-        if (!selected){
-            [self showHUDWithTitle:@"SELECT CLIP TO TRANSFORM" hideAfterDelay:YES];
-            return;
-        }
-        
-        AVAssetTrack *videoTrack = [selected trackWithMediaType:AVMediaTypeVideo];
-        
-        CGAffineTransform transform = CGAffineTransformMakeScale(0.5, 0.5);
-        transform = CGAffineTransformConcat(transform, CGAffineTransformMakeTranslation(videoTrack.naturalSize.width/4, videoTrack.naturalSize.height/4));
-        
-        [self applyTransform:transform toClip:selected];
-    }];
-    
-    JCDropDownAction *scaleUp = [JCDropDownAction dropDownActionWithName:@"SCALE X 2" action:^{
-        SRClip *selected = [timeline lastSelectedClip];
-        if (!selected){
-            [self showHUDWithTitle:@"SELECT CLIP TO TRANSFORM" hideAfterDelay:YES];
-            return;
-        }
-        
-        AVAssetTrack *videoTrack = [selected trackWithMediaType:AVMediaTypeVideo];
-        
-        CGAffineTransform transform = CGAffineTransformMakeScale(2, 2);
-        transform = CGAffineTransformConcat(transform, CGAffineTransformMakeTranslation(-videoTrack.naturalSize.width/2, -videoTrack.naturalSize.height/2));
-        
-        [self applyTransform:transform toClip:selected];
-    }];
-    
-    dropDownScale.actions = [@[flipH, flipV, scaleDown, scaleUp] mutableCopy];
-    
+    dropDownClip.actions = [@[trim, join, delete, duplicate, compress] mutableCopy];
+}
+
+-(void)timeActions
+{
     //Time actions
     
     JCDropDownAction *retimeSlow = [JCDropDownAction dropDownActionWithName:@"RETIME SLOW" action:^{
@@ -273,7 +284,7 @@
         textfield.placeholder = @"SECONDS";
         textfield.keyboardAppearance = UIKeyboardAppearanceDark;
         textfield.keyboardType = UIKeyboardTypeDecimalPad;
-        alert.tag = 0;
+        alert.action = SQAlertViewActionRetime;
         [alert show];
     }];
     
@@ -286,7 +297,10 @@
     }];
     
     dropDownTime.actions = [@[retimePitch, retimeFast, retimeSlow,retimeCustom] mutableCopy];
-    
+}
+
+-(void)cameraActions
+{
     //Cam actions
     
     JCDropDownAction *setFocusAction = [JCDropDownAction dropDownActionWithName:@"SET FOCUS" action:^{
@@ -315,8 +329,8 @@
     
     dropDownCam.actions = [@[setFocusAction, setExposureAction] mutableCopy];
     
-     if ([UIImagePickerController isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceFront])
-         [dropDownCam.actions addObject:flipCamera];
+    if ([UIImagePickerController isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceFront])
+        [dropDownCam.actions addObject:flipCamera];
     
     if ([[AVAssetExportSession allExportPresets] containsObject:AVAssetExportPreset640x480])
         [dropDownCam.actions insertObject:session480 atIndex:0];
@@ -326,17 +340,35 @@
         [dropDownCam.actions insertObject:session1080 atIndex:0];
 }
 
+-(void)fileActions
+{
+    //File actions
+    
+    JCDropDownAction *import = [JCDropDownAction dropDownActionWithName:@"IMPORT" action:^{
+        [self import];
+    }];
+    
+    JCDropDownAction *close = [JCDropDownAction dropDownActionWithName:@"CLOSE" action:^{
+        [self close];
+    }];
+    
+    JCDropDownAction *save = [JCDropDownAction dropDownActionWithName:@"SAVE" action:^{
+        [self save];
+    }];
+    
+    dropDownFile.actions = [@[close, save, import] mutableCopy];
+}
+
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    if (alertView.tag == 0)
+    SQAlertView *alert = (SQAlertView *)alertView;
+    
+    if (alert.action == SQAlertViewActionRetime)
     {
         //retime alert
         UITextField *textfield = [alertView textFieldAtIndex:0];
-        [self showHUDWithTitle:textfield.text hideAfterDelay:YES];
-        
         float newDuration = [textfield.text floatValue];
         
-        SQAlertView *alert = (SQAlertView *)alertView;
         SRClip *clip = alert.clip;
         
         float clipDuration = CMTimeGetSeconds(clip.positionInComposition.duration);
@@ -344,14 +376,18 @@
         float ratio = newDuration / clipDuration;
         
         [self retimeClip:clip multiple:ratio];
-    }
-    
-    if (alertView.tag == 1)
+    }else if (alert.action == SQAlertViewActionClose)
     {
         //close alert
         if (buttonIndex == 1){
             [self dismissViewControllerAnimated:YES completion:nil];
         }
+    }else if (alert.action == SQAlertViewActionScale)
+    {
+        UITextField *textfield = [alertView textFieldAtIndex:0];
+        float newScale = [textfield.text floatValue];
+        
+        [self scaleClipByRatio:newScale];
     }
 }
 
@@ -378,8 +414,8 @@
 
 - (void)close
 {
-    UIAlertView *closeAlert = [[UIAlertView alloc] initWithTitle:@"CLOSE PROJECT?" message:nil delegate:self cancelButtonTitle:@"CANCEL" otherButtonTitles:@"CLOSE", nil];
-    closeAlert.tag = 1;
+    SQAlertView *closeAlert = [[SQAlertView alloc] initWithTitle:@"CLOSE PROJECT?" message:nil delegate:self cancelButtonTitle:@"CANCEL" otherButtonTitles:@"CLOSE", nil];
+    closeAlert.action = SQAlertViewActionClose;
     [closeAlert show];
 }
 
@@ -500,6 +536,25 @@
     }];
 }
 
+-(void)scaleClipByRatio:(float)ratio
+{
+    SRClip *selected = [timeline lastSelectedClip];
+    if (!selected){
+        [self showHUDWithTitle:@"SELECT CLIP TO TRANSFORM" hideAfterDelay:YES];
+        return;
+    }
+    
+    AVAssetTrack *videoTrack = [selected trackWithMediaType:AVMediaTypeVideo];
+    
+    float translateRatio = 1 - ratio;
+    CGPoint translateAmount = CGPointMake(videoTrack.naturalSize.width * translateRatio, videoTrack.naturalSize.height * translateRatio);
+    
+    CGAffineTransform transform = CGAffineTransformMakeTranslation(translateAmount.x, translateAmount.y);
+    transform = CGAffineTransformConcat(transform, CGAffineTransformMakeScale(ratio, ratio));
+    
+    [self applyTransform:transform toClip:selected];
+}
+
 -(void)applyTransform:(CGAffineTransform)transform toClip:(SRClip *)clip
 {
     [clip setModifyLayerInstruction:^(AVMutableVideoCompositionLayerInstruction *layerInstruction, CMTimeRange range) {
@@ -513,29 +568,40 @@
 
 -(void)exportClip:(SRClip *)clip completion:(void(^)(void))block
 {
+    [self exportClip:clip withPreset:sequence.exportPreset completion:^(SRClip *exportedClip) {
+        [exportedClip generateThumbnailsCompletion:^(NSError *error) {
+            
+            if (!error){
+                [sequence addClip:exportedClip];
+            }
+            
+            if (block) block();
+        }];
+    }];
+}
+
+-(void)exportClip:(SRClip *)clip withPreset:(NSString *)preset completion:(void(^)(SRClip *exportedClip))block
+{
     [self showHUDWithTitle:@"EXPORTING" hideAfterDelay:NO];
     
     NSURL *exportURL = [SRClip uniqueFileURLInDirectory:DOCUMENTS];
     
-    [sequence finalizeClips:@[clip] toFile:exportURL withPreset:sequence.exportPreset progress:^(float progress) {
+    [sequence finalizeClips:@[clip] toFile:exportURL withPreset:preset progress:^(float progress) {
         [self showProgress:progress];
     } withCompletionHandler:^(NSError *error)
     {
         [self hideHUD];
         
-        if (block) block();
-        
         if (error)
         {
             [self showHUDWithTitle:@"ERROR" hideAfterDelay:YES];
+            if (block) block(nil);
             return;
         }
         
         SRClip *exported = [[SRClip alloc] initWithURL:exportURL];
         
-        [exported generateThumbnailsCompletion:^(NSError *error) {
-            [sequence addClip:exported];
-        }];
+        if (block) block(exported);
     }];
 }
 

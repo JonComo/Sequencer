@@ -10,8 +10,16 @@
 
 #import "SRClip.h"
 
+typedef enum
+{
+    SQAlertViewActionScale,
+    SQAlertViewActionClose,
+    SQAlertViewActionRetime
+} SQAlertViewAction;
+
 @interface SQAlertView : UIAlertView
 
 @property (nonatomic, strong) SRClip *clip;
+@property SQAlertViewAction action;
 
 @end

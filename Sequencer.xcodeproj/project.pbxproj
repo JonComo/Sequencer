@@ -489,6 +489,11 @@
 				CLASSPREFIX = SQ;
 				LastUpgradeCheck = 0460;
 				ORGANIZATIONNAME = "Jon Como";
+				TargetAttributes = {
+					8658657817CDCB6A00B5D7BD = {
+						DevelopmentTeam = 5C23H8QH97;
+					};
+				};
 			};
 			buildConfigurationList = 8658657417CDCB6A00B5D7BD /* Build configuration list for PBXProject "Sequencer" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -657,7 +662,8 @@
 		8658659D17CDCB6A00B5D7BD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Developer: Jon Como (7X7G2JJC8P)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Sequencer/Sequencer-Prefix.pch";
 				INFOPLIST_FILE = "Sequencer/Sequencer-Info.plist";
@@ -667,7 +673,7 @@
 					"\"$(SRCROOT)/Common Files/src\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "9E063390-D86C-45C6-B495-9FE7C06CF185";
+				PROVISIONING_PROFILE = "";
 				USER_HEADER_SEARCH_PATHS = "";
 				WRAPPER_EXTENSION = app;
 			};
@@ -676,7 +682,8 @@
 		8658659E17CDCB6A00B5D7BD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Developer: Jon Como (7X7G2JJC8P)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Sequencer/Sequencer-Prefix.pch";
 				INFOPLIST_FILE = "Sequencer/Sequencer-Info.plist";
@@ -686,7 +693,7 @@
 					"\"$(SRCROOT)/Common Files/src\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "9E063390-D86C-45C6-B495-9FE7C06CF185";
+				PROVISIONING_PROFILE = "";
 				USER_HEADER_SEARCH_PATHS = "";
 				WRAPPER_EXTENSION = app;
 			};
