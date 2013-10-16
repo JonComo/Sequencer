@@ -122,8 +122,9 @@
     
     AVAssetImageGenerator *imageGenerator = [AVAssetImageGenerator assetImageGeneratorWithAsset:asset];
     imageGenerator.appliesPreferredTrackTransform = YES;
-    imageGenerator.requestedTimeToleranceAfter = kCMTimeZero;
-    imageGenerator.requestedTimeToleranceBefore = kCMTimeZero;
+    
+    //imageGenerator.requestedTimeToleranceAfter = kCMTimeZero;
+    //imageGenerator.requestedTimeToleranceBefore = kCMTimeZero;
     
     int picWidth = size.height;
     imageGenerator.maximumSize = CGSizeMake(picWidth, picWidth);
@@ -142,12 +143,12 @@
     
     for (int i = 0; i<numberToGenerate; i++)
     {
-        
         offsetX += picWidth;
         
         float ratio = offsetX / size.width;
         
-        CMTime timeFrame = CMTimeMultiplyByFloat64(duration, ratio);
+        //CMTime timeFrame = CMTimeMultiplyByFloat64(duration, ratio);
+        CMTime timeFrame = CMTimeMake(offsetX, 30);
         
         NSLog(@"Generating thumbnails for time: %lld timescale: %d", timeFrame.value, timeFrame.timescale);
         

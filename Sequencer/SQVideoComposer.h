@@ -22,6 +22,8 @@ typedef void (^ProgressHandler)(float progress);
 
 -(void)exportClips:(NSArray *)clips toURL:(NSURL *)outputFile withPreset:(NSString *)preset progress:(ProgressHandler)progress withCompletionHandler:(void (^)(NSError *error))block;
 
+-(void)exportCompositionInfo:(NSDictionary *)info toURL:(NSURL *)outputFile withPreset:(NSString *)preset progress:(ProgressHandler)progress withCompletionHandler:(void (^)(NSError *))block;
+
 +(NSDictionary *)compositionFromClips:(NSArray *)clips;
 
 +(AVMutableComposition *)timeRange:(CMTimeRange)range ofClip:(SRClip *)clip;

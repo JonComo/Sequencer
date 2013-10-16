@@ -36,7 +36,7 @@
 {
     [super reloadData];
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:SRSequenceRefreshPreview object:nil];
+    [self.sequence refreshPreview];
 }
 
 -(void)removeFromSuperview
@@ -105,8 +105,7 @@
     
     float xOffset = 0;
     
-    for (SRClip *clip in self.sequence.clips)
-    {
+    for (SRClip *clip in self.sequence.clips){
         if ([clip isPlayingAtTime:time]){
             
             //calculate percent of cell played

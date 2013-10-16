@@ -21,10 +21,15 @@
 {
     progressHandler = progress;
     
-    NSDictionary *assets = [SQVideoComposer compositionFromClips:clips];
+    NSDictionary *info = [SQVideoComposer compositionFromClips:clips];
     
-    AVComposition *composition = assets[SQVideoComposerComposition];
-    AVVideoComposition *videoComposition = assets[SQVideoComposerVideoComposition];
+    [self exportCompositionInfo:info toURL:outputFile withPreset:preset progress:progress withCompletionHandler:block];
+}
+
+-(void)exportCompositionInfo:(NSDictionary *)info toURL:(NSURL *)outputFile withPreset:(NSString *)preset progress:(ProgressHandler)progress withCompletionHandler:(void (^)(NSError *))block
+{
+    AVComposition *composition = info[SQVideoComposerComposition];
+    AVVideoComposition *videoComposition = info[SQVideoComposerVideoComposition];
     
     exporter = [AVAssetExportSession exportSessionWithAsset:composition presetName:preset];
     

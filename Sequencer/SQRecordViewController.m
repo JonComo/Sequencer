@@ -28,6 +28,9 @@
 
 #import "SQAlertView.h"
 
+//Effects
+#import "SQEffectScramble.h"
+
 #define TIPRecord @"TAP TO SET FOCUS"
 #define TIPRecordStop @"TAP TO SET EXPOSURE"
 
@@ -241,7 +244,18 @@
         }];
     }];
     
-    dropDownClip.actions = [@[trim, join, delete, duplicate, compress] mutableCopy];
+    JCDropDownAction *scramble = [JCDropDownAction dropDownActionWithName:@"SCRAMBLE" action:^{
+        if ([timeline selectedClips].count == 0){
+            [self showHUDWithTitle:@"SELECT CLIPS TO SCRAMBLE" hideAfterDelay:YES];
+            return;
+        }
+        
+        [[[SQEffectScramble alloc] initWithClip:[timeline lastSelectedClip]] renderEffectCompletion:^(SRClip *output) {
+            [sequence addClip:output];
+        }];
+    }];
+    
+    dropDownClip.actions = [@[trim, join, delete, duplicate, compress, scramble] mutableCopy];
 }
 
 -(void)timeActions
@@ -544,13 +558,15 @@
         return;
     }
     
-    AVAssetTrack *videoTrack = [selected trackWithMediaType:AVMediaTypeVideo];
+//    AVAssetTrack *videoTrack = [selected trackWithMediaType:AVMediaTypeVideo];
+//    
+//    float translateRatio = 1 - ratio;
+//    CGPoint translateAmount = CGPointMake(videoTrack.naturalSize.width * translateRatio, videoTrack.naturalSize.height * translateRatio);
+//    
+//    CGAffineTransform transform = CGAffineTransformMakeTranslation(translateAmount.x, translateAmount.y);
+//    transform = CGAffineTransformConcat(transform, CGAffineTransformMakeScale(ratio, ratio));
     
-    float translateRatio = 1 - ratio;
-    CGPoint translateAmount = CGPointMake(videoTrack.naturalSize.width * translateRatio, videoTrack.naturalSize.height * translateRatio);
-    
-    CGAffineTransform transform = CGAffineTransformMakeTranslation(translateAmount.x, translateAmount.y);
-    transform = CGAffineTransformConcat(transform, CGAffineTransformMakeScale(ratio, ratio));
+    CGAffineTransform transform = CGAffineTransformMakeScale(ratio, ratio);
     
     [self applyTransform:transform toClip:selected];
 }

@@ -43,6 +43,8 @@
 		865865C817CDF63F00B5D7BD /* JCActionSheetManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 865865C617CDF63F00B5D7BD /* JCActionSheetManager.m */; };
 		865865CA17CDF6DA00B5D7BD /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 865865C917CDF6DA00B5D7BD /* MobileCoreServices.framework */; };
 		8658BEB017FAA44C00E71E9B /* PerlinNoise.m in Sources */ = {isa = PBXBuildFile; fileRef = 8658BEAF17FAA44C00E71E9B /* PerlinNoise.m */; };
+		867807A2180E17F700E9592C /* SQEffect.m in Sources */ = {isa = PBXBuildFile; fileRef = 867807A1180E17F700E9592C /* SQEffect.m */; };
+		867807A6180E18D100E9592C /* SQEffectScramble.m in Sources */ = {isa = PBXBuildFile; fileRef = 867807A5180E18D100E9592C /* SQEffectScramble.m */; };
 		8696EDC217E671CB0075DCE7 /* JCMath.m in Sources */ = {isa = PBXBuildFile; fileRef = 8696EDC117E671CB0075DCE7 /* JCMath.m */; };
 		8696EDDE17E67A0E0075DCE7 /*  DiracAudioPlayer ReadMe.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 8696EDC517E67A0E0075DCE7 /*  DiracAudioPlayer ReadMe.rtf */; };
 		8696EDDF17E67A0E0075DCE7 /* DiracAudioPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8696EDC717E67A0E0075DCE7 /* DiracAudioPlayer.mm */; };
@@ -132,6 +134,10 @@
 		865865C917CDF6DA00B5D7BD /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		8658BEAE17FAA44C00E71E9B /* PerlinNoise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PerlinNoise.h; sourceTree = "<group>"; };
 		8658BEAF17FAA44C00E71E9B /* PerlinNoise.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PerlinNoise.m; sourceTree = "<group>"; };
+		867807A0180E17F700E9592C /* SQEffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQEffect.h; sourceTree = "<group>"; };
+		867807A1180E17F700E9592C /* SQEffect.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SQEffect.m; sourceTree = "<group>"; };
+		867807A4180E18D100E9592C /* SQEffectScramble.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQEffectScramble.h; sourceTree = "<group>"; };
+		867807A5180E18D100E9592C /* SQEffectScramble.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SQEffectScramble.m; sourceTree = "<group>"; };
 		8696EDC017E671CB0075DCE7 /* JCMath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JCMath.h; sourceTree = "<group>"; };
 		8696EDC117E671CB0075DCE7 /* JCMath.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JCMath.m; sourceTree = "<group>"; };
 		8696EDC517E67A0E0075DCE7 /*  DiracAudioPlayer ReadMe.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; path = " DiracAudioPlayer ReadMe.rtf"; sourceTree = "<group>"; };
@@ -348,6 +354,7 @@
 				8696EDED17E680730075DCE7 /* SQVideoComposer.m */,
 				864AFD2517DFA7FD00A1286D /* SQClipTimeStretch.h */,
 				864AFD2617DFA7FD00A1286D /* SQClipTimeStretch.m */,
+				867807A3180E18BA00E9592C /* Effects */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -359,6 +366,17 @@
 				865865C317CDF3A000B5D7BD /* MBProgressHUD.m */,
 			);
 			name = MBProgress;
+			sourceTree = "<group>";
+		};
+		867807A3180E18BA00E9592C /* Effects */ = {
+			isa = PBXGroup;
+			children = (
+				867807A0180E17F700E9592C /* SQEffect.h */,
+				867807A1180E17F700E9592C /* SQEffect.m */,
+				867807A4180E18D100E9592C /* SQEffectScramble.h */,
+				867807A5180E18D100E9592C /* SQEffectScramble.m */,
+			);
+			name = Effects;
 			sourceTree = "<group>";
 		};
 		8696EDC317E67A0E0075DCE7 /* Common Files */ = {
@@ -559,6 +577,7 @@
 				8639E36D17E408AE001ED2F8 /* SQTrimViewController.m in Sources */,
 				8639E37717E40D8E001ED2F8 /* SAResizibleBubble.m in Sources */,
 				8639E37817E40D8E001ED2F8 /* SASliderLeft.m in Sources */,
+				867807A6180E18D100E9592C /* SQEffectScramble.m in Sources */,
 				8639E37917E40D8E001ED2F8 /* SASliderRight.m in Sources */,
 				8639E37A17E40D8E001ED2F8 /* SAVideoRangeSlider.m in Sources */,
 				86D2338317FA4D2E00BAE5EF /* SQCameraEffectView.m in Sources */,
@@ -570,6 +589,7 @@
 				86A6019517E59BA100666168 /* JCAudioRetime.mm in Sources */,
 				86A6019B17E59F9C00666168 /* JCAudioConverter.m in Sources */,
 				86F9B08F17FACA5E001E7933 /* SQAlertView.m in Sources */,
+				867807A2180E17F700E9592C /* SQEffect.m in Sources */,
 				8696EDC217E671CB0075DCE7 /* JCMath.m in Sources */,
 				8696EDDF17E67A0E0075DCE7 /* DiracAudioPlayer.mm in Sources */,
 				8696EDE017E67A0E0075DCE7 /* DiracAudioPlayerBase.mm in Sources */,
