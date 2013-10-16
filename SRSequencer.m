@@ -239,6 +239,7 @@
     captureVideoPreviewLayer = [AVCaptureVideoPreviewLayer layerWithSession:self.captureSession];
     
     self.viewPreview.layer.masksToBounds = NO;
+    
     captureVideoPreviewLayer.frame = zoomFrame;
     
     captureVideoPreviewLayer.borderColor = [UIColor whiteColor].CGColor;
@@ -271,7 +272,10 @@
         {
             //determin if pinched up or down.
             zoomScale = pinch.velocity > 0 ? 1 : 0;
-
+            
+            if ([self.delegate respondsToSelector:@selector(sequencer:isZoomed:)])
+                [self.delegate sequencer:self isZoomed:zoomScale ? YES : NO];
+            
             [self calculateZoomFrame];
             
             captureVideoPreviewLayer.frame = zoomFrame;
@@ -951,6 +955,8 @@
 {
     CGPoint pointOfInterest = [captureVideoPreviewLayer captureDevicePointOfInterestForPoint:point];
     
+    if (!CGRectContainsPoint(zoomFrame, point)) return;
+    
     [self configureDevice:^{
         [videoInput.device setFocusPointOfInterest:pointOfInterest];
         
@@ -963,6 +969,8 @@
 -(void)setExposurePoint:(CGPoint)point
 {
     CGPoint pointOfInterest = [captureVideoPreviewLayer captureDevicePointOfInterestForPoint:point];
+    
+    if (!CGRectContainsPoint(zoomFrame, point)) return;
     
     [self configureDevice:^{
         [videoInput.device setExposurePointOfInterest:pointOfInterest];

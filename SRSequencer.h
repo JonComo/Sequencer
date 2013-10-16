@@ -21,6 +21,7 @@ typedef void (^ErrorHandlingBlock)(NSError *error);
 
 @optional
 -(void)sequencer:(SRSequencer *)sequencer isRecording:(BOOL)recording;
+-(void)sequencer:(SRSequencer *)sequencer isZoomed:(BOOL)zoomed;
 
 @end
 

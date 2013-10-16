@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="4510" systemVersion="12F37" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="bgz-aP-HPi">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="4510" systemVersion="12F45" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="bgz-aP-HPi">
     <dependencies>
         <deployment defaultVersion="1792" identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3742"/>
@@ -185,50 +185,11 @@
                                     <outlet property="delegate" destination="2" id="Kuh-bw-pi1"/>
                                 </connections>
                             </collectionView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="T0o-xx-NSm" customClass="JCDropDown">
-                                <rect key="frame" x="0.0" y="50" width="54" height="30"/>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="54" id="cKQ-Tx-MXa"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                <state key="normal" title="FILE">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <state key="highlighted">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cwj-aE-RFv" customClass="JCDropDown">
-                                <rect key="frame" x="0.0" y="202" width="54" height="30"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="i7z-77-cIC" customClass="JCDropDown">
+                                <rect key="frame" x="0.0" y="91" width="54" height="30"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                <state key="normal" title="CLIP">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <state key="highlighted">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mz1-82-1mI" customClass="JCDropDown">
-                                <rect key="frame" x="0.0" y="88" width="54" height="30"/>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                <state key="normal" title="TIME">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <state key="highlighted">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="t8D-PP-DES" customClass="JCDropDown">
-                                <rect key="frame" x="0.0" y="164" width="54" height="30"/>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                <state key="normal" title="SCALE">
+                                <state key="normal" title="CAM">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
@@ -237,10 +198,10 @@
                                 </state>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WBY-cW-9c7">
-                                <rect key="frame" x="516" y="203" width="54" height="30"/>
+                                <rect key="frame" x="514" y="180" width="54" height="30"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="30" id="8E2-G9-f2o"/>
+                                    <constraint firstAttribute="width" constant="54" id="H5N-Di-jjH"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                 <state key="normal" title="PLAY">
@@ -254,11 +215,38 @@
                                     <action selector="preview:" destination="2" eventType="touchUpInside" id="sFy-wI-bJf"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SFH-k5-zhc">
-                                <rect key="frame" x="516" y="132" width="54" height="40"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="T0o-xx-NSm" customClass="JCDropDown">
+                                <rect key="frame" x="0.0" y="50" width="54" height="30"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="54" id="jHs-z7-z4P"/>
+                                    <constraint firstAttribute="width" constant="54" id="xha-4Z-icg"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                <state key="normal" title="FILE">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <state key="highlighted">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cwj-aE-RFv" customClass="JCDropDown">
+                                <rect key="frame" x="0.0" y="137" width="54" height="30"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                <state key="normal" title="CLIP">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <state key="highlighted">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SFH-k5-zhc">
+                                <rect key="frame" x="504" y="132" width="56" height="40"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="56" id="prr-qL-xAH"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                 <state key="normal" title="REC">
@@ -272,59 +260,40 @@
                                     <action selector="record:" destination="2" eventType="touchUpInside" id="Dqh-9G-FsQ"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="i7z-77-cIC" customClass="JCDropDown">
-                                <rect key="frame" x="0.0" y="126" width="54" height="30"/>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                <state key="normal" title="CAM">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <state key="highlighted">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                            </button>
                         </subviews>
                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
-                            <constraint firstItem="UJS-0a-nvU" firstAttribute="bottom" secondItem="eK7-Tm-qol" secondAttribute="bottom" id="0RG-Cv-bRC"/>
-                            <constraint firstItem="mz1-82-1mI" firstAttribute="leading" secondItem="i7z-77-cIC" secondAttribute="leading" id="3eB-QW-J71"/>
-                            <constraint firstItem="mz1-82-1mI" firstAttribute="trailing" secondItem="i7z-77-cIC" secondAttribute="trailing" id="7y2-wx-snr"/>
-                            <constraint firstItem="t8D-PP-DES" firstAttribute="leading" secondItem="i7z-77-cIC" secondAttribute="leading" id="8Dn-xF-4P7"/>
-                            <constraint firstItem="mz1-82-1mI" firstAttribute="top" secondItem="T0o-xx-NSm" secondAttribute="bottom" constant="8" symbolic="YES" id="8Uy-Pw-5Ki"/>
-                            <constraint firstItem="WBY-cW-9c7" firstAttribute="trailing" secondItem="UJS-0a-nvU" secondAttribute="trailing" constant="2" id="Ba9-fa-SmN"/>
-                            <constraint firstItem="SFH-k5-zhc" firstAttribute="top" secondItem="qZE-Wy-YmB" secondAttribute="bottom" constant="112" id="CIi-1s-Wuk"/>
-                            <constraint firstItem="T0o-xx-NSm" firstAttribute="trailing" secondItem="mz1-82-1mI" secondAttribute="trailing" id="H1f-sm-l7i"/>
-                            <constraint firstItem="UJS-0a-nvU" firstAttribute="top" secondItem="3" secondAttribute="top" id="I7O-Fc-L95"/>
-                            <constraint firstItem="i7z-77-cIC" firstAttribute="top" secondItem="mz1-82-1mI" secondAttribute="bottom" constant="8" symbolic="YES" id="JaB-4t-eCd"/>
-                            <constraint firstItem="WBY-cW-9c7" firstAttribute="top" secondItem="SFH-k5-zhc" secondAttribute="bottom" constant="31" id="NIv-NT-oak"/>
-                            <constraint firstItem="WBY-cW-9c7" firstAttribute="trailing" secondItem="SFH-k5-zhc" secondAttribute="trailing" id="Obe-sq-PP6"/>
-                            <constraint firstItem="t8D-PP-DES" firstAttribute="leading" secondItem="cwj-aE-RFv" secondAttribute="leading" id="Rxt-H5-6Yy"/>
-                            <constraint firstItem="mz1-82-1mI" firstAttribute="leading" secondItem="T0o-xx-NSm" secondAttribute="leading" id="WRO-4G-k2e"/>
-                            <constraint firstItem="i7z-77-cIC" firstAttribute="trailing" secondItem="t8D-PP-DES" secondAttribute="trailing" id="X80-M6-2gX"/>
-                            <constraint firstItem="eK7-Tm-qol" firstAttribute="top" secondItem="cwj-aE-RFv" secondAttribute="bottom" constant="28" id="Xcf-WX-xPi"/>
-                            <constraint firstItem="cwj-aE-RFv" firstAttribute="top" secondItem="t8D-PP-DES" secondAttribute="bottom" constant="8" symbolic="YES" id="YjB-6Z-Qno"/>
-                            <constraint firstItem="cwj-aE-RFv" firstAttribute="leading" secondItem="eK7-Tm-qol" secondAttribute="leading" id="bJa-a7-4d6"/>
-                            <constraint firstItem="t8D-PP-DES" firstAttribute="top" secondItem="i7z-77-cIC" secondAttribute="bottom" constant="8" symbolic="YES" id="brc-ts-J5I"/>
-                            <constraint firstItem="SFH-k5-zhc" firstAttribute="leading" secondItem="WBY-cW-9c7" secondAttribute="leading" id="crH-B4-OQW"/>
-                            <constraint firstItem="T0o-xx-NSm" firstAttribute="top" secondItem="qZE-Wy-YmB" secondAttribute="bottom" constant="30" id="jty-wL-CRk"/>
-                            <constraint firstAttribute="trailing" secondItem="SFH-k5-zhc" secondAttribute="trailing" constant="-2" id="lGh-8B-6BE"/>
-                            <constraint firstItem="t8D-PP-DES" firstAttribute="trailing" secondItem="cwj-aE-RFv" secondAttribute="trailing" id="lmN-Aj-zZ6"/>
-                            <constraint firstItem="eK7-Tm-qol" firstAttribute="top" secondItem="WBY-cW-9c7" secondAttribute="bottom" constant="27" id="mAR-cd-fDw"/>
-                            <constraint firstItem="t8D-PP-DES" firstAttribute="leading" secondItem="3" secondAttribute="leading" id="nyu-gZ-Grh"/>
-                            <constraint firstItem="eK7-Tm-qol" firstAttribute="trailing" secondItem="WBY-cW-9c7" secondAttribute="trailing" constant="-2" id="pbQ-UO-tNN"/>
-                            <constraint firstAttribute="bottom" secondItem="eK7-Tm-qol" secondAttribute="bottom" id="pz1-WC-yvE"/>
-                            <constraint firstItem="UJS-0a-nvU" firstAttribute="leading" secondItem="t8D-PP-DES" secondAttribute="leading" id="rW3-Lh-bif"/>
+                            <constraint firstItem="eK7-Tm-qol" firstAttribute="trailing" secondItem="WBY-cW-9c7" secondAttribute="trailing" id="224-O4-Tq3"/>
+                            <constraint firstItem="WBY-cW-9c7" firstAttribute="top" secondItem="SFH-k5-zhc" secondAttribute="bottom" constant="8" symbolic="YES" id="6G1-vj-6qG"/>
+                            <constraint firstItem="T0o-xx-NSm" firstAttribute="top" secondItem="qZE-Wy-YmB" secondAttribute="bottom" constant="30" id="AB6-E9-wfY"/>
+                            <constraint firstItem="UJS-0a-nvU" firstAttribute="leading" secondItem="eK7-Tm-qol" secondAttribute="leading" id="Bob-ru-tYf"/>
+                            <constraint firstItem="WBY-cW-9c7" firstAttribute="trailing" secondItem="UJS-0a-nvU" secondAttribute="trailing" id="CxY-Ma-kq4"/>
+                            <constraint firstItem="cwj-aE-RFv" firstAttribute="leading" secondItem="eK7-Tm-qol" secondAttribute="leading" id="GLy-hW-Vmh"/>
+                            <constraint firstItem="i7z-77-cIC" firstAttribute="leading" secondItem="cwj-aE-RFv" secondAttribute="leading" id="GPp-Nu-tDt"/>
+                            <constraint firstItem="i7z-77-cIC" firstAttribute="top" secondItem="T0o-xx-NSm" secondAttribute="bottom" constant="11" id="IPy-Fa-YjC"/>
+                            <constraint firstAttribute="trailing" secondItem="SFH-k5-zhc" secondAttribute="trailing" constant="8" id="JZk-bX-erG"/>
+                            <constraint firstAttribute="trailing" secondItem="WBY-cW-9c7" secondAttribute="trailing" id="LUw-0T-ert"/>
+                            <constraint firstItem="eK7-Tm-qol" firstAttribute="bottom" secondItem="UJS-0a-nvU" secondAttribute="bottom" id="Lx6-S8-sct"/>
+                            <constraint firstItem="eK7-Tm-qol" firstAttribute="leading" secondItem="3" secondAttribute="leading" id="UED-Ai-mTN"/>
+                            <constraint firstAttribute="bottom" secondItem="UJS-0a-nvU" secondAttribute="bottom" id="WIe-s6-mZL"/>
+                            <constraint firstItem="SFH-k5-zhc" firstAttribute="centerY" secondItem="cwj-aE-RFv" secondAttribute="centerY" id="YS0-8i-0XH"/>
+                            <constraint firstItem="i7z-77-cIC" firstAttribute="trailing" secondItem="cwj-aE-RFv" secondAttribute="trailing" id="ghi-aV-6XE"/>
+                            <constraint firstItem="T0o-xx-NSm" firstAttribute="leading" secondItem="i7z-77-cIC" secondAttribute="leading" id="iUh-RG-1Km"/>
+                            <constraint firstItem="T0o-xx-NSm" firstAttribute="trailing" secondItem="i7z-77-cIC" secondAttribute="trailing" id="lTH-vL-OMl"/>
+                            <constraint firstItem="eK7-Tm-qol" firstAttribute="top" secondItem="WBY-cW-9c7" secondAttribute="bottom" constant="50" id="oVr-3V-VGe"/>
+                            <constraint firstItem="UJS-0a-nvU" firstAttribute="top" secondItem="3" secondAttribute="top" id="swd-jU-0AW"/>
+                            <constraint firstItem="cwj-aE-RFv" firstAttribute="top" secondItem="i7z-77-cIC" secondAttribute="bottom" constant="16" id="tVh-iE-bNR"/>
+                            <constraint firstItem="SFH-k5-zhc" firstAttribute="top" secondItem="qZE-Wy-YmB" secondAttribute="bottom" constant="112" id="tna-0C-56m"/>
                         </constraints>
                         <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                     </view>
                     <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                     <connections>
+                        <outlet property="buttonPlay" destination="WBY-cW-9c7" id="7qW-7x-AJz"/>
+                        <outlet property="buttonRecord" destination="SFH-k5-zhc" id="f3U-jo-dmJ"/>
                         <outlet property="dropDownCam" destination="i7z-77-cIC" id="Thz-Rj-kcc"/>
                         <outlet property="dropDownClip" destination="cwj-aE-RFv" id="X1u-vt-uRY"/>
                         <outlet property="dropDownFile" destination="T0o-xx-NSm" id="BX9-Bp-brz"/>
-                        <outlet property="dropDownScale" destination="t8D-PP-DES" id="N79-iT-gvX"/>
-                        <outlet property="dropDownTime" destination="mz1-82-1mI" id="zXc-2i-Ilx"/>
                         <outlet property="timeline" destination="eK7-Tm-qol" id="Oz4-rk-dyO"/>
                         <outlet property="viewPreview" destination="UJS-0a-nvU" id="aKm-cx-GNh"/>
                     </connections>

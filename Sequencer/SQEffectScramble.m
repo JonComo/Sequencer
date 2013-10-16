@@ -40,8 +40,6 @@
     AVMutableVideoComposition *mutableVideoComposition;
     NSMutableArray *instructions = [NSMutableArray array];
     
-    CMTime startTime = kCMTimeZero;
-    
     if (!mutableVideoComposition){
         mutableVideoComposition = [AVMutableVideoComposition videoCompositionWithPropertiesOfAsset:asset];
     }
@@ -52,12 +50,21 @@
     AVAssetTrack *clipVideoTrack = videoTracks.count != 0 ? videoTracks[0] : nil;
     AVAssetTrack *clipAudioTrack = audioTracks.count != 0 ? audioTracks[0] : nil;
     
-    for (int i = 0; i<15; i++)
+    CMTime startTime = kCMTimeZero;
+    
+    while (CMTimeCompare(startTime, asset.duration) == -1)
     {
-        float randFloat = arc4random()%(int)(CMTimeGetSeconds(asset.duration) * 100)/100.0f;
-        CMTime randomTime = CMTimeMake(randFloat, asset.duration.timescale);
+        float randFloat = (float)(arc4random()%100)/100.0f;
         
-        CMTimeRange randomRange = CMTimeRangeMake(randomTime, CMTimeAdd(randomTime, CMTimeMake(0.1, asset.duration.timescale)));
+        CMTime randomTime = CMTimeMultiplyByFloat64(asset.duration, randFloat);
+        CMTime duration = CMTimeMake(1, 30);
+        
+        if (CMTimeCompare(CMTimeAdd(randomTime, duration), asset.duration) == 1){
+            //too big, subtract the duration
+            randomTime = CMTimeSubtract(randomTime, duration);
+        }
+        
+        CMTimeRange randomRange = CMTimeRangeMake(randomTime, duration);
         
         if (clipVideoTrack)
             [videoTrack insertTimeRange:randomRange ofTrack:clipVideoTrack atTime:startTime error:nil];
@@ -71,11 +78,13 @@
         [layerInstruction setTransform:videoTrack.preferredTransform atTime:startTime];
         
         instruction.layerInstructions = @[layerInstruction];
-        instruction.timeRange = CMTimeRangeMake(startTime, asset.duration);
+        instruction.timeRange = CMTimeRangeMake(startTime, randomRange.duration);
         
         [instructions addObject:instruction];
         
         startTime = CMTimeAdd(startTime, randomRange.duration);
+        
+        //NSLog(@"Range start: %f duration %f", CMTimeGetSeconds(randomRange.start), CMTimeGetSeconds(randomRange.duration));
     }
     
     mutableVideoComposition.instructions = instructions;

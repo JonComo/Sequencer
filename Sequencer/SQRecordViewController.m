@@ -40,9 +40,11 @@
     
     __weak IBOutlet JCDropDown *dropDownClip;
     __weak IBOutlet JCDropDown *dropDownCam;
-    __weak IBOutlet JCDropDown *dropDownTime;
     __weak IBOutlet JCDropDown *dropDownFile;
-    __weak IBOutlet JCDropDown *dropDownScale;
+    
+    __weak IBOutlet UIButton *buttonRecord;
+    __weak IBOutlet UIButton *buttonPlay;
+    
     
     __weak IBOutlet UIView *viewPreview;
     __weak IBOutlet SQTimeline *timeline;
@@ -123,16 +125,17 @@
 
 -(void)initInterface
 {
-    [self transformActions];
+    buttonRecord.layer.borderWidth = 2;
+    buttonRecord.layer.borderColor = [UIColor redColor].CGColor;
+    
     [self clipActions];
-    [self timeActions];
     [self cameraActions];
     [self fileActions];
 }
 
--(void)transformActions
+-(JCDropDown *)transformActions
 {
-    JCDropDownAction *flipH = [JCDropDownAction dropDownActionWithName:@"FLIP H" action:^{
+    JCDropDown *flipH = [JCDropDown dropDownActionWithName:@"FLIP H" action:^{
         SRClip *selected = [timeline lastSelectedClip];
         if (!selected){
             [self showHUDWithTitle:@"SELECT CLIP TO TRANSFORM" hideAfterDelay:YES];
@@ -147,7 +150,7 @@
         [self applyTransform:transform toClip:selected];
     }];
     
-    JCDropDownAction *flipV = [JCDropDownAction dropDownActionWithName:@"FLIP V" action:^{
+    JCDropDown *flipV = [JCDropDown dropDownActionWithName:@"FLIP V" action:^{
         SRClip *selected = [timeline lastSelectedClip];
         if (!selected){
             [self showHUDWithTitle:@"SELECT CLIP TO TRANSFORM" hideAfterDelay:YES];
@@ -162,7 +165,7 @@
         [self applyTransform:transform toClip:selected];
     }];
     
-    JCDropDownAction *scaleByX = [JCDropDownAction dropDownActionWithName:@"SCALE X" action:^{
+    JCDropDown *scaleByX = [JCDropDown dropDownActionWithName:@"SCALE X" action:^{
         SRClip *lastSelected = [timeline lastSelectedClip];
         if (!lastSelected){
             [self showHUDWithTitle:@"SELECT CLIP TO SCALE" hideAfterDelay:YES];
@@ -184,22 +187,25 @@
         [alert show];
     }];
     
-    JCDropDownAction *scaleDown = [JCDropDownAction dropDownActionWithName:@"SCALE / 2" action:^{
+    JCDropDown *scaleDown = [JCDropDown dropDownActionWithName:@"SCALE / 2" action:^{
         [self scaleClipByRatio:0.5];
     }];
     
-    JCDropDownAction *scaleUp = [JCDropDownAction dropDownActionWithName:@"SCALE X 2" action:^{
+    JCDropDown *scaleUp = [JCDropDown dropDownActionWithName:@"SCALE X 2" action:^{
         [self scaleClipByRatio:2];
     }];
     
-    dropDownScale.actions = [@[flipH, flipV, scaleByX, scaleDown, scaleUp] mutableCopy];
+    JCDropDown *transformActions = [JCDropDown dropDownActionWithName:@"SCALE" action:nil];
+    transformActions.actions = [@[flipH, flipV, scaleByX, scaleDown, scaleUp] mutableCopy];
+    
+    return transformActions;
 }
 
 -(void)clipActions
 {
     //Clip actions
     
-    JCDropDownAction *duplicate = [JCDropDownAction dropDownActionWithName:@"DUPLICATE" action:^{
+    JCDropDown *duplicate = [JCDropDown dropDownActionWithName:@"DUPLICATE" action:^{
         if ([timeline selectedClips].count == 0){
             [self showHUDWithTitle:@"SELECT CLIPS TO DUPLICATE" hideAfterDelay:YES];
             return;
@@ -211,7 +217,7 @@
         }];
     }];
     
-    JCDropDownAction *delete = [JCDropDownAction dropDownActionWithName:@"DELETE" action:^{
+    JCDropDown *delete = [JCDropDown dropDownActionWithName:@"DELETE" action:^{
         if ([timeline selectedClips].count == 0){
             [self showHUDWithTitle:@"SELECT CLIPS TO DELETE" hideAfterDelay:YES];
             return;
@@ -220,17 +226,16 @@
         [sequence deleteSelectedClips];
     }];
     
-    JCDropDownAction *trim = [JCDropDownAction dropDownActionWithName:@"TRIM" action:^{
-        
-        [self trim];
-    }];
-    
-    JCDropDownAction *join = [JCDropDownAction dropDownActionWithName:@"JOIN" action:^{
-        
+    JCDropDown *join = [JCDropDown dropDownActionWithName:@"JOIN" action:^{
         [self join];
     }];
     
-    JCDropDownAction *compress = [JCDropDownAction dropDownActionWithName:@"COMPRESS" action:^{
+    dropDownClip.actions = [@[[self effectActions], [self transformActions], [self timeActions], join, delete, duplicate] mutableCopy];
+}
+
+-(JCDropDown *)effectActions
+{
+    JCDropDown *compress = [JCDropDown dropDownActionWithName:@"COMPRESS" action:^{
         if ([timeline selectedClips].count == 0){
             [self showHUDWithTitle:@"SELECT CLIPS TO COMPRESS" hideAfterDelay:YES];
             return;
@@ -244,25 +249,35 @@
         }];
     }];
     
-    JCDropDownAction *scramble = [JCDropDownAction dropDownActionWithName:@"SCRAMBLE" action:^{
+    JCDropDown *scramble = [JCDropDown dropDownActionWithName:@"SCRAMBLE" action:^{
         if ([timeline selectedClips].count == 0){
             [self showHUDWithTitle:@"SELECT CLIPS TO SCRAMBLE" hideAfterDelay:YES];
             return;
         }
         
+        [self showHUDWithTitle:@"Scrambling" hideAfterDelay:NO];
+        
         [[[SQEffectScramble alloc] initWithClip:[timeline lastSelectedClip]] renderEffectCompletion:^(SRClip *output) {
+            [self hideHUD];
             [sequence addClip:output];
         }];
     }];
     
-    dropDownClip.actions = [@[trim, join, delete, duplicate, compress, scramble] mutableCopy];
+    JCDropDown *effectActions = [JCDropDown dropDownActionWithName:@"EFFECTS" action:nil];
+    effectActions.actions = [@[compress, scramble] mutableCopy];
+    
+    return effectActions;
 }
 
--(void)timeActions
+-(JCDropDown *)timeActions
 {
     //Time actions
     
-    JCDropDownAction *retimeSlow = [JCDropDownAction dropDownActionWithName:@"RETIME SLOW" action:^{
+    JCDropDown *trim = [JCDropDown dropDownActionWithName:@"TRIM" action:^{
+        [self trim];
+    }];
+    
+    JCDropDown *retimeSlow = [JCDropDown dropDownActionWithName:@"RETIME SLOW" action:^{
         SRClip *lastSelected = [timeline lastSelectedClip];
         if (!lastSelected){
             [self showHUDWithTitle:@"SELECT CLIP TO RETIME" hideAfterDelay:YES];
@@ -272,7 +287,7 @@
         [self retimeClip:lastSelected multiple:2.0];
     }];
     
-    JCDropDownAction *retimeFast = [JCDropDownAction dropDownActionWithName:@"RETIME FAST" action:^{
+    JCDropDown *retimeFast = [JCDropDown dropDownActionWithName:@"RETIME FAST" action:^{
         SRClip *lastSelected = [timeline lastSelectedClip];
         if (!lastSelected){
             [self showHUDWithTitle:@"SELECT CLIP TO RETIME" hideAfterDelay:YES];
@@ -282,7 +297,7 @@
         [self retimeClip:lastSelected multiple:0.5];
     }];
     
-    JCDropDownAction *retimeCustom = [JCDropDownAction dropDownActionWithName:@"SET DURATION" action:^{
+    JCDropDown *retimeCustom = [JCDropDown dropDownActionWithName:@"RETIME X" action:^{
         SRClip *lastSelected = [timeline lastSelectedClip];
         if (!lastSelected){
             [self showHUDWithTitle:@"SELECT CLIP TO RETIME" hideAfterDelay:YES];
@@ -302,75 +317,85 @@
         [alert show];
     }];
     
-    JCDropDownAction *retimePitch = [JCDropDownAction dropDownActionWithName:@"REPITCH NO" action:nil];
+    JCDropDown *retimePitch = [JCDropDown dropDownActionWithName:@"REPITCH NO" action:nil];
     
-    __weak JCDropDownAction *weakPitch = retimePitch;
+    __weak JCDropDown *weakPitch = retimePitch;
     [retimePitch setAction:^{
         rePitch = !rePitch;
         weakPitch.name = rePitch ? @"REPITCH YES" : @"REPITCH NO";
     }];
     
-    dropDownTime.actions = [@[retimePitch, retimeFast, retimeSlow,retimeCustom] mutableCopy];
+    JCDropDown *timeActions = [JCDropDown dropDownActionWithName:@"TIME" action:nil];
+
+    timeActions.actions = [@[retimePitch, retimeSlow, retimeFast, retimeCustom, trim] mutableCopy];
+    
+    return timeActions;
 }
 
 -(void)cameraActions
 {
     //Cam actions
     
-    JCDropDownAction *setFocusAction = [JCDropDownAction dropDownActionWithName:@"SET FOCUS" action:^{
+    JCDropDown *setFocusAction = [JCDropDown dropDownActionWithName:@"SET FOCUS" action:^{
         setFocus = YES;
     }];
     
-    JCDropDownAction *setExposureAction = [JCDropDownAction dropDownActionWithName:@"SET EXPOSURE" action:^{
+    JCDropDown *setExposureAction = [JCDropDown dropDownActionWithName:@"SET EXPOSURE" action:^{
         setFocus = NO;
     }];
     
-    JCDropDownAction *session1080 = [JCDropDownAction dropDownActionWithName:@"1920 X 1080" action:^{
+    JCDropDown *session1080 = [JCDropDown dropDownActionWithName:@"1920 X 1080" action:^{
         [sequence setupSessionWithPreset:AVCaptureSessionPreset1920x1080 withCaptureDevice:AVCaptureDevicePositionBack withError:nil];
     }];
     
-    JCDropDownAction *session720 = [JCDropDownAction dropDownActionWithName:@"1280 X 720" action:^{
+    JCDropDown *session720 = [JCDropDown dropDownActionWithName:@"1280 X 720" action:^{
         [sequence setupSessionWithPreset:AVCaptureSessionPreset1280x720 withCaptureDevice:AVCaptureDevicePositionBack withError:nil];
     }];
     
-    JCDropDownAction *session480 = [JCDropDownAction dropDownActionWithName:@"640 X 480" action:^{
+    JCDropDown *session480 = [JCDropDown dropDownActionWithName:@"640 X 480" action:^{
         [sequence setupSessionWithPreset:AVCaptureSessionPreset640x480 withCaptureDevice:AVCaptureDevicePositionBack withError:nil];
     }];
     
-    JCDropDownAction *flipCamera = [JCDropDownAction dropDownActionWithName:@"FLIP" action:^{
+    JCDropDown *flipCamera = [JCDropDown dropDownActionWithName:@"FLIP" action:^{
         [sequence flipCamera];
     }];
     
-    dropDownCam.actions = [@[setFocusAction, setExposureAction] mutableCopy];
+    JCDropDown *settings = [JCDropDown dropDownActionWithName:@"SETTINGS" action:nil];
+    
+    NSMutableArray *settingsActions = [NSMutableArray array];
     
     if ([UIImagePickerController isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceFront])
-        [dropDownCam.actions addObject:flipCamera];
+        [settingsActions addObject:flipCamera];
     
     if ([[AVAssetExportSession allExportPresets] containsObject:AVAssetExportPreset640x480])
-        [dropDownCam.actions insertObject:session480 atIndex:0];
+        [settingsActions insertObject:session480 atIndex:0];
     if ([[AVAssetExportSession allExportPresets] containsObject:AVAssetExportPreset1280x720])
-        [dropDownCam.actions insertObject:session720 atIndex:0];
+        [settingsActions insertObject:session720 atIndex:0];
     if ([[AVAssetExportSession allExportPresets] containsObject:AVAssetExportPreset1920x1080])
-        [dropDownCam.actions insertObject:session1080 atIndex:0];
+        [settingsActions insertObject:session1080 atIndex:0];
+    
+    settings.actions = settingsActions;
+    
+    dropDownCam.actions = [@[settings, setFocusAction, setExposureAction] mutableCopy];
 }
 
 -(void)fileActions
 {
     //File actions
     
-    JCDropDownAction *import = [JCDropDownAction dropDownActionWithName:@"IMPORT" action:^{
+    JCDropDown *import = [JCDropDown dropDownActionWithName:@"IMPORT" action:^{
         [self import];
     }];
     
-    JCDropDownAction *close = [JCDropDownAction dropDownActionWithName:@"CLOSE" action:^{
+    JCDropDown *close = [JCDropDown dropDownActionWithName:@"CLOSE" action:^{
         [self close];
     }];
     
-    JCDropDownAction *save = [JCDropDownAction dropDownActionWithName:@"SAVE" action:^{
+    JCDropDown *save = [JCDropDown dropDownActionWithName:@"SAVE" action:^{
         [self save];
     }];
     
-    dropDownFile.actions = [@[close, save, import] mutableCopy];
+    dropDownFile.actions = [@[import, close, save] mutableCopy];
 }
 
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
@@ -409,7 +434,19 @@
 
 -(void)sequencer:(SRSequencer *)sequencer isRecording:(BOOL)recording
 {
-    
+    buttonRecord.layer.borderColor = recording ? [UIColor whiteColor].CGColor : [UIColor redColor].CGColor;
+}
+
+-(void)sequencer:(SRSequencer *)sequencer isZoomed:(BOOL)zoomed
+{
+    if (zoomed)
+    {
+        [timeline setUserInteractionEnabled:NO];
+        timeline.alpha = 0;
+    }else{
+        [timeline setUserInteractionEnabled:YES];
+        timeline.alpha = 1;
+    }
 }
 
 #pragma UIActions

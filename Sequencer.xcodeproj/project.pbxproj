@@ -71,7 +71,6 @@
 		86D2338017FA4B7500BAE5EF /* SQClipsAnimationCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 86D2337F17FA4B7500BAE5EF /* SQClipsAnimationCell.m */; };
 		86D2338317FA4D2E00BAE5EF /* SQCameraEffectView.m in Sources */ = {isa = PBXBuildFile; fileRef = 86D2338217FA4D2E00BAE5EF /* SQCameraEffectView.m */; };
 		86D43FF717E540810092C1D0 /* JCDropDown.m in Sources */ = {isa = PBXBuildFile; fileRef = 86D43FF617E540810092C1D0 /* JCDropDown.m */; };
-		86D43FFA17E540D30092C1D0 /* JCDropDownAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 86D43FF917E540D30092C1D0 /* JCDropDownAction.m */; };
 		86F9B08F17FACA5E001E7933 /* SQAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 86F9B08E17FACA5E001E7933 /* SQAlertView.m */; };
 /* End PBXBuildFile section */
 
@@ -181,8 +180,6 @@
 		86D2338217FA4D2E00BAE5EF /* SQCameraEffectView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SQCameraEffectView.m; sourceTree = "<group>"; };
 		86D43FF517E540810092C1D0 /* JCDropDown.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JCDropDown.h; sourceTree = "<group>"; };
 		86D43FF617E540810092C1D0 /* JCDropDown.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JCDropDown.m; sourceTree = "<group>"; };
-		86D43FF817E540D30092C1D0 /* JCDropDownAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JCDropDownAction.h; sourceTree = "<group>"; };
-		86D43FF917E540D30092C1D0 /* JCDropDownAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JCDropDownAction.m; sourceTree = "<group>"; };
 		86F9B08D17FACA5E001E7933 /* SQAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQAlertView.h; sourceTree = "<group>"; };
 		86F9B08E17FACA5E001E7933 /* SQAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SQAlertView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -342,8 +339,6 @@
 				863F62C417E50B7400C52AC9 /* SQTimeline.m */,
 				86D43FF517E540810092C1D0 /* JCDropDown.h */,
 				86D43FF617E540810092C1D0 /* JCDropDown.m */,
-				86D43FF817E540D30092C1D0 /* JCDropDownAction.h */,
-				86D43FF917E540D30092C1D0 /* JCDropDownAction.m */,
 				865865A317CDCC2C00B5D7BD /* SRClip.h */,
 				865865A417CDCC2C00B5D7BD /* SRClip.m */,
 				865865A517CDCC2C00B5D7BD /* SRSequencer.h */,
@@ -585,7 +580,6 @@
 				863F62C517E50B7400C52AC9 /* SQTimeline.m in Sources */,
 				86D2338017FA4B7500BAE5EF /* SQClipsAnimationCell.m in Sources */,
 				86D43FF717E540810092C1D0 /* JCDropDown.m in Sources */,
-				86D43FFA17E540D30092C1D0 /* JCDropDownAction.m in Sources */,
 				86A6019517E59BA100666168 /* JCAudioRetime.mm in Sources */,
 				86A6019B17E59F9C00666168 /* JCAudioConverter.m in Sources */,
 				86F9B08F17FACA5E001E7933 /* SQAlertView.m in Sources */,

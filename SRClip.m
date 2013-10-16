@@ -145,7 +145,7 @@
     {
         offsetX += picWidth;
         
-        float ratio = offsetX / size.width;
+        //float ratio = offsetX / size.width;
         
         //CMTime timeFrame = CMTimeMultiplyByFloat64(duration, ratio);
         CMTime timeFrame = CMTimeMake(offsetX, 30);
