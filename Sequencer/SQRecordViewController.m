@@ -24,6 +24,8 @@
 
 #import "SQTimeline.h"
 
+#import "SQVideoComposer.h"
+
 #import "JCDropDown.h"
 
 #import "SQAlertView.h"
@@ -230,7 +232,34 @@
         [self join];
     }];
     
-    dropDownClip.actions = [@[[self effectActions], [self transformActions], [self timeActions], join, delete, duplicate] mutableCopy];
+    JCDropDown *cut = [JCDropDown dropDownActionWithName:@"CUT" action:^{
+        //find clip at time, reexport two portions of it, before and after cut.
+        SRClip *clipToCut = [timeline clipAtTime:timeline.currentTime];
+        
+        NSUInteger index = [sequence.clips indexOfObject:clipToCut];
+        
+        CMTimeRange startRange = CMTimeRangeMake(kCMTimeZero, CMTimeSubtract(timeline.currentTime, clipToCut.positionInComposition.start));
+        CMTimeRange endRange = CMTimeRangeMake(CMTimeAdd(startRange.duration, CMTimeMake(1, 30)), clipToCut.positionInComposition.duration);
+        
+        NSLog(@"StartRange: %f %f EndRange: %f %f", CMTimeGetSeconds(startRange.start), CMTimeGetSeconds(startRange.duration), CMTimeGetSeconds(endRange.start), CMTimeGetSeconds(endRange.duration));
+        
+        NSMutableArray *clipsToAdd = [NSMutableArray array];
+        
+        [self exportTimeRange:startRange ofClip:clipToCut completion:^(SRClip *clip) {
+            [clipsToAdd addObject:clip];
+            
+            [self exportTimeRange:endRange ofClip:clipToCut completion:^(SRClip *clip) {
+                [clipsToAdd addObject:clip];
+                
+                [sequence insertClips:clipsToAdd atIndex:index + 1];
+                
+                [sequence removeClip:clipToCut];
+                [timeline reloadData];
+            }];
+        }];
+    }];
+    
+    dropDownClip.actions = [@[[self effectActions], [self transformActions], [self timeActions], join, cut, delete, duplicate] mutableCopy];
 }
 
 -(JCDropDown *)effectActions
@@ -629,6 +658,22 @@
             }
             
             if (block) block();
+        }];
+    }];
+}
+
+-(void)exportTimeRange:(CMTimeRange)range ofClip:(SRClip *)clip completion:(void(^)(SRClip *clip))block
+{
+    NSDictionary *info = [SQVideoComposer timeRange:range ofClip:clip];
+    
+    NSURL *outputURL = [SRClip uniqueFileURLInDirectory:DOCUMENTS];
+    
+    [[SQVideoComposer new] exportCompositionInfo:info toURL:outputURL withPreset:sequence.exportPreset progress:^(float progress) {
+    } withCompletionHandler:^(NSError *error) {
+        SRClip *clip = [[SRClip alloc] initWithURL:outputURL];
+        
+        [clip generateThumbnailsCompletion:^(NSError *error) {
+            if (!error && block) block(clip);
         }];
     }];
 }

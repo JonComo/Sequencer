@@ -86,7 +86,9 @@ typedef void (^ErrorHandlingBlock)(NSError *error);
 -(void)consolidateSelectedClipsProgress:(void (^)(float))progress completion:(void (^)(SRClip *))consolidateHandler;
 
 -(void)removeClip:(SRClip *)clip;
+
 -(void)addClipFromURL:(NSURL *)url;
 -(void)addClip:(SRClip *)clip;
+-(void)insertClips:(NSArray *)clips atIndex:(NSUInteger)index;
 
 @end

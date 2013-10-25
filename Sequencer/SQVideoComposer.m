@@ -138,41 +138,40 @@
     return @{SQVideoComposerComposition : composition, SQVideoComposerVideoComposition : mutableVideoComposition, SQVideoComposerDuration : [NSValue valueWithCMTime:startTime]};
 }
 
-+(AVMutableComposition *)timeRange:(CMTimeRange)range ofClip:(SRClip *)clip
++(NSDictionary *)timeRange:(CMTimeRange)range ofClip:(SRClip *)clip
 {
     AVMutableComposition *composition = [AVMutableComposition composition];
     
     AVMutableCompositionTrack *videoTrack = [composition addMutableTrackWithMediaType:AVMediaTypeVideo preferredTrackID:kCMPersistentTrackID_Invalid];
     AVMutableCompositionTrack *audioTrack = [composition addMutableTrackWithMediaType:AVMediaTypeAudio preferredTrackID:kCMPersistentTrackID_Invalid];
-    
-    AVMutableVideoComposition *mutableVideoComposition;
 
-        AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:clip.URL options:nil];
-        
-        if (!mutableVideoComposition){
-            mutableVideoComposition = [AVMutableVideoComposition videoCompositionWithPropertiesOfAsset:asset];
-        }
-        
-        NSArray *videoTracks = [asset tracksWithMediaType:AVMediaTypeVideo];
-        NSArray *audioTracks = [asset tracksWithMediaType:AVMediaTypeAudio];
-        
-        AVAssetTrack *clipVideoTrack = videoTracks.count != 0 ? videoTracks[0] : nil;
-        AVAssetTrack *clipAudioTrack = audioTracks.count != 0 ? audioTracks[0] : nil;
-        
-        if (clipVideoTrack)
-            [videoTrack insertTimeRange:range ofTrack:clipVideoTrack atTime:kCMTimeZero error:nil];
-        
-        if (clipAudioTrack)
-            [audioTrack insertTimeRange:range ofTrack:clipAudioTrack atTime:kCMTimeZero error:nil];
-        
-        AVMutableVideoCompositionInstruction *instruction = [AVMutableVideoCompositionInstruction videoCompositionInstruction];
-        AVMutableVideoCompositionLayerInstruction *layerInstruction = [AVMutableVideoCompositionLayerInstruction videoCompositionLayerInstructionWithAssetTrack:videoTrack];
-        
-        [layerInstruction setTransform:videoTrack.preferredTransform atTime:kCMTimeZero];
+    AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:clip.URL options:nil];
+
+    AVMutableVideoComposition *mutableVideoComposition = [AVMutableVideoComposition videoCompositionWithPropertiesOfAsset:asset];
+    
+    NSArray *videoTracks = [asset tracksWithMediaType:AVMediaTypeVideo];
+    NSArray *audioTracks = [asset tracksWithMediaType:AVMediaTypeAudio];
+    
+    AVAssetTrack *clipVideoTrack = videoTracks.count != 0 ? videoTracks[0] : nil;
+    AVAssetTrack *clipAudioTrack = audioTracks.count != 0 ? audioTracks[0] : nil;
+    
+    if (clipVideoTrack)
+        [videoTrack insertTimeRange:range ofTrack:clipVideoTrack atTime:kCMTimeZero error:nil];
+    
+    if (clipAudioTrack)
+        [audioTrack insertTimeRange:range ofTrack:clipAudioTrack atTime:kCMTimeZero error:nil];
+    
+    AVMutableVideoCompositionInstruction *instruction = [AVMutableVideoCompositionInstruction videoCompositionInstruction];
+    AVMutableVideoCompositionLayerInstruction *layerInstruction = [AVMutableVideoCompositionLayerInstruction videoCompositionLayerInstructionWithAssetTrack:videoTrack];
+    
+    [layerInstruction setTransform:videoTrack.preferredTransform atTime:kCMTimeZero];
+    
+    instruction.layerInstructions = @[layerInstruction];
+    instruction.timeRange = CMTimeRangeMake(kCMTimeZero, range.duration);
     
     mutableVideoComposition.instructions = @[instruction];
     
-    return composition;
+    return @{SQVideoComposerComposition : composition, SQVideoComposerVideoComposition : mutableVideoComposition};
 }
 
 @end

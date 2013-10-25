@@ -820,14 +820,23 @@
 {
     if (!clip) return;
     
-    [self.clips addObject:clip];
+    [self insertClips:@[clip] atIndex:self.clips.count];
+}
+
+-(void)insertClips:(NSArray *)clips atIndex:(NSUInteger)index
+{
+    if (!clips || clips.count == 0) return;
     
     [self.timeline deselectAll];
     
-    clip.isSelected = YES;
+    for (SRClip *clip in clips){
+        clip.isSelected = YES;
+        [self.clips insertObject:clip atIndex:index];
+        index++;
+    }
     
     [self.timeline reloadData];
-    [self.timeline scrollToClip:clip];
+    //[self.timeline scrollToClip:[clips lastObject]];
 }
 
 -(NSUInteger)indexToInsert

@@ -34,9 +34,9 @@
 
 -(void)reloadData
 {
-    [super reloadData];
-    
     [self.sequence refreshPreview];
+    
+    [super reloadData];
 }
 
 -(void)removeFromSuperview
@@ -90,13 +90,24 @@
     self.decelerationRate = UIScrollViewDecelerationRateFast;
     
     LXReorderableCollectionViewFlowLayout *layout = [[LXReorderableCollectionViewFlowLayout alloc] init];
-    [layout setMinimumInteritemSpacing:10];
-    [layout setMinimumLineSpacing:10];
+    [layout setMinimumInteritemSpacing:0];
+    [layout setMinimumLineSpacing:0];
     
     layout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
     
     [self setCollectionViewLayout:layout];
     [self registerNib:[UINib nibWithNibName:@"clipCell" bundle:[NSBundle mainBundle]] forCellWithReuseIdentifier:@"clipCell"];
+}
+
+-(SRClip *)clipAtTime:(CMTime)time
+{
+    for (SRClip *clip in self.sequence.clips){
+        if ([clip isPlayingAtTime:time]){
+            return clip;
+        }
+    }
+    
+    return nil;
 }
 
 -(void)scrollToTime:(CMTime)time animated:(BOOL)animated
@@ -111,12 +122,12 @@
             //calculate percent of cell played
             CMTimeRange difference = CMTimeRangeFromTimeToTime(clip.positionInComposition.start, time);
             float ratio = CMTimeGetSeconds(difference.duration) / CMTimeGetSeconds(clip.positionInComposition.duration);
-            [self scrollRectToVisible:CGRectMake(xOffset + clip.timelineSize.width * ratio, 0, 2, 2) animated:animated];
+            [self scrollRectToVisible:CGRectMake(xOffset + clip.timelineSize.width * ratio, 0, 2, 2) animated:NO];
             
             break;
         }
         
-        xOffset += clip.timelineSize.width + 10;
+        xOffset += clip.timelineSize.width;
     }
 }
 
@@ -150,9 +161,8 @@
 
 -(void)deselectAll
 {
-    for (SRClip *clip in self.sequence.clips){
+    for (SRClip *clip in self.sequence.clips)
         clip.isSelected = NO;
-    }
 }
 
 //flow layout
@@ -177,6 +187,7 @@
 {
     isSeeking = YES;
     
+    [self.sequence refreshPreview];
     [self.sequence showPreview];
 }
 

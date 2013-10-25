@@ -102,7 +102,7 @@
 {
     CGSize defaultSize = CGSizeMake(60, 60);
     
-    return CGSizeMake(defaultSize.width + CMTimeGetSeconds(self.asset.duration) * (defaultSize.width/2), defaultSize.height);
+    return CGSizeMake(CMTimeGetSeconds(self.asset.duration) * 45, defaultSize.height);
 }
 
 -(void)generateThumbnailsCompletion:(void (^)(NSError *))block

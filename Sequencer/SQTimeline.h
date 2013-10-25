@@ -25,6 +25,7 @@
 
 -(void)scrollToTime:(CMTime)time animated:(BOOL)animated;
 -(void)scrollToClip:(SRClip *)clip;
+-(SRClip *)clipAtTime:(CMTime)time;
 
 -(void)frameUpdated;
 

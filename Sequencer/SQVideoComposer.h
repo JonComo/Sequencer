@@ -26,6 +26,6 @@ typedef void (^ProgressHandler)(float progress);
 
 +(NSDictionary *)compositionFromClips:(NSArray *)clips;
 
-+(AVMutableComposition *)timeRange:(CMTimeRange)range ofClip:(SRClip *)clip;
++(NSDictionary *)timeRange:(CMTimeRange)range ofClip:(SRClip *)clip;
 
 @end
