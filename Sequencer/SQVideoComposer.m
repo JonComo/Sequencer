@@ -146,6 +146,16 @@
     AVMutableCompositionTrack *audioTrack = [composition addMutableTrackWithMediaType:AVMediaTypeAudio preferredTrackID:kCMPersistentTrackID_Invalid];
 
     AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:clip.URL options:nil];
+    
+//    if (CMTimeCompare(range.start, kCMTimeZero) == -1) range.start = kCMTimeZero;
+    
+    CMTime endTime = CMTimeAdd(range.start, range.duration);
+    if (CMTIME_COMPARE_INLINE(endTime, >, asset.duration)){
+        NSLog(@"Cut duration too long");
+        range = CMTimeRangeMake(range.start, CMTimeSubtract(asset.duration, range.start));
+    }
+    
+    NSLog(@"PERFORMING CUT: Asset duration: %f Range: %f %f", CMTimeGetSeconds(asset.duration), CMTimeGetSeconds(range.start), CMTimeGetSeconds(range.duration));
 
     AVMutableVideoComposition *mutableVideoComposition = [AVMutableVideoComposition videoCompositionWithPropertiesOfAsset:asset];
     

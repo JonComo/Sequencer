@@ -187,7 +187,6 @@
 {
     isSeeking = YES;
     
-    [self.sequence refreshPreview];
     [self.sequence showPreview];
 }
 

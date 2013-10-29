@@ -30,8 +30,6 @@
 
 -(void)reset
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-     
     //refresh items
     playerItem = nil;
     
@@ -44,18 +42,22 @@
 
 -(void)setupWithPlayerItem:(AVPlayerItem *)item
 {
-    [self reset];
+    //[self reset];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    
+    self.player = nil;
+    self.player = [[AVPlayer alloc] initWithPlayerItem:item];
     
     playerItem = item;
     
-    self.player = [[AVPlayer alloc] initWithPlayerItem:item];
+    if (!layer){
+        layer = [AVPlayerLayer layer];
+        [self.layer addSublayer:layer];
+    }
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playFinished) name:AVPlayerItemDidPlayToEndTimeNotification object:nil];
     
-    layer = [AVPlayerLayer layer];
     layer.frame = CGRectMake(0, 0, self.bounds.size.width, self.bounds.size.height);
-    [self.layer addSublayer:layer];
-    
     layer.player = self.player;
     
     self.range = CMTimeRangeMake(kCMTimeZero, playerItem.duration);
@@ -105,6 +107,8 @@
 -(void)seekToTime:(CMTime)time
 {
     if (CMTIME_IS_INVALID(time)) return;
+    
+    NSLog(@"SEEKING: %f", CMTimeGetSeconds(time));
     
     [self.player seekToTime:time toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero];
 }

@@ -411,11 +411,11 @@
         self.player = [JCMoviePlayer new];
         self.player.delegate = self;
         [self.player setUserInteractionEnabled:NO];
+        
+        self.player.frame = zoomFrame;
     }
     
-    self.player.frame = zoomFrame;
-    
-    AVComposition *composition = self.composition;
+    AVComposition *composition = [self composition];
     
     if (!composition) return;
     
@@ -509,6 +509,7 @@
             if (!error){
                 [clipRecording refreshProperties];
                 [self addClip:clipRecording];
+                [self.timeline reloadData];
             }
             
             clipRecording = nil;
@@ -796,24 +797,11 @@
     
     [newClip generateThumbnailsCompletion:^(NSError *error) {
         if (!error)
+        {
             [self addClip:newClip];
+            [self.timeline reloadData];
+        }
     }];
-}
-
--(void)batchAddClips:(NSArray *)clips
-{
-    if (clips.count == 0) return;
-    
-    [self.clips addObjectsFromArray:clips];
-    
-    [self.timeline deselectAll];
-    
-    for (SRClip *clip in clips){
-        clip.isSelected = YES;
-    }
-    
-    [self.timeline reloadData];
-    [self.timeline scrollToClip:[clips lastObject]];
 }
 
 -(void)addClip:(SRClip *)clip
@@ -834,9 +822,6 @@
         [self.clips insertObject:clip atIndex:index];
         index++;
     }
-    
-    [self.timeline reloadData];
-    //[self.timeline scrollToClip:[clips lastObject]];
 }
 
 -(NSUInteger)indexToInsert
@@ -881,7 +866,8 @@
         }
         
         dispatch_async(dispatch_get_main_queue(), ^{
-            [self batchAddClips:duplicates];
+            [self insertClips:duplicates atIndex:self.clips.count-1];
+            [self.timeline reloadData];
             if (block) block();
         });
     });

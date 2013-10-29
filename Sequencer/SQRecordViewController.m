@@ -236,10 +236,19 @@
         //find clip at time, reexport two portions of it, before and after cut.
         SRClip *clipToCut = [timeline clipAtTime:timeline.currentTime];
         
+        if (!clipToCut){
+            [self showHUDWithTitle:@"SCROLL OVER CLIP TO CUT" hideAfterDelay:YES];
+            return;
+        }
+        
+        [self showHUDWithTitle:@"CUTTING" hideAfterDelay:NO];
+        
+        AVURLAsset *asset = [AVURLAsset URLAssetWithURL:clipToCut.URL options:nil];
+        
         NSUInteger index = [sequence.clips indexOfObject:clipToCut];
         
         CMTimeRange startRange = CMTimeRangeMake(kCMTimeZero, CMTimeSubtract(timeline.currentTime, clipToCut.positionInComposition.start));
-        CMTimeRange endRange = CMTimeRangeMake(CMTimeAdd(startRange.duration, CMTimeMake(1, 30)), clipToCut.positionInComposition.duration);
+        CMTimeRange endRange = CMTimeRangeMake(startRange.duration, CMTimeSubtract(asset.duration, startRange.duration));
         
         NSLog(@"StartRange: %f %f EndRange: %f %f", CMTimeGetSeconds(startRange.start), CMTimeGetSeconds(startRange.duration), CMTimeGetSeconds(endRange.start), CMTimeGetSeconds(endRange.duration));
         
@@ -254,7 +263,10 @@
                 [sequence insertClips:clipsToAdd atIndex:index + 1];
                 
                 [sequence removeClip:clipToCut];
+                
                 [timeline reloadData];
+                
+                [self hideHUD];
             }];
         }];
     }];
@@ -274,6 +286,7 @@
             [exportedClip generateThumbnailsCompletion:^(NSError *error) {
                 if (error) return;
                 [sequence addClip:exportedClip];
+                [timeline reloadData];
             }];
         }];
     }];
@@ -289,6 +302,7 @@
         [[[SQEffectScramble alloc] initWithClip:[timeline lastSelectedClip]] renderEffectCompletion:^(SRClip *output) {
             [self hideHUD];
             [sequence addClip:output];
+            [timeline reloadData];
         }];
     }];
     
@@ -302,9 +316,9 @@
 {
     //Time actions
     
-    JCDropDown *trim = [JCDropDown dropDownActionWithName:@"TRIM" action:^{
-        [self trim];
-    }];
+//    JCDropDown *trim = [JCDropDown dropDownActionWithName:@"TRIM" action:^{
+//        [self trim];
+//    }];
     
     JCDropDown *retimeSlow = [JCDropDown dropDownActionWithName:@"RETIME SLOW" action:^{
         SRClip *lastSelected = [timeline lastSelectedClip];
@@ -356,7 +370,7 @@
     
     JCDropDown *timeActions = [JCDropDown dropDownActionWithName:@"TIME" action:nil];
 
-    timeActions.actions = [@[retimePitch, retimeSlow, retimeFast, retimeCustom, trim] mutableCopy];
+    timeActions.actions = [@[retimePitch, retimeSlow, retimeFast, retimeCustom] mutableCopy];
     
     return timeActions;
 }
@@ -551,6 +565,7 @@
     [SQClipTimeStretch stretchClip:lastSelected byAmount:amount rePitch:rePitch completion:^(SRClip *stretchedClip) {
         [self hideHUD];
         [sequence addClip:stretchedClip];
+        [timeline reloadData];
     }];
 }
 
@@ -564,6 +579,7 @@
         [sequence.captureSession startRunning];
         
         [sequence addClipFromURL:movieURL];
+        [timeline reloadData];
     }];
 }
 
@@ -612,6 +628,7 @@
             }
             
             [sequence addClip:consolidated];
+            [timeline reloadData];
         }];
     }];
 }
@@ -655,6 +672,7 @@
             
             if (!error){
                 [sequence addClip:exportedClip];
+                [timeline reloadData];
             }
             
             if (block) block();
