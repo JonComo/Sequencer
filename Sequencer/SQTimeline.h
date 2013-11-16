@@ -10,13 +10,10 @@
 
 #import <AVFoundation/AVFoundation.h>
 
-#import "DraggableCollectionViewFlowLayout.h"
-#import "UICollectionView+Draggable.h"
-
 @class SRSequencer;
 @class SRClip;
 
-@interface SQTimeline : UICollectionView <UICollectionViewDataSource_Draggable, UICollectionViewDelegateFlowLayout>
+@interface SQTimeline : UICollectionView
 
 @property (nonatomic, weak) SRSequencer *sequence;
 

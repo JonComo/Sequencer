@@ -16,14 +16,17 @@
 
 #import "JCMath.h"
 
-//#import "LXReorderableCollectionViewFlowLayout.h"
+#import "LXReorderableCollectionViewFlowLayout.h"
 
-@interface SQTimeline () <UIScrollViewDelegate>
+@interface SQTimeline () <UIScrollViewDelegate, UICollectionViewDelegateFlowLayout>
 
 @end
 
 @implementation SQTimeline
 {
+    BOOL hasSetupLayout;
+    BOOL hasSetupFrame;
+    
     UIView *playhead;
     
     BOOL isSeeking;
@@ -45,13 +48,17 @@
 
 -(void)frameUpdated
 {
+    if (hasSetupFrame) return;
+    
+    hasSetupFrame = YES;
+    
     [self setContentInset:UIEdgeInsetsMake(0, self.superview.frame.size.width/2, 0, self.superview.frame.size.width/2)];
     [self addPlayhead];
 }
 
 -(void)addPlayhead
 {
-    if (playhead) return;
+    playhead = nil;
     
     float center = self.bounds.size.width/2;
     
@@ -67,24 +74,26 @@
 {
     _sequence = sequence;
     
-    [self setupLayout];
-    
-    self.dataSource = self;
+    self.dataSource = _sequence;
     self.delegate = self;
     
     _currentTime = kCMTimeZero;
+    
+    if (!hasSetupLayout)
+        [self setupLayout];
 }
 
 -(void)setupLayout
 {
-    self.draggable = YES;
+    hasSetupLayout = YES;
     
     self.decelerationRate = UIScrollViewDecelerationRateFast;
     
-    DraggableCollectionViewFlowLayout *layout = [[DraggableCollectionViewFlowLayout alloc] init];
+    LXReorderableCollectionViewFlowLayout *layout = [[LXReorderableCollectionViewFlowLayout alloc] init];
+    [layout setMinimumInteritemSpacing:0];
+    [layout setMinimumLineSpacing:0];
     
-    layout.minimumInteritemSpacing = 0;
-    layout.minimumLineSpacing = 0;
+    layout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
     
     [self setCollectionViewLayout:layout];
     [self registerNib:[UINib nibWithNibName:@"clipCell" bundle:[NSBundle mainBundle]] forCellWithReuseIdentifier:@"clipCell"];
@@ -172,49 +181,6 @@
     SRClip *clip = [self.sequence.clips objectAtIndex:indexPath.row];
     
     return clip.timelineSize;
-}
-
--(BOOL)collectionView:(UICollectionView *)collectionView canMoveItemAtIndexPath:(NSIndexPath *)indexPath
-{
-    return YES;
-}
-
--(BOOL)collectionView:(UICollectionView *)collectionView canMoveItemAtIndexPath:(NSIndexPath *)indexPath toIndexPath:(NSIndexPath *)toIndexPath
-{
-    return YES;
-}
-
--(void)collectionView:(UICollectionView *)collectionView moveItemAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
-{
-    id object1 = self.sequence.clips[fromIndexPath.row];
-    id object2 = self.sequence.clips[toIndexPath.row];
-    
-    [self.sequence.clips replaceObjectAtIndex:toIndexPath.row withObject:object1];
-    [self.sequence.clips replaceObjectAtIndex:fromIndexPath.row withObject:object2];
-}
-
--(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
-{
-    SQClipCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"clipCell" forIndexPath:indexPath];
-    
-    SRClip *clip = [self.sequence.clips objectAtIndex:indexPath.row];
-    
-    cell.clip = clip;
-    
-    return cell;
-}
-
--(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
-{
-    return self.sequence.clips.count;
-}
-
-- (void)collectionView:(UICollectionView *)collectionView itemAtIndexPath:(NSIndexPath *)fromIndexPath didMoveToIndexPath:(NSIndexPath *)toIndexPath
-{
-    SRClip *clip = [self.sequence.clips objectAtIndex:fromIndexPath.item];
-    
-    [self.sequence.clips removeObjectAtIndex:fromIndexPath.item];
-    [self.sequence.clips insertObject:clip atIndex:toIndexPath.item];
 }
 
 -(void)scrollViewWillBeginDragging:(UIScrollView *)scrollView

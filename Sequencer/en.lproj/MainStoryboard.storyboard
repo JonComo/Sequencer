@@ -167,11 +167,25 @@
                         <rect key="frame" x="0.0" y="0.0" width="568" height="320"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <view contentMode="scaleAspectFit" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="UJS-0a-nvU" userLabel="viewPreview">
+                            <view contentMode="scaleAspectFit" translatesAutoresizingMaskIntoConstraints="NO" id="UJS-0a-nvU" userLabel="viewPreview">
                                 <rect key="frame" x="0.0" y="0.0" width="568" height="320"/>
                                 <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                             </view>
-                            <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="right" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="i7z-77-cIC" customClass="JCDropDown">
+                            <collectionView opaque="NO" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceHorizontal="YES" showsVerticalScrollIndicator="NO" indicatorStyle="white" minimumZoomScale="0.0" maximumZoomScale="0.0" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="eK7-Tm-qol" customClass="SQTimeline">
+                                <rect key="frame" x="0.0" y="260" width="568" height="60"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="0.0" minimumInteritemSpacing="0.0" id="tZR-Yp-sx1">
+                                    <size key="itemSize" width="80" height="80"/>
+                                    <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                                    <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                                    <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                </collectionViewFlowLayout>
+                                <cells/>
+                                <connections>
+                                    <outlet property="delegate" destination="2" id="Kuh-bw-pi1"/>
+                                </connections>
+                            </collectionView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="i7z-77-cIC" customClass="JCDropDown">
                                 <rect key="frame" x="0.0" y="91" width="54" height="30"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
@@ -201,7 +215,7 @@
                                     <action selector="preview:" destination="2" eventType="touchUpInside" id="sFy-wI-bJf"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="right" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="T0o-xx-NSm" customClass="JCDropDown">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="T0o-xx-NSm" customClass="JCDropDown">
                                 <rect key="frame" x="0.0" y="50" width="54" height="30"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <constraints>
@@ -216,7 +230,7 @@
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="right" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cwj-aE-RFv" customClass="JCDropDown">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cwj-aE-RFv" customClass="JCDropDown">
                                 <rect key="frame" x="0.0" y="137" width="54" height="30"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
@@ -249,18 +263,24 @@
                         </subviews>
                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
+                            <constraint firstItem="eK7-Tm-qol" firstAttribute="trailing" secondItem="WBY-cW-9c7" secondAttribute="trailing" id="224-O4-Tq3"/>
                             <constraint firstItem="WBY-cW-9c7" firstAttribute="top" secondItem="SFH-k5-zhc" secondAttribute="bottom" constant="8" symbolic="YES" id="6G1-vj-6qG"/>
                             <constraint firstItem="T0o-xx-NSm" firstAttribute="top" secondItem="qZE-Wy-YmB" secondAttribute="bottom" constant="30" id="AB6-E9-wfY"/>
+                            <constraint firstItem="UJS-0a-nvU" firstAttribute="leading" secondItem="eK7-Tm-qol" secondAttribute="leading" id="Bob-ru-tYf"/>
                             <constraint firstItem="WBY-cW-9c7" firstAttribute="trailing" secondItem="UJS-0a-nvU" secondAttribute="trailing" id="CxY-Ma-kq4"/>
+                            <constraint firstItem="cwj-aE-RFv" firstAttribute="leading" secondItem="eK7-Tm-qol" secondAttribute="leading" id="GLy-hW-Vmh"/>
                             <constraint firstItem="i7z-77-cIC" firstAttribute="leading" secondItem="cwj-aE-RFv" secondAttribute="leading" id="GPp-Nu-tDt"/>
                             <constraint firstItem="i7z-77-cIC" firstAttribute="top" secondItem="T0o-xx-NSm" secondAttribute="bottom" constant="11" id="IPy-Fa-YjC"/>
                             <constraint firstAttribute="trailing" secondItem="SFH-k5-zhc" secondAttribute="trailing" constant="8" id="JZk-bX-erG"/>
                             <constraint firstAttribute="trailing" secondItem="WBY-cW-9c7" secondAttribute="trailing" id="LUw-0T-ert"/>
+                            <constraint firstItem="eK7-Tm-qol" firstAttribute="bottom" secondItem="UJS-0a-nvU" secondAttribute="bottom" id="Lx6-S8-sct"/>
+                            <constraint firstItem="eK7-Tm-qol" firstAttribute="leading" secondItem="3" secondAttribute="leading" id="UED-Ai-mTN"/>
                             <constraint firstAttribute="bottom" secondItem="UJS-0a-nvU" secondAttribute="bottom" id="WIe-s6-mZL"/>
                             <constraint firstItem="SFH-k5-zhc" firstAttribute="centerY" secondItem="cwj-aE-RFv" secondAttribute="centerY" id="YS0-8i-0XH"/>
                             <constraint firstItem="i7z-77-cIC" firstAttribute="trailing" secondItem="cwj-aE-RFv" secondAttribute="trailing" id="ghi-aV-6XE"/>
                             <constraint firstItem="T0o-xx-NSm" firstAttribute="leading" secondItem="i7z-77-cIC" secondAttribute="leading" id="iUh-RG-1Km"/>
                             <constraint firstItem="T0o-xx-NSm" firstAttribute="trailing" secondItem="i7z-77-cIC" secondAttribute="trailing" id="lTH-vL-OMl"/>
+                            <constraint firstItem="eK7-Tm-qol" firstAttribute="top" secondItem="WBY-cW-9c7" secondAttribute="bottom" constant="50" id="oVr-3V-VGe"/>
                             <constraint firstItem="UJS-0a-nvU" firstAttribute="top" secondItem="3" secondAttribute="top" id="swd-jU-0AW"/>
                             <constraint firstItem="cwj-aE-RFv" firstAttribute="top" secondItem="i7z-77-cIC" secondAttribute="bottom" constant="16" id="tVh-iE-bNR"/>
                             <constraint firstItem="SFH-k5-zhc" firstAttribute="top" secondItem="qZE-Wy-YmB" secondAttribute="bottom" constant="112" id="tna-0C-56m"/>
@@ -274,6 +294,7 @@
                         <outlet property="dropDownCam" destination="i7z-77-cIC" id="Thz-Rj-kcc"/>
                         <outlet property="dropDownClip" destination="cwj-aE-RFv" id="X1u-vt-uRY"/>
                         <outlet property="dropDownFile" destination="T0o-xx-NSm" id="BX9-Bp-brz"/>
+                        <outlet property="timeline" destination="eK7-Tm-qol" id="Oz4-rk-dyO"/>
                         <outlet property="viewPreview" destination="UJS-0a-nvU" id="aKm-cx-GNh"/>
                     </connections>
                 </viewController>
