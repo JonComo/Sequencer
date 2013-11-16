@@ -30,6 +30,9 @@
 
 #import "SQAlertView.h"
 
+#import "SRTimeline.h"
+#import "DraggableCollectionViewFlowLayout.h"
+
 //Effects
 #import "SQEffectScramble.h"
 
@@ -47,12 +50,12 @@
     __weak IBOutlet UIButton *buttonRecord;
     __weak IBOutlet UIButton *buttonPlay;
     
-    
     __weak IBOutlet UIView *viewPreview;
-    __weak IBOutlet SQTimeline *timeline;
     
     BOOL setFocus;
     BOOL rePitch;
+    
+    SRTimeline *timeline;
 }
 
 @end
@@ -65,17 +68,11 @@
 	// Do any additional setup after loading the view.
     
     sequence = [[SRSequencer alloc] initWithDelegate:self];
-    sequence.timeline = timeline;
     sequence.viewPreview = viewPreview;
     
     [viewPreview addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewTapped:)]];
     
-    [self initInterface];
-}
-
--(void)viewWillAppear:(BOOL)animated
-{
-    [timeline frameUpdated];
+    //[self initInterface];
 }
 
 -(void)viewDidAppear:(BOOL)animated
@@ -88,8 +85,7 @@
     if (sequence.captureSession.isInterrupted || !sequence.captureSession.isRunning)
         [sequence.captureSession startRunning];
     
-    
-    [timeline reloadData];
+    [self addTimeline];
 }
 
 -(void)viewWillDisappear:(BOOL)animated
@@ -125,6 +121,32 @@
     NSLog(@"Recorder Removed");
 }
 
+-(void)addTimeline
+{
+    DraggableCollectionViewFlowLayout *layout = [[DraggableCollectionViewFlowLayout alloc] init];
+    
+    layout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
+    
+    layout.minimumInteritemSpacing = 0;
+    layout.minimumLineSpacing = 0;
+    
+    timeline = [[SRTimeline alloc] initWithFrame:CGRectMake(0, 256, self.view.bounds.size.width, 60) collectionViewLayout:layout];
+    [self.view addSubview:timeline];
+    
+    [timeline registerNib:[UINib nibWithNibName:@"clipCell" bundle:[NSBundle mainBundle]] forCellWithReuseIdentifier:@"clipCell"];
+    
+    timeline.alwaysBounceHorizontal = YES;
+    
+    timeline.dataSource = timeline;
+    timeline.delegate = timeline;
+    
+    [timeline setDraggable:YES];
+    
+    timeline.sequence = sequence;
+    sequence.timeline = timeline;
+}
+
+/*
 -(void)initInterface
 {
     buttonRecord.layer.borderWidth = 2;
@@ -440,6 +462,7 @@
     
     dropDownFile.actions = [@[import, close, save] mutableCopy];
 }
+ */
 
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
@@ -457,7 +480,7 @@
         
         float ratio = newDuration / clipDuration;
         
-        [self retimeClip:clip multiple:ratio];
+        //[self retimeClip:clip multiple:ratio];
     }else if (alert.action == SQAlertViewActionClose)
     {
         //close alert
@@ -469,7 +492,7 @@
         UITextField *textfield = [alertView textFieldAtIndex:0];
         float newScale = [textfield.text floatValue];
         
-        [self scaleClipByRatio:newScale];
+        //[self scaleClipByRatio:newScale];
     }
 }
 
@@ -553,7 +576,7 @@
 }
 
 //clip actions
-
+/*
 - (void)retimeClip:(SRClip *)clip multiple:(float)amount
 {
     SRClip *lastSelected = [timeline lastSelectedClip];
@@ -720,6 +743,7 @@
         if (block) block(exported);
     }];
 }
+ */
 
 -(void)showHUDWithTitle:(NSString *)title hideAfterDelay:(BOOL)hide
 {

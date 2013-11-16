@@ -17,6 +17,11 @@
 		863F62C517E50B7400C52AC9 /* SQTimeline.m in Sources */ = {isa = PBXBuildFile; fileRef = 863F62C417E50B7400C52AC9 /* SQTimeline.m */; };
 		864AFD2717DFA7FD00A1286D /* SQClipTimeStretch.m in Sources */ = {isa = PBXBuildFile; fileRef = 864AFD2617DFA7FD00A1286D /* SQClipTimeStretch.m */; };
 		86544C2317E423AA00240E28 /* JCMoviePlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 86544C2217E423AA00240E28 /* JCMoviePlayer.m */; };
+		865544231837849800DD4BDD /* LSCollectionViewHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 865544191837849800DD4BDD /* LSCollectionViewHelper.m */; };
+		865544241837849800DD4BDD /* LSCollectionViewLayoutHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 8655441B1837849800DD4BDD /* LSCollectionViewLayoutHelper.m */; };
+		865544251837849800DD4BDD /* DraggableCollectionViewFlowLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 8655441E1837849800DD4BDD /* DraggableCollectionViewFlowLayout.m */; };
+		865544261837849800DD4BDD /* UICollectionView+Draggable.m in Sources */ = {isa = PBXBuildFile; fileRef = 865544201837849800DD4BDD /* UICollectionView+Draggable.m */; };
+		8655442918378A0800DD4BDD /* SRTimeline.m in Sources */ = {isa = PBXBuildFile; fileRef = 8655442818378A0800DD4BDD /* SRTimeline.m */; };
 		8658657D17CDCB6A00B5D7BD /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8658657C17CDCB6A00B5D7BD /* UIKit.framework */; };
 		8658657F17CDCB6A00B5D7BD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8658657E17CDCB6A00B5D7BD /* Foundation.framework */; };
 		8658658117CDCB6A00B5D7BD /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8658658017CDCB6A00B5D7BD /* CoreGraphics.framework */; };
@@ -93,6 +98,18 @@
 		864AFD2617DFA7FD00A1286D /* SQClipTimeStretch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SQClipTimeStretch.m; sourceTree = "<group>"; };
 		86544C2117E423AA00240E28 /* JCMoviePlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JCMoviePlayer.h; sourceTree = "<group>"; };
 		86544C2217E423AA00240E28 /* JCMoviePlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JCMoviePlayer.m; sourceTree = "<group>"; };
+		865544181837849800DD4BDD /* LSCollectionViewHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LSCollectionViewHelper.h; sourceTree = "<group>"; };
+		865544191837849800DD4BDD /* LSCollectionViewHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LSCollectionViewHelper.m; sourceTree = "<group>"; };
+		8655441A1837849800DD4BDD /* LSCollectionViewLayoutHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LSCollectionViewLayoutHelper.h; sourceTree = "<group>"; };
+		8655441B1837849800DD4BDD /* LSCollectionViewLayoutHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LSCollectionViewLayoutHelper.m; sourceTree = "<group>"; };
+		8655441D1837849800DD4BDD /* DraggableCollectionViewFlowLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DraggableCollectionViewFlowLayout.h; sourceTree = "<group>"; };
+		8655441E1837849800DD4BDD /* DraggableCollectionViewFlowLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DraggableCollectionViewFlowLayout.m; sourceTree = "<group>"; };
+		8655441F1837849800DD4BDD /* UICollectionView+Draggable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UICollectionView+Draggable.h"; sourceTree = "<group>"; };
+		865544201837849800DD4BDD /* UICollectionView+Draggable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UICollectionView+Draggable.m"; sourceTree = "<group>"; };
+		865544211837849800DD4BDD /* UICollectionViewDataSource_Draggable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UICollectionViewDataSource_Draggable.h; sourceTree = "<group>"; };
+		865544221837849800DD4BDD /* UICollectionViewLayout_Warpable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UICollectionViewLayout_Warpable.h; sourceTree = "<group>"; };
+		8655442718378A0800DD4BDD /* SRTimeline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRTimeline.h; sourceTree = "<group>"; };
+		8655442818378A0800DD4BDD /* SRTimeline.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRTimeline.m; sourceTree = "<group>"; };
 		8658657917CDCB6A00B5D7BD /* Sequencer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Sequencer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8658657C17CDCB6A00B5D7BD /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		8658657E17CDCB6A00B5D7BD /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -223,6 +240,39 @@
 			path = SAVideoRangeSlider;
 			sourceTree = "<group>";
 		};
+		865544161837849800DD4BDD /* DraggableCollectionView */ = {
+			isa = PBXGroup;
+			children = (
+				865544171837849800DD4BDD /* Helpers */,
+				8655441C1837849800DD4BDD /* Layout */,
+				8655441F1837849800DD4BDD /* UICollectionView+Draggable.h */,
+				865544201837849800DD4BDD /* UICollectionView+Draggable.m */,
+				865544211837849800DD4BDD /* UICollectionViewDataSource_Draggable.h */,
+				865544221837849800DD4BDD /* UICollectionViewLayout_Warpable.h */,
+			);
+			path = DraggableCollectionView;
+			sourceTree = "<group>";
+		};
+		865544171837849800DD4BDD /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				865544181837849800DD4BDD /* LSCollectionViewHelper.h */,
+				865544191837849800DD4BDD /* LSCollectionViewHelper.m */,
+				8655441A1837849800DD4BDD /* LSCollectionViewLayoutHelper.h */,
+				8655441B1837849800DD4BDD /* LSCollectionViewLayoutHelper.m */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
+		8655441C1837849800DD4BDD /* Layout */ = {
+			isa = PBXGroup;
+			children = (
+				8655441D1837849800DD4BDD /* DraggableCollectionViewFlowLayout.h */,
+				8655441E1837849800DD4BDD /* DraggableCollectionViewFlowLayout.m */,
+			);
+			path = Layout;
+			sourceTree = "<group>";
+		};
 		8658657017CDCB6A00B5D7BD = {
 			isa = PBXGroup;
 			children = (
@@ -245,6 +295,7 @@
 		8658657B17CDCB6A00B5D7BD /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				865544161837849800DD4BDD /* DraggableCollectionView */,
 				8658BEAE17FAA44C00E71E9B /* PerlinNoise.h */,
 				8658BEAF17FAA44C00E71E9B /* PerlinNoise.m */,
 				8696EDC017E671CB0075DCE7 /* JCMath.h */,
@@ -337,6 +388,8 @@
 				86544C2217E423AA00240E28 /* JCMoviePlayer.m */,
 				863F62C317E50B7400C52AC9 /* SQTimeline.h */,
 				863F62C417E50B7400C52AC9 /* SQTimeline.m */,
+				8655442718378A0800DD4BDD /* SRTimeline.h */,
+				8655442818378A0800DD4BDD /* SRTimeline.m */,
 				86D43FF517E540810092C1D0 /* JCDropDown.h */,
 				86D43FF617E540810092C1D0 /* JCDropDown.m */,
 				865865A317CDCC2C00B5D7BD /* SRClip.h */,
@@ -561,6 +614,7 @@
 				865865A217CDCB9200B5D7BD /* LXReorderableCollectionViewFlowLayout.m in Sources */,
 				865865A717CDCC2C00B5D7BD /* SRClip.m in Sources */,
 				865865A817CDCC2C00B5D7BD /* SRSequencer.m in Sources */,
+				865544241837849800DD4BDD /* LSCollectionViewLayoutHelper.m in Sources */,
 				865865AB17CDCC3A00B5D7BD /* AVAssetStitcher.m in Sources */,
 				865865B217CDCC6F00B5D7BD /* SQRecordViewController.m in Sources */,
 				865865BD17CDE8C000B5D7BD /* SQHomeViewController.m in Sources */,
@@ -572,8 +626,10 @@
 				8639E36D17E408AE001ED2F8 /* SQTrimViewController.m in Sources */,
 				8639E37717E40D8E001ED2F8 /* SAResizibleBubble.m in Sources */,
 				8639E37817E40D8E001ED2F8 /* SASliderLeft.m in Sources */,
+				865544231837849800DD4BDD /* LSCollectionViewHelper.m in Sources */,
 				867807A6180E18D100E9592C /* SQEffectScramble.m in Sources */,
 				8639E37917E40D8E001ED2F8 /* SASliderRight.m in Sources */,
+				865544261837849800DD4BDD /* UICollectionView+Draggable.m in Sources */,
 				8639E37A17E40D8E001ED2F8 /* SAVideoRangeSlider.m in Sources */,
 				86D2338317FA4D2E00BAE5EF /* SQCameraEffectView.m in Sources */,
 				86544C2317E423AA00240E28 /* JCMoviePlayer.m in Sources */,
@@ -581,9 +637,11 @@
 				86D2338017FA4B7500BAE5EF /* SQClipsAnimationCell.m in Sources */,
 				86D43FF717E540810092C1D0 /* JCDropDown.m in Sources */,
 				86A6019517E59BA100666168 /* JCAudioRetime.mm in Sources */,
+				865544251837849800DD4BDD /* DraggableCollectionViewFlowLayout.m in Sources */,
 				86A6019B17E59F9C00666168 /* JCAudioConverter.m in Sources */,
 				86F9B08F17FACA5E001E7933 /* SQAlertView.m in Sources */,
 				867807A2180E17F700E9592C /* SQEffect.m in Sources */,
+				8655442918378A0800DD4BDD /* SRTimeline.m in Sources */,
 				8696EDC217E671CB0075DCE7 /* JCMath.m in Sources */,
 				8696EDDF17E67A0E0075DCE7 /* DiracAudioPlayer.mm in Sources */,
 				8696EDE017E67A0E0075DCE7 /* DiracAudioPlayerBase.mm in Sources */,

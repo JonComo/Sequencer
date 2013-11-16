@@ -10,7 +10,7 @@
 
 #import "SQVideoComposer.h"
 
-#import "SQTimeline.h"
+#import "SRTimeline.h"
 
 #import "JCMath.h"
 
@@ -445,6 +445,7 @@
 
 -(void)play
 {
+    /*
     self.player.range = CMTimeRangeMake(self.timeline.currentTime, kCMTimeIndefinite);
     
     int currentTimeAndDuration = CMTimeCompare(self.timeline.currentTime, self.duration);
@@ -453,7 +454,7 @@
         self.player.range = CMTimeRangeMake(kCMTimeZero, kCMTimeIndefinite);
     }
     
-    [self.player play];
+    [self.player play]; */
 }
 
 -(void)stop
@@ -473,7 +474,7 @@
 
 -(void)moviePlayer:(JCMoviePlayer *)player playingAtTime:(CMTime)currentTime
 {
-    [self.timeline scrollToTime:currentTime animated:NO];
+    //[self.timeline scrollToTime:currentTime animated:NO];
 }
 
 #pragma mark - AVCaptureFileOutputRecordingDelegate implementation
@@ -743,39 +744,6 @@
     [self.clips removeAllObjects];
 }
 
-#pragma UICollectionViewDataSourceDelegate
-
--(void)setTimeline:(SQTimeline *)collectionViewTimeline
-{
-    _timeline = collectionViewTimeline;
-    
-    _timeline.sequence = self;
-}
-
--(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
-{
-    SQClipCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"clipCell" forIndexPath:indexPath];
-    
-    SRClip *clip = [self.clips objectAtIndex:indexPath.row];
-    
-    cell.clip = clip;
-    
-    return cell;
-}
-
--(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
-{
-    return self.clips.count;
-}
-
-- (void)collectionView:(UICollectionView *)collectionView itemAtIndexPath:(NSIndexPath *)fromIndexPath didMoveToIndexPath:(NSIndexPath *)toIndexPath
-{
-    SRClip *clip = [self.clips objectAtIndex:fromIndexPath.item];
-    
-    [self.clips removeObjectAtIndex:fromIndexPath.item];
-    [self.clips insertObject:clip atIndex:toIndexPath.item];
-}
-
 #pragma Clip Operations
 
 -(SRClip *)lastSelectedClip
@@ -815,7 +783,7 @@
 {
     if (!clips || clips.count == 0) return;
     
-    [self.timeline deselectAll];
+    //[self.timeline deselectAll];
     
     for (SRClip *clip in clips){
         clip.isSelected = YES;
@@ -845,16 +813,19 @@
 
 -(void)deleteSelectedClips
 {
+    /*
     NSArray *selected = [self.timeline selectedClips];
     
     for (SRClip *clip in selected)
         [self removeClip:clip];
     
     [self.timeline reloadData];
+      */
 }
 
 -(void)duplicateSelectedClipsCompletion:(void(^)(void))block
 {
+    /*
     NSArray *selected = [self.timeline selectedClips];
     NSMutableArray *duplicates = [NSMutableArray array];
     
@@ -870,11 +841,12 @@
             [self.timeline reloadData];
             if (block) block();
         });
-    });
+    }); */
 }
 
 -(void)consolidateSelectedClipsProgress:(void (^)(float))progress completion:(void (^)(SRClip *))consolidateHandler
 {
+    /*
     NSURL *exportURL = [SRClip uniqueFileURLInDirectory:DOCUMENTS];
     
     [self finalizeClips:[self.timeline selectedClips] toFile:exportURL withPreset:self.exportPreset progress:progress withCompletionHandler:^(NSError *error) {
@@ -885,7 +857,7 @@
         }else{
             if (consolidateHandler) consolidateHandler(nil);
         }
-    }];
+    }]; */
 }
 
 -(void)removeClip:(SRClip *)clip

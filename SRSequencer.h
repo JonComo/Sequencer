@@ -13,7 +13,7 @@
 #define SRSequenceRefreshPreview @"sequenceRefreshPreview"
 
 @class SRSequencer;
-@class SQTimeline;
+@class SRTimeline;
 
 typedef void (^ErrorHandlingBlock)(NSError *error);
 
@@ -25,7 +25,7 @@ typedef void (^ErrorHandlingBlock)(NSError *error);
 
 @end
 
-@interface SRSequencer : NSObject <AVCaptureFileOutputRecordingDelegate, UICollectionViewDataSource>
+@interface SRSequencer : NSObject <AVCaptureFileOutputRecordingDelegate>
 
 @property (nonatomic, weak) id delegate;
 
@@ -35,7 +35,7 @@ typedef void (^ErrorHandlingBlock)(NSError *error);
 @property (strong, nonatomic) NSString *exportPreset;
 
 @property (nonatomic, weak) UIView *viewPreview;
-@property (nonatomic, weak) SQTimeline *timeline;
+@property (nonatomic, weak) SRTimeline *timeline;
 @property (nonatomic, strong) AVComposition *composition;
 
 @property (nonatomic, assign) CMTime duration;
