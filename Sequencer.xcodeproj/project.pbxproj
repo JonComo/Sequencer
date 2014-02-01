@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		8601067617DF7DE5002AEFC2 /* icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8601067517DF7DE5002AEFC2 /* icon@2x.png */; };
 		8601067817DF7DE7002AEFC2 /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 8601067717DF7DE7002AEFC2 /* icon.png */; };
+		86307510189D6F9A00ED3F81 /* icon120.png in Resources */ = {isa = PBXBuildFile; fileRef = 8630750F189D6F9A00ED3F81 /* icon120.png */; };
 		8639E36D17E408AE001ED2F8 /* SQTrimViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8639E36C17E408AE001ED2F8 /* SQTrimViewController.m */; };
 		8639E37717E40D8E001ED2F8 /* SAResizibleBubble.m in Sources */ = {isa = PBXBuildFile; fileRef = 8639E37017E40D8E001ED2F8 /* SAResizibleBubble.m */; };
 		8639E37817E40D8E001ED2F8 /* SASliderLeft.m in Sources */ = {isa = PBXBuildFile; fileRef = 8639E37217E40D8E001ED2F8 /* SASliderLeft.m */; };
@@ -77,6 +78,7 @@
 /* Begin PBXFileReference section */
 		8601067517DF7DE5002AEFC2 /* icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon@2x.png"; sourceTree = "<group>"; };
 		8601067717DF7DE7002AEFC2 /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
+		8630750F189D6F9A00ED3F81 /* icon120.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = icon120.png; path = Sequencer/media/icon120.png; sourceTree = "<group>"; };
 		8639E36B17E408AE001ED2F8 /* SQTrimViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQTrimViewController.h; sourceTree = "<group>"; };
 		8639E36C17E408AE001ED2F8 /* SQTrimViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SQTrimViewController.m; sourceTree = "<group>"; };
 		8639E36F17E40D8E001ED2F8 /* SAResizibleBubble.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SAResizibleBubble.h; sourceTree = "<group>"; };
@@ -228,6 +230,7 @@
 			children = (
 				8601067717DF7DE7002AEFC2 /* icon.png */,
 				8601067517DF7DE5002AEFC2 /* icon@2x.png */,
+				8630750F189D6F9A00ED3F81 /* icon120.png */,
 				8658658217CDCB6A00B5D7BD /* Sequencer */,
 				8658657B17CDCB6A00B5D7BD /* Frameworks */,
 				8658657A17CDCB6A00B5D7BD /* Products */,
@@ -540,6 +543,7 @@
 				8601067617DF7DE5002AEFC2 /* icon@2x.png in Resources */,
 				8601067817DF7DE7002AEFC2 /* icon.png in Resources */,
 				8696EDDE17E67A0E0075DCE7 /*  DiracAudioPlayer ReadMe.rtf in Resources */,
+				86307510189D6F9A00ED3F81 /* icon120.png in Resources */,
 				8696EDE417E67A0E0075DCE7 /* MainWindow.xib in Resources */,
 				8696EDE517E67A0E0075DCE7 /* song.aif in Resources */,
 				8696EDE617E67A0E0075DCE7 /* song2.caf in Resources */,
@@ -676,8 +680,8 @@
 		8658659D17CDCB6A00B5D7BD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Jon Como (5C23H8QH97)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Jon Como (5C23H8QH97)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Sequencer/Sequencer-Prefix.pch";
 				INFOPLIST_FILE = "Sequencer/Sequencer-Info.plist";
@@ -687,7 +691,7 @@
 					"\"$(SRCROOT)/Common Files/src\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "A08819D3-ED08-4F61-BB12-14ECE8C0200F";
 				USER_HEADER_SEARCH_PATHS = "";
 				WRAPPER_EXTENSION = app;
 			};
@@ -696,8 +700,8 @@
 		8658659E17CDCB6A00B5D7BD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Jon Como (5C23H8QH97)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Jon Como (5C23H8QH97)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Sequencer/Sequencer-Prefix.pch";
 				INFOPLIST_FILE = "Sequencer/Sequencer-Info.plist";
@@ -707,7 +711,7 @@
 					"\"$(SRCROOT)/Common Files/src\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "A08819D3-ED08-4F61-BB12-14ECE8C0200F";
 				USER_HEADER_SEARCH_PATHS = "";
 				WRAPPER_EXTENSION = app;
 			};
