@@ -52,7 +52,9 @@
     
     hasSetupFrame = YES;
     
-    [self setContentInset:UIEdgeInsetsMake(0, self.superview.frame.size.width*4/9, 0, self.superview.frame.size.width*4/9)];
+    float offset = self.superview.frame.size.width/2;
+    
+    [self setContentInset:UIEdgeInsetsMake(0, offset, 0, offset)];
     [self addPlayhead];
 }
 

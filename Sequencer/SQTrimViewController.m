@@ -93,7 +93,6 @@
     }
 }
 
-
 - (IBAction)trim:(id)sender
 {
     NSURL *outputURL = [SRClip uniqueFileURLInDirectory:DOCUMENTS];
