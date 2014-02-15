@@ -47,7 +47,6 @@
     __weak IBOutlet UIButton *buttonRecord;
     __weak IBOutlet UIButton *buttonPlay;
     
-    
     __weak IBOutlet UIView *viewPreview;
     __weak IBOutlet SQTimeline *timeline;
     
@@ -63,6 +62,11 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
+    
+    buttonRecord.backgroundColor = [UIColor redColor];
+    buttonRecord.layer.cornerRadius = 22;
+    buttonPlay.enabled = NO;
+    buttonPlay.alpha = 0;
     
     sequence = [[SRSequencer alloc] initWithDelegate:self];
     sequence.timeline = timeline;
@@ -471,19 +475,32 @@
 
 -(void)sequencer:(SRSequencer *)sequencer isRecording:(BOOL)recording
 {
-    [buttonRecord setTintColor:recording ? [UIColor whiteColor] : [UIColor redColor]];
+    buttonPlay.enabled = !recording;
+    buttonPlay.alpha = recording ? 0 : 1;
+    
+    [UIView animateWithDuration:0.2 animations:^{
+        if (recording){
+            buttonRecord.backgroundColor = [UIColor whiteColor];
+            buttonRecord.layer.cornerRadius = 0;
+            buttonRecord.layer.transform = CATransform3DMakeScale(0.7, 0.7, 1);
+        }else{
+            buttonRecord.backgroundColor = [UIColor redColor];
+            buttonRecord.layer.cornerRadius = 22;
+            buttonRecord.layer.transform = CATransform3DMakeScale(1, 1, 1);
+        }
+    }];
 }
 
 -(void)sequencer:(SRSequencer *)sequencer isZoomed:(BOOL)zoomed
 {
-    if (zoomed)
-    {
-        [timeline setUserInteractionEnabled:NO];
-        timeline.alpha = 0;
-    }else{
-        [timeline setUserInteractionEnabled:YES];
-        timeline.alpha = 1;
-    }
+    [UIView animateWithDuration:0.2 animations:^{
+        timeline.layer.transform = CATransform3DMakeTranslation(0, zoomed ? 40 : 0, 0);
+    }];
+}
+
+-(void)sequencer:(SRSequencer *)sequencer isPlaying:(BOOL)playing
+{
+    [buttonPlay setTitle:playing ? @"STOP" : @"PLAY" forState:UIControlStateNormal];
 }
 
 #pragma UIActions
@@ -509,8 +526,7 @@
 
 - (IBAction)record:(id)sender
 {
-    if (sequence.isRecording)
-    {
+    if (sequence.isRecording){
         [sequence pauseRecording];
     }else{
         [sequence record];

@@ -27,8 +27,6 @@
     BOOL hasSetupLayout;
     BOOL hasSetupFrame;
     
-    UIView *playhead;
-    
     BOOL isSeeking;
 }
 
@@ -41,7 +39,7 @@
 
 -(void)removeFromSuperview
 {
-    [playhead removeFromSuperview];
+    [self.playhead removeFromSuperview];
     
     [super removeFromSuperview];
 }
@@ -52,7 +50,7 @@
     
     hasSetupFrame = YES;
     
-    float offset = self.superview.frame.size.width/2;
+    float offset = self.frame.size.width/2;
     
     [self setContentInset:UIEdgeInsetsMake(0, offset, 0, offset)];
     [self addPlayhead];
@@ -60,17 +58,18 @@
 
 -(void)addPlayhead
 {
-    playhead = nil;
+    [self.playhead removeFromSuperview];
+    self.playhead = nil;
     
     NSLog(@"Size: %@", NSStringFromCGRect(self.frame));
     float center = self.frame.size.width/2;
     
-    playhead = [[UIView alloc] initWithFrame:CGRectMake(self.frame.origin.x + center - 1, self.frame.origin.y + self.frame.size.height * 3/4, 2, self.frame.size.height * 1/4)];
+    self.playhead = [[UIView alloc] initWithFrame:CGRectMake(self.frame.origin.x + center - 1, self.frame.origin.y + self.frame.size.height * 3/4, 2, self.frame.size.height * 1/4)];
     
-    [playhead setUserInteractionEnabled:NO];
-    [self.superview addSubview:playhead];
+    [self.playhead setUserInteractionEnabled:NO];
+    [self.superview addSubview:self.playhead];
     
-    playhead.backgroundColor = [UIColor whiteColor];
+    self.playhead.backgroundColor = [UIColor whiteColor];
 }
 
 -(void)setSequence:(SRSequencer *)sequence

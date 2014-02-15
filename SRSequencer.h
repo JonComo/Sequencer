@@ -20,6 +20,7 @@ typedef void (^ErrorHandlingBlock)(NSError *error);
 @protocol SRSequencerDelegate <NSObject>
 
 @optional
+-(void)sequencer:(SRSequencer *)sequencer isPlaying:(BOOL)playing;
 -(void)sequencer:(SRSequencer *)sequencer isRecording:(BOOL)recording;
 -(void)sequencer:(SRSequencer *)sequencer isZoomed:(BOOL)zoomed;
 

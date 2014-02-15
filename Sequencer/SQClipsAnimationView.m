@@ -35,8 +35,7 @@
     int numberToMake = self.bounds.size.width / cellSize.width + 1;
     
     for (int i = 0; i<numberToMake; i++) {
-        SQClipsAnimationCell *cell = [[SQClipsAnimationCell alloc] init];
-        
+        //SQClipsAnimationCell *cell = [[SQClipsAnimationCell alloc] init];
         
     }
 }

@@ -90,9 +90,14 @@
 
 -(void)pause
 {
+    if (!self.isPlaying) return;
+    
     self.isPlaying = NO;
     
     [self.player pause];
+    
+    if ([self.delegate respondsToSelector:@selector(moviePlayer:playbackStateChanged:)])
+        [self.delegate moviePlayer:self playbackStateChanged:JCMoviePlayerStateFinished];
     
     [timerPlaying invalidate];
     timerPlaying = nil;

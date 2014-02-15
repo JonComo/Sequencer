@@ -445,6 +445,8 @@
 
 -(void)play
 {
+    if (self.clips.count == 0) return;
+    
     self.player.range = CMTimeRangeMake(self.timeline.currentTime, kCMTimeIndefinite);
     
     int currentTimeAndDuration = CMTimeCompare(self.timeline.currentTime, self.duration);
@@ -464,8 +466,10 @@
 
 -(void)moviePlayer:(JCMoviePlayer *)player playbackStateChanged:(JCMoviePlayerState)state
 {
-    if (state == JCMoviePlayerStateFinished)
-    {
+    if ([self.delegate respondsToSelector:@selector(sequencer:isPlaying:)])
+        [self.delegate sequencer:self isPlaying:state == JCMoviePlayerStateStarted];
+    
+    if (state == JCMoviePlayerStateFinished){
         [self stop];
         [self hidePreview];
     }

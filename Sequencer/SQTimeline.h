@@ -16,6 +16,7 @@
 @interface SQTimeline : UICollectionView
 
 @property (nonatomic, weak) SRSequencer *sequence;
+@property (nonatomic, strong) UIView *playhead;
 
 @property CMTime currentTime;
 

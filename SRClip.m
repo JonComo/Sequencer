@@ -132,7 +132,7 @@
     imageGenerator.maximumSize = CGSizeMake(picWidth, picWidth);
     
     //Generate rest of the images
-    CMTime duration = asset.duration;
+    //CMTime duration = asset.duration;
     
     int numberToGenerate = ceil(size.width / picWidth);
     numberToGenerate -= 2; //account for the start and end thumb
