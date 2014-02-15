@@ -73,14 +73,11 @@
     [self initInterface];
 }
 
--(void)viewWillAppear:(BOOL)animated
-{
-    [timeline frameUpdated];
-}
-
 -(void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+    
+    [timeline frameUpdated];
     
     if (!sequence.captureSession)
         [sequence setupSessionWithDefaults];
@@ -127,9 +124,6 @@
 
 -(void)initInterface
 {
-    buttonRecord.layer.borderWidth = 2;
-    buttonRecord.layer.borderColor = [UIColor redColor].CGColor;
-    
     [self clipActions];
     [self cameraActions];
     [self fileActions];
@@ -477,7 +471,7 @@
 
 -(void)sequencer:(SRSequencer *)sequencer isRecording:(BOOL)recording
 {
-    buttonRecord.layer.borderColor = recording ? [UIColor whiteColor].CGColor : [UIColor redColor].CGColor;
+    [buttonRecord setTintColor:recording ? [UIColor whiteColor] : [UIColor redColor]];
 }
 
 -(void)sequencer:(SRSequencer *)sequencer isZoomed:(BOOL)zoomed
