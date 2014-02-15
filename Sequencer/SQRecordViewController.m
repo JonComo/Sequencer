@@ -471,15 +471,10 @@
     }
 }
 
-#pragma SequenceDelegate
-
--(void)sequencer:(SRSequencer *)sequencer isRecording:(BOOL)recording
+-(void)buttonRecordIsStop:(BOOL)isStop
 {
-    buttonPlay.enabled = !recording;
-    buttonPlay.alpha = recording ? 0 : 1;
-    
     [UIView animateWithDuration:0.2 animations:^{
-        if (recording){
+        if (isStop){
             buttonRecord.backgroundColor = [UIColor whiteColor];
             buttonRecord.layer.cornerRadius = 0;
             buttonRecord.layer.transform = CATransform3DMakeScale(0.7, 0.7, 1);
@@ -491,6 +486,16 @@
     }];
 }
 
+#pragma SequenceDelegate
+
+-(void)sequencer:(SRSequencer *)sequencer isRecording:(BOOL)recording
+{
+    buttonPlay.enabled = !recording;
+    buttonPlay.alpha = recording ? 0 : 1;
+    
+    [self buttonRecordIsStop:recording];
+}
+
 -(void)sequencer:(SRSequencer *)sequencer isZoomed:(BOOL)zoomed
 {
     [UIView animateWithDuration:0.2 animations:^{
@@ -500,7 +505,18 @@
 
 -(void)sequencer:(SRSequencer *)sequencer isPlaying:(BOOL)playing
 {
-    [buttonPlay setTitle:playing ? @"STOP" : @"PLAY" forState:UIControlStateNormal];
+    buttonPlay.alpha = playing ? 0 : 1;
+    buttonPlay.userInteractionEnabled = !playing;
+    
+    [buttonRecord removeTarget:self action:NULL forControlEvents:UIControlEventAllEvents];
+    
+    if (playing){
+        [buttonRecord addTarget:self action:@selector(preview:) forControlEvents:UIControlEventTouchUpInside];
+    }else{
+        [buttonRecord addTarget:self action:@selector(record:) forControlEvents:UIControlEventTouchUpInside];
+    }
+    
+    [self buttonRecordIsStop:playing];
 }
 
 #pragma UIActions

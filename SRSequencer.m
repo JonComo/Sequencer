@@ -135,6 +135,7 @@
     if([_captureSession canAddOutput:movieFileOutput])
     {
         [_captureSession addOutput:movieFileOutput];
+        [[movieFileOutput connectionWithMediaType:AVMediaTypeVideo] setEnablesVideoStabilizationWhenAvailable:YES];
     }else{
         *error = [NSError errorWithDomain:@"Error setting file output." code:101 userInfo:nil];
         return;
@@ -155,7 +156,6 @@
     }
     
     [self calculateZoomFrame];
-    
     [self setupPreviewLayer];
 }
 
@@ -388,19 +388,24 @@
     
     clipRecording = [[SRClip alloc] initWithURL:outputFileURL];
     
+    AVCaptureConnection *videoConnection = [movieFileOutput connectionWithMediaType:AVMediaTypeVideo];
+    
     if (videoInput.device.position == AVCaptureDevicePositionFront)
     {
-        if (![[movieFileOutput connectionWithMediaType:AVMediaTypeVideo] isVideoMirrored])
-            [[movieFileOutput connectionWithMediaType:AVMediaTypeVideo] setVideoMirrored:YES];
+        [videoConnection setVideoOrientation:AVCaptureVideoOrientationLandscapeRight];
+        
+        
+        if (![videoConnection isVideoMirrored])
+            [videoConnection setVideoMirrored:YES];
     }else{
+        [videoConnection setVideoOrientation:AVCaptureVideoOrientationLandscapeRight];
+        
         if (videoInput.device.position == AVCaptureDevicePositionBack)
         {
-            if ([[movieFileOutput connectionWithMediaType:AVMediaTypeVideo] isVideoMirrored])
-                [[movieFileOutput connectionWithMediaType:AVMediaTypeVideo] setVideoMirrored:NO];
+            if ([videoConnection isVideoMirrored])
+                [videoConnection setVideoMirrored:NO];
         }
     }
-    
-    [[movieFileOutput connectionWithMediaType:AVMediaTypeVideo] setVideoOrientation:AVCaptureVideoOrientationLandscapeRight];
     
     [movieFileOutput startRecordingToOutputFileURL:outputFileURL recordingDelegate:self];
 }
